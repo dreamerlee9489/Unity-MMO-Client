@@ -14,7 +14,7 @@ namespace Net
         public int Level => _level;
         public Proto.Gender Gender => _gender;
 
-        public void Parse(Proto.PlayerLittle proto)
+        public void ParseProto(Proto.PlayerLittle proto)
         {
             _id = proto.Sn;
             _name = proto.Name;
@@ -31,7 +31,7 @@ namespace Net
         public string Account => _account;
         public List<PlayerInfo> Players => _players;
 
-        public void Parse(Proto.PlayerList proto)
+        public void ParseProto(Proto.PlayerList proto)
         {
             _account = proto.Account;
             _players.Clear();
@@ -39,7 +39,7 @@ namespace Net
             foreach (Proto.PlayerLittle roleProto in proto.Player)
             {
                 PlayerInfo role = new PlayerInfo();
-                role.Parse(roleProto);
+                role.ParseProto(roleProto);
                 _players.Add(role);
             }
         }

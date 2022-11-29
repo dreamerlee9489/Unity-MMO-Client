@@ -1,4 +1,5 @@
 ﻿using Control.CMD;
+using Frame;
 using Net;
 using System.Collections.Generic;
 using UI;
@@ -10,19 +11,20 @@ namespace Control
     [RequireComponent(typeof(CapsuleCollider), typeof(NavMeshAgent))]
     public class Entity : MonoBehaviour, ICmdReceiver
     {
-        private static readonly int _moveSpeed = Animator.StringToHash("moveSpeed");
-        public const float WalkSpeed = 1.558401f, RunSpeed = 5.662316f;
+        private static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
+        public static readonly float WalkSpeed = 1.558401f, RunSpeed = 5.662316f;
 
-        public int hp = 0;
         private Animator _animator;
         private NavMeshAgent _agent;
-        private List<Proto.Vector3> _cornerPoints = new();
         private NameBar _nameBar;
+        private List<Proto.Vector3> _cornerPoints = new();
 
         public Animator Animator => _animator;
         public NavMeshAgent Agent => _agent;
-        public List<Proto.Vector3> CornerPoints => _cornerPoints;
         public NameBar NameBar => _nameBar;
+        public List<Proto.Vector3> CornerPoints => _cornerPoints;
+
+        public int Hp { get; set; }
 
         private void Awake()
         {
@@ -44,20 +46,20 @@ namespace Control
                 _agent.destination = pos;
                 _cornerPoints.Clear();
             }
-            _animator.SetFloat(_moveSpeed, transform.InverseTransformVector(_agent.velocity).z);
+            _animator.SetFloat(MoveSpeed, transform.InverseTransformVector(_agent.velocity).z);
         }
 
         public void Execute(Vector3 point)
         {
             Vector3 destPoint = point;
-            int layer = 1 << NavMesh.GetAreaFromName("Walkable");
-            if (NavMesh.SamplePosition(point, out NavMeshHit meshHit, 10, layer))
+            if (NavMesh.SamplePosition(point, out NavMeshHit meshHit, 10, 1))
                 destPoint = meshHit.position;
             NavMeshPath path = new();
             _agent.CalculatePath(destPoint, path);
             if (path.status != NavMeshPathStatus.PathPartial)
             {
                 Proto.Move proto = new();
+                proto.EnemyId = gameObject.CompareTag("Player") ? -1 : GetComponent<EnemyController>().Id;
                 foreach (Vector3 pos in path.corners)
                     proto.Position.Add(new Proto.Vector3() { X = pos.x, Y = pos.y, Z = pos.z });
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SMove, proto);

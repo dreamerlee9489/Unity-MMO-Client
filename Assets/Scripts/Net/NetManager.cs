@@ -143,6 +143,7 @@ namespace Net
             writer.Write((ushort)2);
             writer.Write((ushort)msgId);
 
+            Debug.Log("Send msg: id = " + msgId);
             if (msg != null)
             {
                 Google.Protobuf.CodedOutputStream os = new Google.Protobuf.CodedOutputStream(ms);
@@ -167,7 +168,6 @@ namespace Net
                 Disconnect();
                 return false;
             }
-            Debug.Log("Send msg: id = " + msgId);
             return true;
         }
 

@@ -1,12 +1,14 @@
 ﻿using Frame;
 using Net;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace UI
 {
     public class UICanvas : BasePanel
     {
         private Dictionary<string, BasePanel> panelDict = new();
+        public Text debug;
 
         protected override void Awake()
         {

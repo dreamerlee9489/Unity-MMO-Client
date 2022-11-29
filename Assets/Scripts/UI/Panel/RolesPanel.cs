@@ -1,7 +1,8 @@
 ﻿using Frame;
 using Google.Protobuf;
 using Net;
-using System;
+using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI
@@ -109,20 +110,23 @@ namespace UI
         private void ConnectedCallback(EAppType appType)
         {
             if (appType == EAppType.Game)
-            {
-                Proto.LoginByToken proto = new Proto.LoginByToken
-                {
-                    Token = _token,
-                    Account = _account
-                };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2GLoginByToken, proto);
-            }
-            //print("RolesPanel.ConnectedCallback apptype=" + appType);
+                MonoManager.Instance.StartCoroutine(SendTokenDelay());
         }
 
         private void DisconnectCallback(EAppType appType)
         {
             //print("RolesPanel.DisconnectCallback apptype=" + appType);
+        }
+
+        private IEnumerator SendTokenDelay()
+        {
+            yield return new WaitForSeconds(1);
+            Proto.LoginByToken proto = new Proto.LoginByToken
+            {
+                Token = _token,
+                Account = _account
+            };
+            NetManager.Instance.SendPacket(Proto.MsgId.C2GLoginByToken, proto);
         }
     }
 }

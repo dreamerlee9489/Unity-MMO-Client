@@ -6,18 +6,16 @@ using UnityEngine.Networking;
 using UI;
 using UnityEngine.SceneManagement;
 using Cinemachine;
-using System.Collections.Generic;
-using Control;
 
 namespace Frame
 {
     public class GameManager : MonoSingleton<GameManager>
     {
+        private UICanvas _canvas;
         private AccountInfo _accountInfo;
         private Player _mainPlayer;
-        private UICanvas _canvas;
         private CinemachineVirtualCamera _virtualCamera;
-        private Dictionary<ulong, AppearRole> _players = new();
+        private WorldManager _activeWorld;
 
         public string ip;
         public int port;
@@ -26,6 +24,7 @@ namespace Frame
         public AccountInfo AccountInfo => _accountInfo;
         public Player MainPlayer => _mainPlayer;
         public CinemachineVirtualCamera VirtualCamera => _virtualCamera;
+        public WorldManager ActiveWorld => _activeWorld;
 
         protected override void Awake()
         {
@@ -35,8 +34,6 @@ namespace Frame
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CMove, SyncMoveHandler);
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
@@ -51,8 +48,6 @@ namespace Frame
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CMove, SyncMoveHandler);
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
@@ -77,30 +72,6 @@ namespace Frame
             }
         }
 
-        private void RoleAppearHandler(Google.Protobuf.IMessage msg)
-        {
-            print("GameManager.RoleAppearHandler");
-            Proto.RoleAppear proto = msg as Proto.RoleAppear;
-            if (proto != null)
-            {
-                foreach (Proto.Role role in proto.Role)
-                {
-                    ulong sn = role.Sn;
-                    if (_players.ContainsKey(sn))
-                        _players[sn].Parse(role);
-                    else
-                    {
-                        AppearRole appearRole = new AppearRole();
-                        appearRole.Parse(role);
-                        appearRole.LoadObj();
-                        _players.Add(sn, appearRole);
-                        _players[sn].Obj.GetComponent<Entity>().NameBar.Name.text = role.Name;
-                        Debug.Log("sync player sn=" + sn + " world =" + SceneManager.GetActiveScene().name);
-                    }
-                }
-            }
-        }
-
         private void PlayerListHandler(Google.Protobuf.IMessage msg)
         {
             Proto.PlayerList proto = msg as Proto.PlayerList;
@@ -108,7 +79,7 @@ namespace Frame
             {
                 if (_accountInfo == null)
                     _accountInfo = new AccountInfo();
-                _accountInfo.Parse(proto);
+                _accountInfo.ParseProto(proto);
                 if (_accountInfo.Players.Count == 0)
                 {
                     Canvas.GetPanel<CreatePanel>().Open();
@@ -152,26 +123,10 @@ namespace Frame
             }
         }
 
-        private void SyncMoveHandler(Google.Protobuf.IMessage msg)
-        {
-            Proto.Move proto = msg as Proto.Move;
-            if (proto != null)
-            {
-                Debug.Log("SyncMoveHandler");
-                ulong playSn = proto.PlayerSn;
-                if (_players.ContainsKey(playSn))
-                {
-                    AppearRole player = _players[playSn];
-                    Entity entity = player.Obj.GetComponent<Entity>();
-                    entity.CornerPoints.AddRange(proto.Position);
-                }
-            }
-        }
-
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            Debug.Log("OnSceneLoaded " + scene.buildIndex + " mode=" + mode);
             EventManager.Instance.Invoke(EEventType.SceneLoaded, scene.buildIndex);
+            _activeWorld = FindObjectOfType<WorldManager>();
         }
     }
 }
