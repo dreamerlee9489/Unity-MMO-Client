@@ -1,6 +1,4 @@
-﻿using Frame;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Control.FSM
 {
@@ -10,34 +8,30 @@ namespace Control.FSM
 
         public Pursuit(Entity owner, Entity target) : base(owner, target)
         {
+            type = AIStateType.Pursuit;
+            Enter();
         }
 
         public override void Enter()
         {
             _owner.Agent.speed = Entity.RunSpeed;
-            MonoManager.Instance.StartCoroutine(UpdatePos());
         }
 
         public override void Execute()
         {
-            _owner.Agent.destination = _target.transform.position;
-            //_owner.Execute(_target.transform.position);
+            if (_target)
+            {
+                _owner.Agent.destination = _target.transform.position;
+            }
         }
 
         public override void Exit()
         {
             _owner.Agent.speed = Entity.WalkSpeed;
-            MonoManager.Instance.StopCoroutine(UpdatePos());
-            Debug.Log("PURSUIT EXIT");
         }
 
-        private IEnumerator UpdatePos()
+        public override void UpdateState(int code)
         {
-            while (true)
-            {
-                _owner.Execute(_target.transform.position);
-                yield return _wait1s;
-            }
         }
     }
 }

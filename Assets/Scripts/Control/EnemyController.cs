@@ -1,4 +1,5 @@
 ﻿using Control.FSM;
+using Frame;
 using UnityEngine;
 
 namespace Control
@@ -11,20 +12,24 @@ namespace Control
         private Entity _entity;
         private AIState _prevState;
         private AIState _currState;
+        private PatrolPath _patrolPath;
 
         public Entity Entity => _entity;
         public AIState CurrState => _currState;
+        public PatrolPath PatrolPath => _patrolPath;
 
         public int Id { get; set; }
 
         private void Awake()
         {
             _entity = GetComponent<Entity>();
+            _patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
         }
 
         private void Start()
         {
-            _currState = new Patrol(_entity);
+            _patrolPath.transform.position = transform.position;
+            _currState = new Idle(_entity);
         }
 
         private void Update()
@@ -51,7 +56,9 @@ namespace Control
 
         public void ParseProto(Proto.Enemy proto)
         {
-            _entity.Agent.destination = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
+            _entity.Agent.enabled = false;
+            _entity.transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
+            _entity.Agent.enabled = true;
         }
     }
 }

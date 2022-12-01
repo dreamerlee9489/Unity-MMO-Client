@@ -6,6 +6,7 @@ namespace Frame
     public class PoolType
     {
         public const string RoleToggle = "RoleToggle";
+        public const string PatrolPath = "PatrolPath";
     }
 
     public class PoolManager : MonoSingleton<PoolManager>

@@ -1,6 +1,7 @@
 ﻿using Control;
 using Frame;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Net
 {
@@ -36,6 +37,7 @@ namespace Net
                     Object.DontDestroyOnLoad(_obj);
                 }
                 _obj.GetComponent<Entity>().NameBar.Name.text = _name;
+                _obj.GetComponent<PlayerController>().Sn = _sn;
                 _obj.SetActive(true);
             });
         }

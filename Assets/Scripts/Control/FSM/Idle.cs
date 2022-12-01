@@ -4,21 +4,29 @@ namespace Control.FSM
 {
     public class Idle : AIState
     {
-        public Idle(Entity owner, Entity target = null) : base(owner, target) => Enter();
+        public Idle(Entity owner, Entity target = null) : base(owner, target)
+        {
+            type = AIStateType.Idle;
+            Enter();
+        }
 
         public override void Enter()
         {
-            throw new System.NotImplementedException();
+            _owner.Anim.SetBool(Entity.Attack, false);
         }
 
         public override void Execute()
         {
-            throw new System.NotImplementedException();
         }
 
         public override void Exit()
         {
-            throw new System.NotImplementedException();
+
+        }
+
+        public override void UpdateState(int code)
+        {
+
         }
     }
 }

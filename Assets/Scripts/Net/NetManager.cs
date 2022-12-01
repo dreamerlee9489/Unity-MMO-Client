@@ -32,8 +32,10 @@ namespace Net
             RegistParseFunc(Proto.MsgId.L2CPlayerList, ParsePacket<Proto.PlayerList>);
             RegistParseFunc(Proto.MsgId.G2CSyncPlayer, ParsePacket<Proto.SyncPlayer>);
             RegistParseFunc(Proto.MsgId.S2CRoleAppear, ParsePacket<Proto.RoleAppear>);
-            RegistParseFunc(Proto.MsgId.S2CMove, ParsePacket<Proto.Move>);
             RegistParseFunc(Proto.MsgId.S2CEnemyList, ParsePacket<Proto.EnemyList>);
+            RegistParseFunc(Proto.MsgId.S2CFsmChangeState, ParsePacket<Proto.FsmChangeState>);
+            RegistParseFunc(Proto.MsgId.S2CPlayerSyncState, ParsePacket<Proto.PlayerSyncState>);
+            RegistParseFunc(Proto.MsgId.S2CRoleDisAppear, ParsePacket<Proto.RoleDisAppear>);
             InvokeRepeating("SendPingMsg", 10, 10);
         }
 
@@ -143,7 +145,6 @@ namespace Net
             writer.Write((ushort)2);
             writer.Write((ushort)msgId);
 
-            Debug.Log("Send msg: id = " + msgId);
             if (msg != null)
             {
                 Google.Protobuf.CodedOutputStream os = new Google.Protobuf.CodedOutputStream(ms);
@@ -179,7 +180,6 @@ namespace Net
                 Debug.LogWarning("未找到解包函数: msgId = " + msgId);
                 return;
             }
-            Debug.LogFormat("Recv msg: id = {0}", msgId);
             Google.Protobuf.IMessage msg = _funcDict[msgId](bytes, offset, length);
             MsgManager.Instance.HandleMsg(msgId, msg);
         }

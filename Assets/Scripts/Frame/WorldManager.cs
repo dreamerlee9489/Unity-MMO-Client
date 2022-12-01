@@ -1,10 +1,9 @@
 ﻿using Control;
-using Google.Protobuf;
+using Control.FSM;
 using Net;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Frame
 {
@@ -39,15 +38,20 @@ namespace Frame
             }
 
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CMove, SyncMoveHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnemyList, EnemyListHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CFsmChangeState, FsmChangeStateHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
+            PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"), 10);
         }
 
         private void OnApplicationQuit()
         {
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CMove, SyncMoveHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnemyList, EnemyListHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CFsmChangeState, FsmChangeStateHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
         }
 
         private Vector3 GetPos(string posStr)
@@ -63,7 +67,6 @@ namespace Frame
 
         private void RoleAppearHandler(Google.Protobuf.IMessage msg)
         {
-            print("GameManager.RoleAppearHandler");
             Proto.RoleAppear proto = msg as Proto.RoleAppear;
             if (proto != null)
             {
@@ -78,33 +81,27 @@ namespace Frame
                         appearRole.Parse(role);
                         appearRole.LoadObj();
                         _players.Add(sn, appearRole);
-                        Debug.Log("sync player sn=" + sn + " world =" + SceneManager.GetActiveScene().name);
                     }
                 }
             }
         }
 
-        private void SyncMoveHandler(Google.Protobuf.IMessage msg)
+        private void PlayerSyncStateHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.Move proto = msg as Proto.Move;
+            Proto.PlayerSyncState proto = msg as Proto.PlayerSyncState;
             if (proto != null)
             {
                 ulong playSn = proto.PlayerSn;
-                int enemyId = proto.EnemyId;
-                if (enemyId == -1 && _players.ContainsKey(playSn))
+                if (_players.ContainsKey(playSn))
                 {
                     AppearRole player = _players[playSn];
-                    Entity entity = player.Obj.GetComponent<Entity>();
-                    entity.CornerPoints.AddRange(proto.Position);
-                }
-                else
-                {
-                    _enemies[enemyId].Entity.CornerPoints.AddRange(proto.Position);
+                    PlayerController entity = player.Obj.GetComponent<PlayerController>();
+                    entity.ParseSyncState(proto);
                 }
             }
         }
 
-        private void EnemyListHandler(IMessage msg)
+        private void EnemyListHandler(Google.Protobuf.IMessage msg)
         {
             Proto.EnemyList proto = msg as Proto.EnemyList;
             if (proto != null)
@@ -114,6 +111,43 @@ namespace Frame
                 {
                     _enemies[i].Id = i;
                     _enemies[i].ParseProto(enemyList[i]);
+                }
+            }
+        }
+
+        private void FsmChangeStateHandler(Google.Protobuf.IMessage msg)
+        {
+            Proto.FsmChangeState proto = msg as Proto.FsmChangeState;
+            if (proto != null)
+            {
+                AIStateType state = (AIStateType)proto.State;
+                int code = proto.Code;
+                int id = proto.EnemyId;
+                ulong sn = proto.PlayerSn;
+                if (_enemies[id].CurrState.type != state)
+                {
+                    Entity player = null;
+                    if (sn > 0 && _players.ContainsKey(sn))
+                        player = _players[sn].Obj.GetComponent<Entity>();
+                    _enemies[id].ChangeState(AIState.GenState(state, _enemies[id].Entity, player));
+                }
+                else
+                {
+                    _enemies[id].CurrState.UpdateState(proto.Code);
+                }
+            }
+        }
+
+        private void RoleDisAppearHandler(Google.Protobuf.IMessage msg)
+        {
+            Proto.RoleDisAppear proto = msg as Proto.RoleDisAppear;
+            if (proto != null)
+            {
+                ulong playSn = proto.Sn;
+                if (_players.ContainsKey(playSn))
+                {
+                    Destroy(_players[playSn].Obj);
+                    _players.Remove(playSn);
                 }
             }
         }
