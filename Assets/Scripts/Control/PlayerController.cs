@@ -26,7 +26,7 @@ namespace Control
 
         private void Start()
         {
-            _agent.speed = RunSpeed * 1.2f;
+            _agent.speed = RunSpeed * 1.5f;
             MonoManager.Instance.StartCoroutine(SyncStateCoroutine());
         }
 
@@ -87,8 +87,8 @@ namespace Control
                         EnemyId = (!_hitTarget || _hitTarget.CompareTag("Terrain")) ? -1 : _hitTarget.GetComponent<EnemyController>().Id,
                         State = (int)_state,
                         Code = _stateCode,
-                        CurrPos = new Proto.Vector3() { X = transform.position.x, Y = transform.position.y, Z = transform.position.z },
-                        Target = new Proto.Vector3() { X = _hitPoint.x, Y = _hitPoint.y, Z = _hitPoint.z }
+                        CurPos = new Proto.Vector3() { X = transform.position.x, Y = transform.position.y, Z = transform.position.z },
+                        HitPos = new Proto.Vector3() { X = _hitPoint.x, Y = _hitPoint.y, Z = _hitPoint.z }
                     };
                     NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncState, proto);
                 }
@@ -101,9 +101,9 @@ namespace Control
             PlayerStateType state = (PlayerStateType)proto.State;
             Vector3 pos = new()
             {
-                x = proto.Target.X,
-                y = proto.Target.Y,
-                z = proto.Target.Z
+                x = proto.HitPos.X,
+                y = proto.HitPos.Y,
+                z = proto.HitPos.Z
             };
             _agent.destination = pos;
             switch (state)

@@ -1,43 +1,42 @@
-﻿using App;
-
-namespace Control.FSM
+﻿namespace Control.FSM
 {
-    public enum AIStateType { Idle, Patrol, Pursuit, Attack }
+    public enum FsmStateType { Idle, Patrol, Pursuit, Attack }
 
-    public abstract class AIState
+    public abstract class FsmState
     {
+        protected FsmStateType _type;
         protected EnemyController _owner;
         protected PlayerController _target;
 
-        public AIStateType type;
+        public FsmStateType Type => _type;
         public PlayerController Target => _target;
 
-        protected AIState(EnemyController owner, PlayerController target = null)
+        protected FsmState(EnemyController owner, PlayerController target = null)
         {
             _owner = owner;
             _target = target;
+        }
+
+        public static FsmState GenState(FsmStateType type, int code, EnemyController owner, PlayerController target)
+        {
+            switch (type)
+            {
+                case FsmStateType.Idle:
+                    return new Idle(owner, null);
+                case FsmStateType.Patrol:
+                    return new Patrol(owner, null, code);
+                case FsmStateType.Pursuit:
+                    return new Pursuit(owner, target);
+                case FsmStateType.Attack:
+                    return new Attack(owner, target);
+                default:
+                    return null;
+            }
         }
 
         public abstract void Enter();
         public abstract void Execute();
         public abstract void Exit();
         public abstract void UpdateState(int code);
-
-        public static AIState GenState(AIStateType type, EnemyController owner, PlayerController target)
-        {
-            switch (type)
-            {
-                case AIStateType.Idle:
-                    return new Idle(owner, null);
-                case AIStateType.Patrol:
-                    return new Patrol(owner, null);
-                case AIStateType.Pursuit:
-                    return new Pursuit(owner, target);
-                case AIStateType.Attack:
-                    return new Attack(owner, target);
-                default:
-                    return null;
-            }
-        }
     }
 }

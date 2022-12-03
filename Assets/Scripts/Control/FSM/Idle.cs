@@ -1,13 +1,14 @@
 ﻿using Frame;
-using UnityEngine;
+using Net;
 
 namespace Control.FSM
 {
-    public class Idle : AIState
+    public class Idle : FsmState
     {
         public Idle(EnemyController owner, PlayerController target = null) : base(owner, target)
         {
-            type = AIStateType.Idle;
+            _type = FsmStateType.Idle;
+            _target = GameManager.Instance.MainPlayer.GetGameObject().GetComponent<PlayerController>();
             Enter();
         }
 
@@ -19,6 +20,29 @@ namespace Control.FSM
 
         public override void Execute()
         {
+            if (_owner.CanSee(_target))
+            {
+                Proto.FsmSyncState proto = new()
+                {
+                    EnemyId = _owner.Id,
+                    PlayerSn = _target.Sn,
+                    State = (int)FsmStateType.Pursuit,
+                    Code = -1,
+                    CurPos = new()
+                    {
+                        X = _owner.transform.position.x,
+                        Y = _owner.transform.position.y,
+                        Z = _owner.transform.position.z
+                    },
+                    NxtPos = new()
+                    {
+                        X = _target.transform.position.x,
+                        Y = _target.transform.position.y,
+                        Z = _target.transform.position.z
+                    }
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SFsmSyncState, proto);
+            }
         }
 
         public override void Exit()

@@ -58,9 +58,7 @@ namespace Frame
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
             if (request.result == UnityWebRequest.Result.ProtocolError)
-            {
                 Debug.Log("ConnectServer error: " + request.error);
-            }
             else
             {
                 string result = request.downloadHandler.text;
@@ -74,23 +72,18 @@ namespace Frame
 
         private void PlayerListHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.PlayerList proto = msg as Proto.PlayerList;
-            if (proto != null)
+            if (msg is Proto.PlayerList proto)
             {
-                if (_accountInfo == null)
-                    _accountInfo = new AccountInfo();
+                _accountInfo ??= new AccountInfo();
                 _accountInfo.ParseProto(proto);
                 if (_accountInfo.Players.Count == 0)
-                {
                     Canvas.GetPanel<CreatePanel>().Open();
-                }
                 else
                 {
-                    RoleToggle roleToggle = null;
                     Transform content = Canvas.GetPanel<RolesPanel>()._rolesRect.content;
                     for (int i = 0; i < _accountInfo.Players.Count; i++)
                     {
-                        roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
+                        RoleToggle roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
                         roleToggle.Name.text = _accountInfo.Players[i].Name;
                         roleToggle.Level.text = "Lv " + _accountInfo.Players[i].Level;
                         roleToggle.Id = _accountInfo.Players[i].Id;
@@ -102,8 +95,7 @@ namespace Frame
 
         private void EnterWorldHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.EnterWorld proto = msg as Proto.EnterWorld;
-            if (proto != null && proto.WorldId > 2)
+            if (msg is Proto.EnterWorld proto && proto.WorldId > 2)
             {
                 //Debug.Log("GameManager.EnterWorldHandler id: " + proto.WorldId);
                 SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
@@ -113,12 +105,10 @@ namespace Frame
 
         private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.SyncPlayer proto = msg as Proto.SyncPlayer;
-            if (proto != null)
+            if (msg is Proto.SyncPlayer proto)
             {
                 //print("GameManager.SyncPlayerHandler sn: " + proto.Player.Sn);
-                if (_mainPlayer == null)
-                    _mainPlayer = new Player();
+                _mainPlayer ??= new Player();
                 _mainPlayer.Parse(proto.Player);
             }
         }

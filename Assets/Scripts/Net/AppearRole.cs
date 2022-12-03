@@ -1,7 +1,6 @@
 ﻿using Control;
 using Frame;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Net
 {
@@ -23,18 +22,18 @@ namespace Net
             {
                 _obj = Object.Instantiate(obj);
                 _obj.SetActive(false);
-                _obj.transform.position = _position;
-                _obj.transform.rotation = Quaternion.identity;
+                _obj.transform.SetPositionAndRotation(_position, Quaternion.identity);
                 if (_sn != GameManager.Instance.MainPlayer.Sn)
                     _obj.name = "Sync_" + _name;
                 else
                 {
                     _obj.name = "MainPlayer";
                     GameManager.Instance.MainPlayer.SetGameObject(_obj);
-                    GameManager.Instance.VirtualCamera.transform.position = _position + new Vector3(0, 6, -8);
-                    GameManager.Instance.VirtualCamera.transform.rotation = Quaternion.AngleAxis(-45, Vector3.left);
+                    GameManager.Instance.VirtualCamera.transform.SetPositionAndRotation(_position + new Vector3(0, 6, -8), Quaternion.AngleAxis(-45, Vector3.left));
                     GameManager.Instance.VirtualCamera.Follow = _obj.transform;
                     Object.DontDestroyOnLoad(_obj);
+                    Proto.RequestSyncEnemies proto = new() { PlayerSn = _sn };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemies, proto);
                 }
                 _obj.GetComponent<GameEntity>().NameBar.Name.text = _name;
                 _obj.GetComponent<PlayerController>().Sn = _sn;

@@ -1,16 +1,17 @@
 ﻿using Control.FSM;
 using Frame;
+using System.Collections;
 using UnityEngine;
 
 namespace Control
 {
     public class EnemyController : GameEntity
     {
-        private AIState _prevState;
-        private AIState _currState;
+        private FsmState _prevState;
+        private FsmState _currState;
         private PatrolPath _patrolPath;
 
-        public AIState CurrState => _currState;
+        public FsmState CurrState => _currState;
         public PatrolPath PatrolPath => _patrolPath;
 
         public int Id { get; set; }
@@ -18,14 +19,14 @@ namespace Control
         protected override void Awake()
         {
             base.Awake();
+            _agent.speed = RunSpeed;
             _patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
+            _patrolPath.transform.position = transform.position;
         }
 
         private void Start()
         {
-            _patrolPath.transform.position = transform.position;
-            _currState = new Idle(this);
-            _agent.speed = RunSpeed;
+            //_currState = new Idle(this);
         }
 
         protected override void Update()
@@ -35,7 +36,7 @@ namespace Control
                 _currState.Execute();
         }
 
-        public void ChangeState(AIState newState)
+        public void ChangeState(FsmState newState)
         {
             _prevState = _currState;
             _currState.Exit();
@@ -43,33 +44,40 @@ namespace Control
             _currState.Enter();
         }
 
-        public void ChangeState(AIStateType type, int code, PlayerController target)
+        public void ParseSyncState(FsmStateType type, int code, PlayerController target)
         {
-            if (_currState.type == type)
+            if (_currState == null)
+            {
+                _currState = FsmState.GenState(type, code, this, target);
+                _currState.Enter();
+                print("SyncState null: type=" + type + " code=" + code);
+                return;
+            }
+            else if (_currState.Type == type)
             {
                 _currState.UpdateState(code);
-                print(_currState.type + " update code=" + code);
+                print(_currState.Type + " update code=" + code);
             }
             else
             {
                 _prevState = _currState;
                 _currState.Exit();
-                _currState = AIState.GenState(type, this, target);
+                _currState = FsmState.GenState(type, code, this, target);
                 _currState.Enter();
-                print(_currState.type + " enter id=" + Id + ", sn=" + target?.Sn);
+                print(_currState.Type + " enter id=" + Id + ", sn=" + target?.Sn + ", code=" + code);
             }
         }
 
-        public void ParseProto(Proto.Enemy proto)
+        public void ParseEnemy(Proto.Enemy proto)
         {
             _agent.enabled = false;
             transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
             _agent.enabled = true;
         }
 
-        public AIStateType GetCurrStateType()
+        public FsmStateType GetCurrStateType()
         {
-            return _currState.type;
+            return _currState.Type;
         }
     }
 }

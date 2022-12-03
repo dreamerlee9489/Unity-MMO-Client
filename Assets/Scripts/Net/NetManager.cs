@@ -10,14 +10,15 @@ namespace Net
 {
     public class NetManager : MonoSingleton<NetManager>
     {
-        Socket _sock = null;
-        EAppType _appType = EAppType.Client;
-        ENetState _state = ENetState.NoConnect;
-        int _recvIdx = 0;
-        byte[] _recvBuf = new byte[512 * 1024];
-
         public delegate Google.Protobuf.IMessage ParseFunc(byte[] bytes, int offset, int length);
+
+        private Socket _sock = null;
+        private EAppType _appType = EAppType.Client;
+        private ENetState _state = ENetState.NoConnect;
+        private int _recvIdx = 0;
+        private byte[] _recvBuf = new byte[512 * 1024];
         private readonly Dictionary<Proto.MsgId, ParseFunc> _funcDict = new();
+
         public EAppType AppType => _appType;
 
         protected override void Awake()
@@ -33,7 +34,7 @@ namespace Net
             RegistParseFunc(Proto.MsgId.G2CSyncPlayer, ParsePacket<Proto.SyncPlayer>);
             RegistParseFunc(Proto.MsgId.S2CRoleAppear, ParsePacket<Proto.RoleAppear>);
             RegistParseFunc(Proto.MsgId.S2CEnemyList, ParsePacket<Proto.EnemyList>);
-            RegistParseFunc(Proto.MsgId.S2CFsmChangeState, ParsePacket<Proto.FsmChangeState>);
+            RegistParseFunc(Proto.MsgId.S2CFsmSyncState, ParsePacket<Proto.FsmSyncState>);
             RegistParseFunc(Proto.MsgId.S2CPlayerSyncState, ParsePacket<Proto.PlayerSyncState>);
             RegistParseFunc(Proto.MsgId.S2CRoleDisAppear, ParsePacket<Proto.RoleDisAppear>);
             InvokeRepeating("SendPingMsg", 10, 10);

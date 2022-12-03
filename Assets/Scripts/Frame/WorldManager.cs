@@ -20,7 +20,7 @@ namespace Frame
         {
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnemyList, EnemyListHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CFsmChangeState, FsmChangeStateHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
             PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
@@ -29,25 +29,21 @@ namespace Frame
         private void Start()
         {
             csvFile = Application.streamingAssetsPath + "/CSV/" + csvFile;
-            using (StreamReader reader = File.OpenText(csvFile))
+            using StreamReader reader = File.OpenText(csvFile);
+            reader.ReadLine();
+            string line;
+            int id = 0;
+            while ((line = reader.ReadLine()) != null)
             {
-                reader.ReadLine();
-                string line;
-                int id = 0;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    string[] strs = line.Split(',');
-                    ResourceManager.Instance.LoadAsync<GameObject>("Entity/Enemy/" + strs[1], (obj) =>
-                    {
-                        EnemyController enemyObj = Instantiate(obj).GetComponent<EnemyController>();
-                        enemyObj.gameObject.SetActive(false);
-                        enemyObj.Id = id++;
-                        enemyObj.Hp = int.Parse(strs[2]);
-                        enemyObj.transform.position = GetPos(strs[3]);
-                        enemyObj.gameObject.SetActive(true);
-                        _enemies.Add(enemyObj);
-                    });
-                }
+                string[] strs = line.Split(',');
+                GameObject obj = ResourceManager.Instance.Load<GameObject>("Entity/Enemy/" + strs[1]);
+                EnemyController enemyObj = Instantiate(obj).GetComponent<EnemyController>();
+                enemyObj.gameObject.SetActive(false);
+                enemyObj.Id = id++;
+                enemyObj.Hp = int.Parse(strs[2]);
+                enemyObj.transform.position = GetPos(strs[3]);
+                enemyObj.gameObject.SetActive(true);
+                _enemies.Add(enemyObj);
             }
         }
 
@@ -55,7 +51,7 @@ namespace Frame
         {
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnemyList, EnemyListHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CFsmChangeState, FsmChangeStateHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
         }
@@ -73,8 +69,7 @@ namespace Frame
 
         private void RoleAppearHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.RoleAppear proto = msg as Proto.RoleAppear;
-            if (proto != null)
+            if (msg is Proto.RoleAppear proto)
             {
                 foreach (Proto.Role role in proto.Role)
                 {
@@ -94,8 +89,7 @@ namespace Frame
 
         private void PlayerSyncStateHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.PlayerSyncState proto = msg as Proto.PlayerSyncState;
-            if (proto != null)
+            if (msg is Proto.PlayerSyncState proto)
             {
                 ulong playSn = proto.PlayerSn;
                 if (_players.ContainsKey(playSn))
@@ -109,38 +103,35 @@ namespace Frame
 
         private void EnemyListHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.EnemyList proto = msg as Proto.EnemyList;
-            if (proto != null)
+            if (msg is Proto.EnemyList proto && _enemies.Count > 0)
             {
                 var enemyList = proto.Enemies;
                 for (int i = 0; i < enemyList.Count; ++i)
                 {
                     _enemies[i].Id = i;
-                    _enemies[i].ParseProto(enemyList[i]);
+                    _enemies[i].ParseEnemy(enemyList[i]);
                 }
             }
         }
 
-        private void FsmChangeStateHandler(Google.Protobuf.IMessage msg)
+        private void FsmSyncStateHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.FsmChangeState proto = msg as Proto.FsmChangeState;
-            if (proto != null && _enemies.Count > 0)
+            if (msg is Proto.FsmSyncState proto && _enemies.Count > 0)
             {
-                AIStateType type = (AIStateType)proto.State;
+                FsmStateType type = (FsmStateType)proto.State;
                 int code = proto.Code;
                 int enemyId = proto.EnemyId;
                 ulong playerSn = proto.PlayerSn;
                 PlayerController player = null;
                 if (_players.ContainsKey(playerSn))
                     player = _players[playerSn].Obj.GetComponent<PlayerController>();
-                _enemies[enemyId].ChangeState(type, code, player);
+                _enemies[enemyId].ParseSyncState(type, code, player);
             }
         }
 
         private void RoleDisAppearHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.RoleDisAppear proto = msg as Proto.RoleDisAppear;
-            if (proto != null)
+            if (msg is Proto.RoleDisAppear proto)
             {
                 ulong playSn = proto.Sn;
                 if (_players.ContainsKey(playSn))
