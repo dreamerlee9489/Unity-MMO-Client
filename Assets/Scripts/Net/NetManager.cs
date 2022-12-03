@@ -108,7 +108,6 @@ namespace Net
                         {
                             sock.EndConnect(result);
                             sock.Blocking = false;
-                            Debug.Log("Connect success: " + sock.RemoteEndPoint);
                         }
                     }
                 }
@@ -131,7 +130,6 @@ namespace Net
                 _sock = null;
                 _state = ENetState.Disconnected;
                 EventManager.Instance.Invoke(EEventType.Disconnect, _appType);
-                Debug.Log("Disconnect: socket is close. apptype=" + _appType);
             }
         }
 

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Frame;
+using Net;
+using UnityEngine;
 
 namespace Control.FSM
 {
@@ -6,7 +8,7 @@ namespace Control.FSM
     {
         private PatrolPath _patrolPath;
 
-        public Patrol(Entity owner, Entity target = null) : base(owner, target)
+        public Patrol(EnemyController owner, PlayerController target = null) : base(owner, target)
         {
             type = AIStateType.Patrol;
             Enter();
@@ -14,8 +16,9 @@ namespace Control.FSM
 
         public override void Enter()
         {
-            _owner.Agent.speed = Entity.WalkSpeed;
-            _patrolPath = _owner.GetComponent<EnemyController>().PatrolPath;
+            _owner.Anim.SetBool(GameEntity.Attack, false);
+            _owner.Agent.speed = _owner.WalkSpeed;
+            _patrolPath = _owner.PatrolPath;
         }
 
         public override void Execute()

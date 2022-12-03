@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using Frame;
+using UnityEngine;
 
 namespace Control.FSM
 {
     public class Idle : AIState
     {
-        public Idle(Entity owner, Entity target = null) : base(owner, target)
+        public Idle(EnemyController owner, PlayerController target = null) : base(owner, target)
         {
             type = AIStateType.Idle;
             Enter();
@@ -12,7 +13,8 @@ namespace Control.FSM
 
         public override void Enter()
         {
-            _owner.Anim.SetBool(Entity.Attack, false);
+            _owner.Anim.SetBool(GameEntity.Attack, false);
+            _owner.Agent.speed = _owner.WalkSpeed;
         }
 
         public override void Execute()

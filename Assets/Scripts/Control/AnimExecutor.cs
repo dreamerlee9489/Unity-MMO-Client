@@ -2,7 +2,7 @@
 
 namespace Control
 {
-    public class AnimReceiver : MonoBehaviour
+    public class AnimExecutor : MonoBehaviour
     {
         public void AttackAnim()
         {

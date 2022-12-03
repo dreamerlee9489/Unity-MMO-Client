@@ -40,7 +40,7 @@ namespace Frame
         private void Start()
         {
             MonoManager.Instance.StartCoroutine(ConnectServer());
-            PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"), 10);
+            PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
         }
 
         private void OnDestroy()

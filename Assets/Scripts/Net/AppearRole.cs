@@ -36,7 +36,7 @@ namespace Net
                     GameManager.Instance.VirtualCamera.Follow = _obj.transform;
                     Object.DontDestroyOnLoad(_obj);
                 }
-                _obj.GetComponent<Entity>().NameBar.Name.text = _name;
+                _obj.GetComponent<GameEntity>().NameBar.Name.text = _name;
                 _obj.GetComponent<PlayerController>().Sn = _sn;
                 _obj.SetActive(true);
             });

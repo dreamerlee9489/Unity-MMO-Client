@@ -28,7 +28,7 @@ namespace Frame
         /// <summary>
         /// 实例化count个GameObject并压入池中
         /// </summary>
-        public void Add(string poolType, GameObject obj, int count = 1)
+        public void Add(string poolType, GameObject obj, int count = 10)
         {
             if (!_roots.ContainsKey(poolType))
             {

@@ -14,14 +14,26 @@ namespace Frame
 
         public string csvFile = "";
         public List<EnemyController> Enemies => _enemies;
+        public Dictionary<ulong, AppearRole> Players => _players;
 
         private void Awake()
+        {
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnemyList, EnemyListHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CFsmChangeState, FsmChangeStateHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
+            PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
+        }
+
+        private void Start()
         {
             csvFile = Application.streamingAssetsPath + "/CSV/" + csvFile;
             using (StreamReader reader = File.OpenText(csvFile))
             {
                 reader.ReadLine();
                 string line;
+                int id = 0;
                 while ((line = reader.ReadLine()) != null)
                 {
                     string[] strs = line.Split(',');
@@ -29,20 +41,14 @@ namespace Frame
                     {
                         EnemyController enemyObj = Instantiate(obj).GetComponent<EnemyController>();
                         enemyObj.gameObject.SetActive(false);
-                        enemyObj.Entity.Hp = int.Parse(strs[2]);
+                        enemyObj.Id = id++;
+                        enemyObj.Hp = int.Parse(strs[2]);
                         enemyObj.transform.position = GetPos(strs[3]);
                         enemyObj.gameObject.SetActive(true);
                         _enemies.Add(enemyObj);
                     });
                 }
             }
-
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnemyList, EnemyListHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CFsmChangeState, FsmChangeStateHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
-            PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"), 10);
         }
 
         private void OnApplicationQuit()
@@ -118,23 +124,16 @@ namespace Frame
         private void FsmChangeStateHandler(Google.Protobuf.IMessage msg)
         {
             Proto.FsmChangeState proto = msg as Proto.FsmChangeState;
-            if (proto != null)
+            if (proto != null && _enemies.Count > 0)
             {
-                AIStateType state = (AIStateType)proto.State;
+                AIStateType type = (AIStateType)proto.State;
                 int code = proto.Code;
-                int id = proto.EnemyId;
-                ulong sn = proto.PlayerSn;
-                if (_enemies[id].CurrState.type != state)
-                {
-                    Entity player = null;
-                    if (sn > 0 && _players.ContainsKey(sn))
-                        player = _players[sn].Obj.GetComponent<Entity>();
-                    _enemies[id].ChangeState(AIState.GenState(state, _enemies[id].Entity, player));
-                }
-                else
-                {
-                    _enemies[id].CurrState.UpdateState(proto.Code);
-                }
+                int enemyId = proto.EnemyId;
+                ulong playerSn = proto.PlayerSn;
+                PlayerController player = null;
+                if (_players.ContainsKey(playerSn))
+                    player = _players[playerSn].Obj.GetComponent<PlayerController>();
+                _enemies[enemyId].ChangeState(type, code, player);
             }
         }
 

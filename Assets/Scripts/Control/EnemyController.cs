@@ -4,36 +4,33 @@ using UnityEngine;
 
 namespace Control
 {
-    [RequireComponent(typeof(Entity))]
-    public class EnemyController : MonoBehaviour
+    public class EnemyController : GameEntity
     {
-        public static readonly float SqrViewRadius = 6;
-
-        private Entity _entity;
         private AIState _prevState;
         private AIState _currState;
         private PatrolPath _patrolPath;
 
-        public Entity Entity => _entity;
         public AIState CurrState => _currState;
         public PatrolPath PatrolPath => _patrolPath;
 
         public int Id { get; set; }
 
-        private void Awake()
+        protected override void Awake()
         {
-            _entity = GetComponent<Entity>();
+            base.Awake();
             _patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
         }
 
         private void Start()
         {
             _patrolPath.transform.position = transform.position;
-            _currState = new Idle(_entity);
+            _currState = new Idle(this);
+            _agent.speed = RunSpeed;
         }
 
-        private void Update()
+        protected override void Update()
         {
+            base.Update();
             if (_currState != null)
                 _currState.Execute();
         }
@@ -46,19 +43,33 @@ namespace Control
             _currState.Enter();
         }
 
-        public bool CanSee(Transform target)
+        public void ChangeState(AIStateType type, int code, PlayerController target)
         {
-            Vector3 direction = target.position - transform.position;
-            if (direction.sqrMagnitude <= SqrViewRadius)
-                return true;
-            return false;
+            if (_currState.type == type)
+            {
+                _currState.UpdateState(code);
+                print(_currState.type + " update code=" + code);
+            }
+            else
+            {
+                _prevState = _currState;
+                _currState.Exit();
+                _currState = AIState.GenState(type, this, target);
+                _currState.Enter();
+                print(_currState.type + " enter id=" + Id + ", sn=" + target?.Sn);
+            }
         }
 
         public void ParseProto(Proto.Enemy proto)
         {
-            _entity.Agent.enabled = false;
-            _entity.transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
-            _entity.Agent.enabled = true;
+            _agent.enabled = false;
+            transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
+            _agent.enabled = true;
+        }
+
+        public AIStateType GetCurrStateType()
+        {
+            return _currState.type;
         }
     }
 }

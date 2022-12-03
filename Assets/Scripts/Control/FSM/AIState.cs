@@ -2,20 +2,17 @@
 
 namespace Control.FSM
 {
-    public enum AIStateType
-    {
-        Idle, Patrol, Pursuit, Attack
-    }
+    public enum AIStateType { Idle, Patrol, Pursuit, Attack }
 
     public abstract class AIState
     {
-        protected readonly Entity _owner;
-        protected readonly Entity _target;
+        protected EnemyController _owner;
+        protected PlayerController _target;
 
         public AIStateType type;
-        public Entity Target => _target;
+        public PlayerController Target => _target;
 
-        protected AIState(Entity owner, Entity target = null)
+        protected AIState(EnemyController owner, PlayerController target = null)
         {
             _owner = owner;
             _target = target;
@@ -26,7 +23,7 @@ namespace Control.FSM
         public abstract void Exit();
         public abstract void UpdateState(int code);
 
-        public static AIState GenState(AIStateType type, Entity owner, Entity target)
+        public static AIState GenState(AIStateType type, EnemyController owner, PlayerController target)
         {
             switch (type)
             {
