@@ -29,6 +29,11 @@ namespace Control.FSM
         public override void Execute()
         {
             _owner.Agent.destination = _patrolPath.Path[_index].position;
+            if (_owner.IsLinker && !_owner.IsLinking)
+            {
+                _owner.IsLinking = true;
+                MonoManager.Instance.StartCoroutine(_owner.UploadData());
+            }
             if (_owner.CanSee(_target))
             {
                 Proto.FsmSyncState proto = new()
@@ -56,8 +61,12 @@ namespace Control.FSM
 
         public override void Exit()
         {
-            _owner.IsLinker = false;
-            MonoManager.Instance.StopCoroutine(_owner.UploadData());
+            if (_owner.IsLinker)
+            {
+                _owner.IsLinker = false;
+                _owner.IsLinking = false;
+                MonoManager.Instance.StopCoroutine(_owner.UploadData());
+            }
         }
 
         public override void UpdateState(int code)

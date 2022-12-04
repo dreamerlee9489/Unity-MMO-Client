@@ -1,10 +1,8 @@
 ﻿using Control.FSM;
 using Frame;
 using Net;
-using System;
 using System.Collections;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace Control
 {
@@ -13,11 +11,12 @@ namespace Control
         private FsmState _prevState;
         private FsmState _currState;
         private PatrolPath _patrolPath;
-        private WaitForSeconds _sleep = new(1f);
+        private WaitForSeconds _sleep = new(0.5f);
 
         public FsmState CurrState => _currState;
         public PatrolPath PatrolPath => _patrolPath;
         public bool IsLinker { get; set; }
+        public bool IsLinking { get; set; }
 
         public int Id { get; set; }
 
@@ -81,7 +80,6 @@ namespace Control
         {
             while (true)
             {
-                yield return _sleep;
                 Proto.Enemy proto = new()
                 {
                     Id = Id,
@@ -93,6 +91,7 @@ namespace Control
                     }
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SEnemy, proto);
+                yield return _sleep;
             }
         }
     }

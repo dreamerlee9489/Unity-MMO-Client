@@ -17,12 +17,15 @@ namespace Control.FSM
         {
             _owner.Anim.SetBool(GameEntity.Attack, false);
             _owner.Agent.speed = _owner.WalkSpeed;
-            if (_owner.IsLinker)
-                MonoManager.Instance.StartCoroutine(_owner.UploadData());
         }
 
         public override void Execute()
         {
+            if (_owner.IsLinker && !_owner.IsLinking)
+            {
+                _owner.IsLinking = true;
+                MonoManager.Instance.StartCoroutine(_owner.UploadData());
+            }
             if (_owner.CanSee(_target))
             {
                 Proto.FsmSyncState proto = new()
@@ -45,6 +48,12 @@ namespace Control.FSM
                     }
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SFsmSyncState, proto);
+                if (_owner.IsLinker)
+                {
+                    _owner.IsLinker = false;
+                    _owner.IsLinking = false;
+                    MonoManager.Instance.StopCoroutine(_owner.UploadData());
+                }
             }
         }
 
