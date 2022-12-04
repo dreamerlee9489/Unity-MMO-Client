@@ -14,7 +14,7 @@ namespace Control
         private Transform _hitTarget = null;
         private RaycastHit _hit;
         private Vector3 _hitPoint = Vector3.zero;
-        private WaitForSeconds _waitForSeconds = new(0.02f);
+        private WaitForSeconds _sleep = new(0.02f);
 
         public ulong Sn { get; set; }
 
@@ -56,11 +56,11 @@ namespace Control
             switch (_hitTarget?.tag)
             {
                 case "Terrain":
-                    if (_agent.remainingDistance <= _agent.stoppingDistance)
+                    if (Vector3.Distance(transform.position, _hitPoint) <= _agent.stoppingDistance)
                         _hitTarget = null;
                     break;
                 case "Enemy":
-                    if (_agent.remainingDistance <= AttackRadius)
+                    if (Vector3.Distance(transform.position, _hitTarget.transform.position) <= AttackRadius)
                         _stateCode = 1;
                     else
                         _stateCode = 0;
@@ -78,7 +78,7 @@ namespace Control
             yield return new WaitForSeconds(0.5f);
             while (true)
             {
-                yield return _waitForSeconds;
+                yield return _sleep;
                 if (_state != PlayerStateType.Idle)
                 {
                     Proto.PlayerSyncState proto = new()
@@ -105,16 +105,20 @@ namespace Control
                 y = proto.HitPos.Y,
                 z = proto.HitPos.Z
             };
-            _agent.destination = pos;
+
             switch (state)
             {
                 case PlayerStateType.Move:
                     _anim.SetBool(Attack, false);
+                    _agent.destination = pos;
                     break;
                 case PlayerStateType.Attack:
                     bool code = proto.Code == 0 ? false : true;
                     _anim.SetBool(Attack, code);
-                    transform.LookAt(GameManager.Instance.ActiveWorld.Enemies[id].transform);
+                    Transform target = GameManager.Instance.ActiveWorld.Enemies[id].transform;
+                    transform.LookAt(target);
+                    if (!code)
+                        _agent.destination = target.position;
                     break;
                 default:
                     break;

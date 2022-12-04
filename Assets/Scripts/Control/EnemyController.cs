@@ -1,7 +1,10 @@
 ﻿using Control.FSM;
 using Frame;
+using Net;
+using System;
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace Control
 {
@@ -10,9 +13,11 @@ namespace Control
         private FsmState _prevState;
         private FsmState _currState;
         private PatrolPath _patrolPath;
+        private WaitForSeconds _sleep = new(1f);
 
         public FsmState CurrState => _currState;
         public PatrolPath PatrolPath => _patrolPath;
+        public bool IsLinker { get; set; }
 
         public int Id { get; set; }
 
@@ -22,11 +27,6 @@ namespace Control
             _agent.speed = RunSpeed;
             _patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
             _patrolPath.transform.position = transform.position;
-        }
-
-        private void Start()
-        {
-            //_currState = new Idle(this);
         }
 
         protected override void Update()
@@ -50,21 +50,16 @@ namespace Control
             {
                 _currState = FsmState.GenState(type, code, this, target);
                 _currState.Enter();
-                print("SyncState null: type=" + type + " code=" + code);
                 return;
             }
-            else if (_currState.Type == type)
-            {
+            if (_currState.Type == type)
                 _currState.UpdateState(code);
-                print(_currState.Type + " update code=" + code);
-            }
             else
             {
                 _prevState = _currState;
                 _currState.Exit();
                 _currState = FsmState.GenState(type, code, this, target);
                 _currState.Enter();
-                print(_currState.Type + " enter id=" + Id + ", sn=" + target?.Sn + ", code=" + code);
             }
         }
 
@@ -78,6 +73,27 @@ namespace Control
         public FsmStateType GetCurrStateType()
         {
             return _currState.Type;
+        }
+
+        public void LinkPlayer() => IsLinker = true;
+
+        public IEnumerator UploadData()
+        {
+            while (true)
+            {
+                yield return _sleep;
+                Proto.Enemy proto = new()
+                {
+                    Id = Id,
+                    Pos = new()
+                    {
+                        X = transform.position.x,
+                        Y = transform.position.y,
+                        Z = transform.position.z
+                    }
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SEnemy, proto);
+            }
         }
     }
 }

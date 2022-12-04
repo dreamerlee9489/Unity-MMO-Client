@@ -1,14 +1,10 @@
-﻿using Frame;
-using Net;
-using System.Collections;
+﻿using Net;
 using UnityEngine;
 
 namespace Control.FSM
 {
     public class Pursuit : FsmState
     {
-        private WaitForSeconds _waitForSeconds = new(0.5f);
-
         public Pursuit(EnemyController owner, PlayerController target) : base(owner, target)
         {
             _type = FsmStateType.Pursuit;

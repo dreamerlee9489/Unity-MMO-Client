@@ -1,5 +1,6 @@
 ﻿using Frame;
 using Net;
+using UnityEngine;
 
 namespace Control.FSM
 {
@@ -16,6 +17,8 @@ namespace Control.FSM
         {
             _owner.Anim.SetBool(GameEntity.Attack, false);
             _owner.Agent.speed = _owner.WalkSpeed;
+            if (_owner.IsLinker)
+                MonoManager.Instance.StartCoroutine(_owner.UploadData());
         }
 
         public override void Execute()
@@ -47,7 +50,6 @@ namespace Control.FSM
 
         public override void Exit()
         {
-
         }
 
         public override void UpdateState(int code)

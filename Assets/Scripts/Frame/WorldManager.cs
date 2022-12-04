@@ -1,6 +1,7 @@
 ﻿using Control;
 using Control.FSM;
 using Net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -23,6 +24,7 @@ namespace Frame
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
 
@@ -54,6 +56,7 @@ namespace Frame
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
         }
 
         private Vector3 GetPos(string posStr)
@@ -95,8 +98,11 @@ namespace Frame
                 if (_players.ContainsKey(playSn))
                 {
                     AppearRole player = _players[playSn];
-                    PlayerController entity = player.Obj.GetComponent<PlayerController>();
-                    entity.ParseSyncState(proto);
+                    if (player.Obj != null)
+                    {
+                        PlayerController entity = player.Obj.GetComponent<PlayerController>();
+                        entity.ParseSyncState(proto);
+                    }
                 }
             }
         }
@@ -140,6 +146,12 @@ namespace Frame
                     _players.Remove(playSn);
                 }
             }
+        }
+
+        private void RequestLinkPlayerHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.RequestLinkPlayer proto)
+                _enemies[proto.EnemyId].LinkPlayer();
         }
     }
 }

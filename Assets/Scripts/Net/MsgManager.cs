@@ -8,9 +8,6 @@ namespace Net
     {
         public delegate void MsgHandler(Google.Protobuf.IMessage msg);
         private readonly Dictionary<Proto.MsgId, MsgHandler> _handlerDict = new();
-        private readonly Dictionary<Proto.MsgId, Google.Protobuf.IMessage> _msgCache = new();
-
-        public Dictionary<Proto.MsgId, Google.Protobuf.IMessage> MsgCache => _msgCache;
 
         public void RegistMsgHandler(Proto.MsgId msgId, MsgHandler handler)
         {
@@ -29,7 +26,6 @@ namespace Net
         {
             if (!_handlerDict.ContainsKey(msgId))
             {
-                _msgCache.Add(msgId, msg);
                 Debug.Log("未处理消息 msgid=" + msgId);
                 return;
             }

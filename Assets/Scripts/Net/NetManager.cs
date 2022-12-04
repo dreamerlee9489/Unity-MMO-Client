@@ -37,6 +37,7 @@ namespace Net
             RegistParseFunc(Proto.MsgId.S2CFsmSyncState, ParsePacket<Proto.FsmSyncState>);
             RegistParseFunc(Proto.MsgId.S2CPlayerSyncState, ParsePacket<Proto.PlayerSyncState>);
             RegistParseFunc(Proto.MsgId.S2CRoleDisAppear, ParsePacket<Proto.RoleDisAppear>);
+            RegistParseFunc(Proto.MsgId.S2CRequestLinkPlayer, ParsePacket<Proto.RequestLinkPlayer>);
             InvokeRepeating("SendPingMsg", 10, 10);
         }
 

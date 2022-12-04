@@ -1,13 +1,14 @@
 ﻿using Frame;
 using Net;
+using System.Collections;
 using UnityEngine;
 
 namespace Control.FSM
 {
     public class Patrol : FsmState
     {
-        private PatrolPath _patrolPath;
         private int _index;
+        private PatrolPath _patrolPath;
 
         public Patrol(EnemyController owner, PlayerController target = null, int code = 0) : base(owner, target)
         {
@@ -55,6 +56,8 @@ namespace Control.FSM
 
         public override void Exit()
         {
+            _owner.IsLinker = false;
+            MonoManager.Instance.StopCoroutine(_owner.UploadData());
         }
 
         public override void UpdateState(int code)
