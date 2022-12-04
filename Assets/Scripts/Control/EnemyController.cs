@@ -24,6 +24,10 @@ namespace Control
         {
             base.Awake();
             _agent.speed = RunSpeed;
+        }
+
+        private void Start()
+        {
             _patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
             _patrolPath.transform.position = transform.position;
         }

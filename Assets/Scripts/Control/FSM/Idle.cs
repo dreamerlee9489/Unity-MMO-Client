@@ -9,7 +9,6 @@ namespace Control.FSM
         public Idle(EnemyController owner, PlayerController target = null) : base(owner, target)
         {
             _type = FsmStateType.Idle;
-            _target = GameManager.Instance.MainPlayer.GetGameObject().GetComponent<PlayerController>();
             Enter();
         }
 
@@ -21,6 +20,8 @@ namespace Control.FSM
 
         public override void Execute()
         {
+            if (!_target && GameManager.Instance.MainPlayer.GetGameObject())
+                _target = GameManager.Instance.MainPlayer.GetGameObject().GetComponent<PlayerController>();
             if (_owner.IsLinker && !_owner.IsLinking)
             {
                 _owner.IsLinking = true;

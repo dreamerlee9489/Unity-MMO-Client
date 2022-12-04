@@ -1,5 +1,4 @@
 ﻿using UI;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -34,10 +33,8 @@ namespace Control
         protected virtual void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
+            _anim = GetComponent<Animator>();
             _nameBar = transform.Find("NameBar").GetComponent<NameBar>();
-            Transform model = transform.Find("Model");
-            model.AddComponent<AnimExecutor>();
-            _anim = model.GetComponent<Animator>();
         }
 
         protected virtual void Update()

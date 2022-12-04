@@ -1,7 +1,5 @@
 ﻿using Frame;
 using Net;
-using System.Collections;
-using UnityEngine;
 
 namespace Control.FSM
 {
@@ -14,7 +12,6 @@ namespace Control.FSM
         {
             _type = FsmStateType.Patrol;
             _index = code;
-            _target = GameManager.Instance.MainPlayer.GetGameObject().GetComponent<PlayerController>();
             Enter();
         }
 
@@ -28,7 +25,8 @@ namespace Control.FSM
 
         public override void Execute()
         {
-            _owner.Agent.destination = _patrolPath.Path[_index].position;
+            if (!_target && GameManager.Instance.MainPlayer.GetGameObject())
+                _target = GameManager.Instance.MainPlayer.GetGameObject().GetComponent<PlayerController>();
             if (_owner.IsLinker && !_owner.IsLinking)
             {
                 _owner.IsLinking = true;
