@@ -10,15 +10,9 @@ namespace Net
         protected GameObject _obj = null;
         public ulong Sn => _sn;
 
-        public void SetGameObject(GameObject obj)
-        {
-            _obj = obj;
-        }
+        public void SetGameObject(GameObject obj) => _obj = obj;
 
-        public GameObject GetGameObject()
-        {
-            return _obj;
-        }
+        public GameObject GetGameObject() => _obj;
 
         public void Parse(Proto.Player proto)
         {

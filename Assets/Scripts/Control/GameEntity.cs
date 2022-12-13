@@ -4,8 +4,8 @@ using UnityEngine.AI;
 
 namespace Control
 {
-    [RequireComponent(typeof(CapsuleCollider), typeof(NavMeshAgent))]
-    public class GameEntity : MonoBehaviour
+    [RequireComponent(typeof(CapsuleCollider), typeof(NavMeshAgent), typeof(AnimExecutor))]
+    public abstract class GameEntity : MonoBehaviour
     {
         public static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
         public static readonly int Attack = Animator.StringToHash("Attack");
@@ -44,17 +44,23 @@ namespace Control
 
         public bool CanSee(GameEntity target)
         {
-            Vector3 direction = target.transform.position - transform.position;
-            if (direction.magnitude <= ViewRadius)
-                return true;
+            if (target)
+            {
+                Vector3 direction = target.transform.position - transform.position;
+                if (direction.magnitude <= ViewRadius)
+                    return true;
+            }
             return false;
         }
 
         public bool CanAttack(GameEntity target)
         {
-            Vector3 direction = target.transform.position - transform.position;
-            if (direction.magnitude <= AttackRadius)
-                return true;
+            if (target)
+            {
+                Vector3 direction = target.transform.position - transform.position;
+                if (direction.magnitude <= AttackRadius)
+                    return true;
+            }
             return false;
         }
     }

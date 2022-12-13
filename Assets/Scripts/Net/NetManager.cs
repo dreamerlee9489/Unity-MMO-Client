@@ -16,7 +16,7 @@ namespace Net
         private EAppType _appType = EAppType.Client;
         private ENetState _state = ENetState.NoConnect;
         private int _recvIdx = 0;
-        private byte[] _recvBuf = new byte[512 * 1024];
+        private readonly byte[] _recvBuf = new byte[512 * 1024];
         private readonly Dictionary<Proto.MsgId, ParseFunc> _funcDict = new();
 
         public EAppType AppType => _appType;
@@ -38,7 +38,7 @@ namespace Net
             RegistParseFunc(Proto.MsgId.S2CPlayerSyncState, ParsePacket<Proto.PlayerSyncState>);
             RegistParseFunc(Proto.MsgId.S2CRoleDisAppear, ParsePacket<Proto.RoleDisAppear>);
             RegistParseFunc(Proto.MsgId.S2CRequestLinkPlayer, ParsePacket<Proto.RequestLinkPlayer>);
-            InvokeRepeating("SendPingMsg", 10, 10);
+            InvokeRepeating(nameof(SendPingMsg), 10, 10);
         }
 
         private void Update()
@@ -68,11 +68,10 @@ namespace Net
             {
                 while (_recvIdx >= PacketHead.SIZE)
                 {
-                    PacketHead head = new PacketHead();
-                    MemoryStream ms = new MemoryStream(_recvBuf);
-                    BinaryReader reader = new BinaryReader(ms);
+                    PacketHead head = new();
+                    MemoryStream ms = new(_recvBuf);
+                    BinaryReader reader = new(ms);
                     int totalLen = reader.ReadUInt16();
-                    int headLen = reader.ReadUInt16();
                     head.msgId = reader.ReadUInt16();
                     if (totalLen > _recvIdx)
                         break;
@@ -86,19 +85,16 @@ namespace Net
             }
         }
 
-        private void OnApplicationQuit()
-        {
-            Disconnect();
-        }
+        private void OnApplicationQuit() => Disconnect();
 
         public void Connect(string ip, int port, EAppType appType)
         {
             _state = ENetState.Connecting;
-            EventManager.Instance.Invoke(EEventType.Connecting, appType);
             _sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _sock.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
             _sock.Blocking = true;
             _sock.SendBufferSize = _recvBuf.Length;
+            EventManager.Instance.Invoke(EEventType.Connecting, appType);
             _sock.BeginConnect(ip, port, (result) =>
             {
                 try
@@ -139,15 +135,15 @@ namespace Net
         {
             int size = PacketHead.SIZE;
             size += msg != null ? msg.CalculateSize() : 0;
-            MemoryStream ms = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(ms);
+            MemoryStream ms = new();
+            BinaryWriter writer = new(ms);
             writer.Write((ushort)size);
             writer.Write((ushort)2);
             writer.Write((ushort)msgId);
 
             if (msg != null)
             {
-                Google.Protobuf.CodedOutputStream os = new Google.Protobuf.CodedOutputStream(ms);
+                Google.Protobuf.CodedOutputStream os = new(ms);
                 msg.WriteTo(os);
                 os.Flush();
             }
@@ -193,8 +189,8 @@ namespace Net
 
         private Google.Protobuf.IMessage ParsePacket<T>(byte[] bytes, int offset, int length) where T : Google.Protobuf.IMessage, new()
         {
-            T msg = new T();
-            Google.Protobuf.CodedInputStream stream = new Google.Protobuf.CodedInputStream(bytes, offset, length);
+            T msg = new();
+            Google.Protobuf.CodedInputStream stream = new(bytes, offset, length);
             msg.MergeFrom(stream);
             return msg;
         }
@@ -208,7 +204,7 @@ namespace Net
         public string Md5(byte[] data)
         {
             byte[] bin;
-            using (MD5CryptoServiceProvider md5Crypto = new MD5CryptoServiceProvider())
+            using (MD5CryptoServiceProvider md5Crypto = new())
                 bin = md5Crypto.ComputeHash(data);
             return BitConverter.ToString(bin).Replace("-", "").ToLower();
         }

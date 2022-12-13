@@ -3,11 +3,11 @@ using Net;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.Panel
 {
     public class UICanvas : BasePanel
     {
-        private Dictionary<string, BasePanel> panelDict = new();
+        private readonly Dictionary<string, BasePanel> panelDict = new();
         public Text debug;
 
         protected override void Awake()
@@ -37,7 +37,6 @@ namespace UI
 
         private void DisconnectCallback(EAppType appType)
         {
-            //print("UICanvas.DisconnectCallback apptype=" + appType);
         }
     }
 }

@@ -5,19 +5,19 @@
     public abstract class FsmState
     {
         protected FsmStateType _type;
-        protected EnemyController _owner;
+        protected FsmController _owner;
         protected PlayerController _target;
 
         public FsmStateType Type => _type;
         public PlayerController Target => _target;
 
-        protected FsmState(EnemyController owner, PlayerController target = null)
+        protected FsmState(FsmController owner, PlayerController target = null)
         {
             _owner = owner;
             _target = target;
         }
 
-        public static FsmState GenState(FsmStateType type, int code, EnemyController owner, PlayerController target)
+        public static FsmState GenState(FsmStateType type, int code, FsmController owner, PlayerController target)
         {
             switch (type)
             {
@@ -37,6 +37,6 @@
         public abstract void Enter();
         public abstract void Execute();
         public abstract void Exit();
-        public abstract void UpdateState(int code);
+        public virtual void UpdateState(int code) { }
     }
 }

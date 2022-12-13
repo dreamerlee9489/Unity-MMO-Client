@@ -1,8 +1,7 @@
-﻿using Frame;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.Panel
 {
     public class ModalBox : MonoBehaviour
     {

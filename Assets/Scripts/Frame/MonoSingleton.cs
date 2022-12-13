@@ -12,7 +12,7 @@ namespace Frame
             {
                 if (instance == null)
                 {
-                    GameObject go = new GameObject(typeof(T).Name);
+                    GameObject go = new(typeof(T).Name);
                     instance = go.AddComponent<T>();
                     DontDestroyOnLoad(go);
                 }

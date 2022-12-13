@@ -8,7 +8,7 @@ namespace Control.FSM
         private int _index;
         private PatrolPath _patrolPath;
 
-        public Patrol(EnemyController owner, PlayerController target = null, int code = 0) : base(owner, target)
+        public Patrol(FsmController owner, PlayerController target = null, int code = 0) : base(owner, target)
         {
             _type = FsmStateType.Patrol;
             _index = code;
@@ -17,14 +17,17 @@ namespace Control.FSM
 
         public override void Enter()
         {
-            _patrolPath = _owner.PatrolPath;
             _owner.Anim.SetBool(GameEntity.Attack, false);
             _owner.Agent.speed = _owner.WalkSpeed;
-            _owner.Agent.destination = _patrolPath.Path[_index].position;
         }
 
         public override void Execute()
         {
+            if (!_patrolPath && _owner.PatrolPath)
+            {
+                _patrolPath = _owner.PatrolPath;
+                _owner.Agent.destination = _patrolPath.Path[_index].position;
+            }
             if (!_target && GameManager.Instance.MainPlayer.GetGameObject())
                 _target = GameManager.Instance.MainPlayer.GetGameObject().GetComponent<PlayerController>();
             if (_owner.IsLinker && !_owner.IsLinking)
