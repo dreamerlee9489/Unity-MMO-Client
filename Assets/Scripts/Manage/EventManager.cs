@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Frame
+namespace Manage
 {
     public enum EEventType
     {

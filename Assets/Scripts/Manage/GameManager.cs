@@ -7,7 +7,7 @@ using UI;
 using UnityEngine.SceneManagement;
 using Cinemachine;
 
-namespace Frame
+namespace Manage
 {
     public class GameManager : MonoSingleton<GameManager>
     {

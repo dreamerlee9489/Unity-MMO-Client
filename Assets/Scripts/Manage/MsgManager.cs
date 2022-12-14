@@ -1,8 +1,7 @@
-﻿using Frame;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Net
+namespace Manage
 {
     public class MsgManager : BaseSingleton<MsgManager>
     {

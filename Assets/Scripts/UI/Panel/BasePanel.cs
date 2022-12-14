@@ -1,4 +1,4 @@
-﻿using Frame;
+﻿using Manage;
 using UnityEngine;
 
 namespace UI

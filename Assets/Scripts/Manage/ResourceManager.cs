@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Frame
+namespace Manage
 {
     public class ResourceManager : BaseSingleton<ResourceManager>
     {

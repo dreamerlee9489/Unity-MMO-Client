@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Frame
+namespace Manage
 {
     public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {

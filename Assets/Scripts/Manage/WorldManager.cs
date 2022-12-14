@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace Frame
+namespace Manage
 {
     public class WorldManager : MonoBehaviour
     {
