@@ -12,8 +12,8 @@ namespace Control
         private PlayerStateType _state = PlayerStateType.Idle;
         private int _stateCode = 0;
         private Transform _hitTarget = null;
+        private RaycastHit _hit;
         private Vector3 _hitPoint = Vector3.zero;
-        private RaycastHit _hit = new();
         private WaitForSeconds _sleep = new(0.02f);
         private readonly Proto.Vector3 _curPos = new();
         private readonly Proto.Vector3 _hitPos = new();
@@ -23,6 +23,7 @@ namespace Control
         protected override void Awake()
         {
             base.Awake();
+            _hitTarget = null;
         }
 
         private void Start()
@@ -67,6 +68,13 @@ namespace Control
                         _stateCode = 0;
                     break;
             }
+
+            _curPos.X = transform.position.x;
+            _curPos.Y = transform.position.y;
+            _curPos.Z = transform.position.z;
+            _hitPos.X = _hitPoint.x;
+            _hitPos.Y = _hitPoint.y;
+            _hitPos.Z = _hitPoint.z;
         }
 
         private void OnApplicationQuit()
@@ -82,13 +90,6 @@ namespace Control
                 yield return _sleep;
                 if (_state != PlayerStateType.Idle)
                 {
-                    _curPos.X = transform.position.x;
-                    _curPos.Y = transform.position.y;
-                    _curPos.Z = transform.position.z;
-                    _hitPos.X = _hitPoint.x;
-                    _hitPos.Y = _hitPoint.y;
-                    _hitPos.Z = _hitPoint.z;
-
                     Proto.PlayerSyncState proto = new()
                     {
                         PlayerSn = Sn,
