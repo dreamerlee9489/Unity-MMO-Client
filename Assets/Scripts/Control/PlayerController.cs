@@ -106,7 +106,6 @@ namespace Control
 
         public void ParseSyncState(Proto.PlayerSyncState proto)
         {
-            int id = proto.EnemyId;
             PlayerStateType state = (PlayerStateType)proto.State;
             Vector3 pos = new()
             {
@@ -122,12 +121,15 @@ namespace Control
                     _agent.destination = pos;
                     break;
                 case PlayerStateType.Attack:
-                    bool code = proto.Code == 0 ? false : true;
+                    bool code = proto.Code != 0;
+                    int id = proto.EnemyId;
                     _anim.SetBool(Attack, code);
-                    Transform target = GameManager.Instance.ActiveWorld.Enemies[id].transform;
-                    transform.LookAt(target);
+                    Transform target = null;
+                    if (id < GameManager.Instance.ActiveWorld.Enemies.Count)
+                        target = GameManager.Instance.ActiveWorld.Enemies[id].transform;
                     if (!code)
                         _agent.destination = target.position;
+                    transform.LookAt(target);
                     break;
                 default:
                     break;

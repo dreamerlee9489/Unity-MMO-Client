@@ -1,7 +1,6 @@
 ﻿using Control;
 using Control.FSM;
 using Net;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -10,8 +9,8 @@ namespace Frame
 {
     public class WorldManager : MonoBehaviour
     {
-        private List<FsmController> _enemies = new();
-        private Dictionary<ulong, AppearRole> _players = new();
+        private readonly List<FsmController> _enemies = new();
+        private readonly Dictionary<ulong, AppearRole> _players = new();
 
         public string csvFile = "";
         public List<FsmController> Enemies => _enemies;
@@ -20,7 +19,7 @@ namespace Frame
         private void Awake()
         {
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnemyList, EnemyListHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnemy, EnemyHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
@@ -31,23 +30,12 @@ namespace Frame
         private void OnApplicationQuit()
         {
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnemyList, EnemyListHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnemy, EnemyHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
-        }
-
-        private Vector3 GetPos(string posStr)
-        {
-            Vector3 pos = Vector3.zero;
-            posStr = posStr.Substring(1, posStr.Length - 2);
-            string[] strs = posStr.Split(';');
-            pos.x = float.Parse(strs[0]);
-            pos.y = float.Parse(strs[1]);
-            pos.z = float.Parse(strs[2]);
-            return pos;
         }
 
         private void RoleAppearHandler(Google.Protobuf.IMessage msg)
@@ -87,16 +75,12 @@ namespace Frame
             }
         }
 
-        private void EnemyListHandler(Google.Protobuf.IMessage msg)
+        private void EnemyHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.EnemyList proto && _enemies.Count > 0)
+            if (msg is Proto.Enemy proto && _enemies.Count > 0)
             {
-                var enemyList = proto.Enemies;
-                for (int i = 0; i < enemyList.Count; ++i)
-                {
-                    _enemies[i].Id = i;
-                    _enemies[i].ParseEnemy(enemyList[i]);
-                }
+                int id = proto.Id;
+                _enemies[id].ParseEnemy(proto);
             }
         }
 
@@ -144,17 +128,20 @@ namespace Frame
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
-                GameObject obj = ResourceManager.Instance.Load<GameObject>("Entity/Enemy/" + strs[1]);
-                FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
-                enemyObj.gameObject.SetActive(false);
-                enemyObj.Id = id++;
-                enemyObj.Hp = int.Parse(strs[2]);
-                enemyObj.transform.position = GetPos(strs[3]);
-                enemyObj.gameObject.SetActive(true);
-                _enemies.Add(enemyObj);
+                ResourceManager.Instance.LoadAsync<GameObject>("Entity/Enemy/" + strs[1], (obj) =>
+                {
+                    FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
+                    enemyObj.Id = id++;
+                    enemyObj.Hp = int.Parse(strs[2]);
+                    _enemies.Add(enemyObj);
+                    Proto.RequestSyncEnemy proto = new()
+                    {
+                        PlayerSn = GameManager.Instance.MainPlayer.Sn,
+                        EnemyId = enemyObj.Id
+                    };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemy, proto);
+                });
             }
-            Proto.RequestSyncEnemies proto = new() { PlayerSn = GameManager.Instance.MainPlayer.Sn };
-            NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemies, proto);
         }
     }
 }

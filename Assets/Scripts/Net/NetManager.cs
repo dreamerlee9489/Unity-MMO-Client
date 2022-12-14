@@ -16,7 +16,7 @@ namespace Net
         private EAppType _appType = EAppType.Client;
         private ENetState _state = ENetState.NoConnect;
         private int _recvIdx = 0;
-        private byte[] _recvBuf = new byte[512 * 1024];
+        private readonly byte[] _recvBuf = new byte[512 * 1024];
         private readonly Dictionary<Proto.MsgId, ParseFunc> _funcDict = new();
 
         public EAppType AppType => _appType;
@@ -33,12 +33,12 @@ namespace Net
             RegistParseFunc(Proto.MsgId.L2CPlayerList, ParsePacket<Proto.PlayerList>);
             RegistParseFunc(Proto.MsgId.G2CSyncPlayer, ParsePacket<Proto.SyncPlayer>);
             RegistParseFunc(Proto.MsgId.S2CRoleAppear, ParsePacket<Proto.RoleAppear>);
-            RegistParseFunc(Proto.MsgId.S2CEnemyList, ParsePacket<Proto.EnemyList>);
+            RegistParseFunc(Proto.MsgId.S2CEnemy, ParsePacket<Proto.Enemy>);
             RegistParseFunc(Proto.MsgId.S2CFsmSyncState, ParsePacket<Proto.FsmSyncState>);
             RegistParseFunc(Proto.MsgId.S2CPlayerSyncState, ParsePacket<Proto.PlayerSyncState>);
             RegistParseFunc(Proto.MsgId.S2CRoleDisAppear, ParsePacket<Proto.RoleDisAppear>);
             RegistParseFunc(Proto.MsgId.S2CRequestLinkPlayer, ParsePacket<Proto.RequestLinkPlayer>);
-            InvokeRepeating("SendPingMsg", 10, 10);
+            InvokeRepeating(nameof(SendPingMsg), 10, 10);
         }
 
         private void Update()
