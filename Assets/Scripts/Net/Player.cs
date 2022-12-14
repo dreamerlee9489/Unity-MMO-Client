@@ -9,6 +9,7 @@ namespace Net
         protected Proto.Gender _gender;
         protected GameObject _obj = null;
         public ulong Sn => _sn;
+        public string Name => _name;
 
         public void SetGameObject(GameObject obj) => _obj = obj;
 

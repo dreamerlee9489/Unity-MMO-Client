@@ -34,14 +34,13 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
-            SceneManager.sceneLoaded += OnSceneLoaded;
+            PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
+            PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
 
         private void Start()
         {
             MonoManager.Instance.StartCoroutine(ConnectServer());
-            PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
-            PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
 
         private void OnDestroy()
@@ -49,7 +48,6 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
-            SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
         IEnumerator ConnectServer()
@@ -110,12 +108,6 @@ namespace Manage
                 _mainPlayer ??= new Player();
                 _mainPlayer.Parse(proto.Player);
             }
-        }
-
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            EventManager.Instance.Invoke(EEventType.SceneLoaded, scene.buildIndex);
-            _activeWorld = FindObjectOfType<WorldManager>();
         }
     }
 }

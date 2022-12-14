@@ -115,7 +115,7 @@ namespace Manage
         private void RequestLinkPlayerHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.RequestLinkPlayer proto)
-                _enemies[proto.EnemyId].LinkPlayer();
+                _enemies[proto.EnemyId].LinkPlayer(proto.IsLinker);
         }
 
         private void PlayerLoadedCallback()
@@ -131,6 +131,7 @@ namespace Manage
                 ResourceManager.Instance.LoadAsync<GameObject>("Entity/Enemy/" + strs[1], (obj) =>
                 {
                     FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
+                    enemyObj.gameObject.SetActive(false);
                     enemyObj.Id = id++;
                     enemyObj.Hp = int.Parse(strs[2]);
                     _enemies.Add(enemyObj);

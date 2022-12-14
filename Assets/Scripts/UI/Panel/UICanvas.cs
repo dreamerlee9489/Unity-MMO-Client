@@ -1,11 +1,13 @@
 ﻿using Manage;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace UI
 {
     public class UICanvas : BasePanel
     {
         private readonly Dictionary<string, BasePanel> _panelDict = new();
+        public Text Debug;
 
         protected override void Awake()
         {

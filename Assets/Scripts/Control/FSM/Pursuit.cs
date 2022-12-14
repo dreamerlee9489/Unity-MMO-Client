@@ -7,7 +7,6 @@ namespace Control.FSM
         public Pursuit(FsmController owner, PlayerController target) : base(owner, target)
         {
             _type = FsmStateType.Pursuit;
-            Enter();
         }
 
         public override void Enter()
@@ -27,18 +26,6 @@ namespace Control.FSM
                     PlayerSn = _target.Sn,
                     State = (int)FsmStateType.Idle,
                     Code = -1,
-                    CurPos = new()
-                    {
-                        X = _owner.transform.position.x,
-                        Y = _owner.transform.position.y,
-                        Z = _owner.transform.position.z
-                    },
-                    NxtPos = new()
-                    {
-                        X = _owner.transform.position.x,
-                        Y = _owner.transform.position.y,
-                        Z = _owner.transform.position.z
-                    }
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SFsmSyncState, proto);
             }
@@ -50,18 +37,6 @@ namespace Control.FSM
                     PlayerSn = _target.Sn,
                     State = (int)FsmStateType.Attack,
                     Code = -1,
-                    CurPos = new()
-                    {
-                        X = _owner.transform.position.x,
-                        Y = _owner.transform.position.y,
-                        Z = _owner.transform.position.z
-                    },
-                    NxtPos = new()
-                    {
-                        X = _target.transform.position.x,
-                        Y = _target.transform.position.y,
-                        Z = _target.transform.position.z
-                    }
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SFsmSyncState, proto);
             }

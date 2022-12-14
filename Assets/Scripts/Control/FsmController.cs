@@ -1,6 +1,5 @@
 ﻿using Control.FSM;
 using Manage;
-using Net;
 using System.Collections;
 using UnityEngine;
 
@@ -15,8 +14,6 @@ namespace Control
 
         public FsmState CurrState => _currState;
         public PatrolPath PatrolPath => _patrolPath;
-        public bool IsLinker { get; set; }
-        public bool IsLinking { get; set; }
 
         public int Id { get; set; }
 
@@ -24,6 +21,10 @@ namespace Control
         {
             base.Awake();
             _agent.speed = RunSpeed;
+        }
+
+        private void Start()
+        {
             _patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
             _patrolPath.transform.position = transform.position;
         }
@@ -40,14 +41,6 @@ namespace Control
             _patrolPath = null;
         }
 
-        public void ChangeState(FsmState newState)
-        {
-            _prevState = _currState;
-            _currState.Exit();
-            _currState = newState;
-            _currState.Enter();
-        }
-
         public void ParseSyncState(FsmStateType type, int code, PlayerController target)
         {
             if (_currState == null)
@@ -56,9 +49,7 @@ namespace Control
                 _currState.Enter();
                 return;
             }
-            if (_currState.Type == type)
-                _currState.UpdateState(code);
-            else
+            if (_currState.Type != type)
             {
                 _prevState = _currState;
                 _currState.Exit();
@@ -69,9 +60,8 @@ namespace Control
 
         public void ParseEnemy(Proto.Enemy proto)
         {
-            _agent.enabled = false;
             transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
-            _agent.enabled = true;
+            gameObject.SetActive(true);
         }
 
         public FsmStateType GetCurrStateType()
@@ -79,9 +69,23 @@ namespace Control
             return _currState.Type;
         }
 
-        public void LinkPlayer() => IsLinker = true;
+        public void LinkPlayer(bool isLinker)
+        {
+            if (isLinker)
+            {
+                MonoManager.Instance.StartCoroutine(UploadData());
+                GameManager.Instance.Canvas.Debug.text = GameManager.Instance.MainPlayer.Name + " is Linking Enemy:" + Id;
+                print(GameManager.Instance.MainPlayer.Name + " is Linking Enemy:" + Id);
+            }
+            else
+            {
+                MonoManager.Instance.StopCoroutine(UploadData());
+                GameManager.Instance.Canvas.Debug.text = "";
+                print(GameManager.Instance.MainPlayer.Name + " is dislink Enemy:" + Id);
+            }
+        }
 
-        public IEnumerator UploadData()
+        private IEnumerator UploadData()
         {
             while (true)
             {

@@ -19,24 +19,18 @@
 
         public static FsmState GenState(FsmStateType type, int code, FsmController owner, PlayerController target)
         {
-            switch (type)
+            return type switch
             {
-                case FsmStateType.Idle:
-                    return new Idle(owner, null);
-                case FsmStateType.Patrol:
-                    return new Patrol(owner, null, code);
-                case FsmStateType.Pursuit:
-                    return new Pursuit(owner, target);
-                case FsmStateType.Attack:
-                    return new Attack(owner, target);
-                default:
-                    return null;
-            }
+                FsmStateType.Idle => new Idle(owner, null),
+                FsmStateType.Patrol => new Patrol(owner, null, code),
+                FsmStateType.Pursuit => new Pursuit(owner, target),
+                FsmStateType.Attack => new Attack(owner, target),
+                _ => null,
+            };
         }
 
         public abstract void Enter();
         public abstract void Execute();
         public abstract void Exit();
-        public virtual void UpdateState(int code) { }
     }
 }
