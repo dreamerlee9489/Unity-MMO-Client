@@ -1,11 +1,12 @@
 ﻿using Frame;
 using Net;
+using UnityEngine;
 
 namespace Control.FSM
 {
     public class Idle : FsmState
     {
-        public Idle(FsmController owner, PlayerController target = null) : base(owner, target)
+        public Idle(EnemyController owner, PlayerController target = null) : base(owner, target)
         {
             _type = FsmStateType.Idle;
             Enter();
@@ -59,6 +60,11 @@ namespace Control.FSM
 
         public override void Exit()
         {
+        }
+
+        public override void UpdateState(int code)
+        {
+
         }
     }
 }

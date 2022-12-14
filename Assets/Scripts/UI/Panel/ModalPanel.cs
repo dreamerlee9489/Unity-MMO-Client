@@ -1,7 +1,8 @@
 ﻿using Frame;
 using Net;
+using System;
 
-namespace UI.Panel
+namespace UI
 {
     public class ModalPanel : BasePanel
     {

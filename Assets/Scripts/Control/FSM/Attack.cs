@@ -1,10 +1,11 @@
 ﻿using Net;
+using UnityEngine;
 
 namespace Control.FSM
 {
     public class Attack : FsmState
     {
-        public Attack(FsmController owner, PlayerController target) : base(owner, target)
+        public Attack(EnemyController owner, PlayerController target = null) : base(owner, target)
         {
             _type = FsmStateType.Attack;
         }
@@ -70,6 +71,10 @@ namespace Control.FSM
         public override void Exit()
         {
             _owner.Anim.SetBool(GameEntity.Attack, false);
+        }
+
+        public override void UpdateState(int code)
+        {
         }
     }
 }

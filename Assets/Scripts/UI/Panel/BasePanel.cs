@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Frame;
+using UnityEngine;
 
-namespace UI.Panel
+namespace UI
 {
     public class PanelType
     {

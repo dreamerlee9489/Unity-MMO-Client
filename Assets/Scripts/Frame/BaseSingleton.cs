@@ -1,4 +1,6 @@
-﻿namespace Frame
+﻿using UnityEngine;
+
+namespace Frame
 {
     public class BaseSingleton<T> where T : class, new()
     {
@@ -8,7 +10,8 @@
         {
             get
             {
-                instance ??= new T();
+                if (instance == null)
+                    instance = new T();
                 return instance;
             }
         }

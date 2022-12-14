@@ -6,12 +6,12 @@ using UnityEngine;
 
 namespace Control
 {
-    public class FsmController : GameEntity
+    public class EnemyController : GameEntity
     {
         private FsmState _prevState;
         private FsmState _currState;
         private PatrolPath _patrolPath;
-        private readonly WaitForSeconds _sleep = new(0.5f);
+        private WaitForSeconds _sleep = new(0.5f);
 
         public FsmState CurrState => _currState;
         public PatrolPath PatrolPath => _patrolPath;
@@ -35,7 +35,8 @@ namespace Control
         protected override void Update()
         {
             base.Update();
-            _currState?.Execute();
+            if (_currState != null)
+                _currState.Execute();
         }
 
         public void ChangeState(FsmState newState)
@@ -72,7 +73,10 @@ namespace Control
             _agent.enabled = true;
         }
 
-        public FsmStateType GetCurrStateType() => _currState.Type;
+        public FsmStateType GetCurrStateType()
+        {
+            return _currState.Type;
+        }
 
         public void LinkPlayer() => IsLinker = true;
 

@@ -9,11 +9,11 @@ namespace Frame
 {
     public class WorldManager : MonoBehaviour
     {
-        private readonly List<FsmController> _enemies = new();
-        private readonly Dictionary<ulong, AppearRole> _players = new();
+        private List<EnemyController> _enemies = new();
+        private Dictionary<ulong, AppearRole> _players = new();
 
         public string csvFile = "";
-        public List<FsmController> Enemies => _enemies;
+        public List<EnemyController> Enemies => _enemies;
         public Dictionary<ulong, AppearRole> Players => _players;
 
         private void Awake()
@@ -24,7 +24,6 @@ namespace Frame
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
-            EventManager.Instance.AddListener(EEventType.SceneLoaded, SceneLoadedCallback);
             PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
 
@@ -39,7 +38,7 @@ namespace Frame
             {
                 string[] strs = line.Split(',');
                 GameObject obj = ResourceManager.Instance.Load<GameObject>("Entity/Enemy/" + strs[1]);
-                FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
+                EnemyController enemyObj = Instantiate(obj).GetComponent<EnemyController>();
                 enemyObj.gameObject.SetActive(false);
                 enemyObj.Id = id++;
                 enemyObj.Hp = int.Parse(strs[2]);
@@ -57,7 +56,6 @@ namespace Frame
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
-            EventManager.Instance.RemoveListener(EEventType.SceneLoaded, SceneLoadedCallback);
         }
 
         private Vector3 GetPos(string posStr)
@@ -153,12 +151,6 @@ namespace Frame
         {
             if (msg is Proto.RequestLinkPlayer proto)
                 _enemies[proto.EnemyId].LinkPlayer();
-        }
-
-        private void SceneLoadedCallback()
-        {
-            //Proto.RequestSyncEnemies proto = new() { PlayerSn = GameManager.Instance.MainPlayer.Sn };
-            //NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemies, proto);
         }
     }
 }

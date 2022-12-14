@@ -5,7 +5,7 @@ namespace Frame
 {
     public class MonoProcessor : MonoBehaviour
     {
-        private event Action UpdateEvent = null;
+        event Action updateEvent = null;
 
         private void Awake()
         {
@@ -14,17 +14,17 @@ namespace Frame
 
         private void Update()
         {
-            UpdateEvent?.Invoke();
+            updateEvent?.Invoke();
         }
 
         public void AddUpdateAction(Action update)
         {
-            UpdateEvent += update;
+            updateEvent += update;
         }
 
         public void RemoveUpdateAction(Action update)
         {
-            UpdateEvent -= update;
+            updateEvent -= update;
         }
     }
 }

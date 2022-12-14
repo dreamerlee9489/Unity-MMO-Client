@@ -2,61 +2,62 @@
 using System.Collections;
 using System.ComponentModel;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Frame
 {
     public class MonoManager : BaseSingleton<MonoManager>
     {
-        private readonly MonoProcessor _processor;
+        MonoProcessor processor;
 
         public MonoManager()
         {
-            _processor = new GameObject("MonoProcessor").AddComponent<MonoProcessor>();
+            processor = new GameObject("MonoProcessor").AddComponent<MonoProcessor>();
         }
 
         public void AddUpdateAction(Action update)
         {
-            _processor.AddUpdateAction(update);
+            processor.AddUpdateAction(update);
         }
 
         public void RemoveUpdateAction(Action update)
         {
-            _processor.RemoveUpdateAction(update);
+            processor.RemoveUpdateAction(update);
         }
 
         public Coroutine StartCoroutine(IEnumerator enumerator)
         {
-            return _processor.StartCoroutine(enumerator);
+            return processor.StartCoroutine(enumerator);
         }
 
         public Coroutine StartCoroutine(string methodName)
         {
-            return _processor.StartCoroutine(methodName);
+            return processor.StartCoroutine(methodName);
         }
 
         public Coroutine StartCoroutine(string methodName, [DefaultValue("null")] object value)
         {
-            return _processor.StartCoroutine(methodName, value);
+            return processor.StartCoroutine(methodName, value);
         }
 
         public void StopCoroutine(IEnumerator enumerator)
         {
-            _processor.StopCoroutine(enumerator);
+            processor.StopCoroutine(enumerator);
         }
 
         public void StopCoroutine(Coroutine routine)
         {
-            _processor.StopCoroutine(routine);
+            processor.StopCoroutine(routine);
         }
 
         public void StopCoroutine(string methodName)
         {
-            _processor.StopCoroutine(methodName);
+            processor.StopCoroutine(methodName);
         }
 
         public void StopAllCoroutines()
         {
-            _processor.StopAllCoroutines();
+            processor.StopAllCoroutines();
         }
     }
 }

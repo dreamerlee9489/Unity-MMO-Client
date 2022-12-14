@@ -4,7 +4,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using UI;
-using UI.Panel;
 using UnityEngine.SceneManagement;
 using Cinemachine;
 
@@ -52,7 +51,7 @@ namespace Frame
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
-        private IEnumerator ConnectServer()
+        IEnumerator ConnectServer()
         {
             UnityWebRequest request = UnityWebRequest.Get($"http://{ip}:{port}/login");
             request.SetRequestHeader("Content-Type", "application/json;charset=utf-8");
@@ -81,7 +80,7 @@ namespace Frame
                     Canvas.GetPanel<CreatePanel>().Open();
                 else
                 {
-                    Transform content = Canvas.GetPanel<RolesPanel>().RolesRect.content;
+                    Transform content = Canvas.GetPanel<RolesPanel>()._rolesRect.content;
                     for (int i = 0; i < _accountInfo.Players.Count; i++)
                     {
                         RoleToggle roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
@@ -116,7 +115,7 @@ namespace Frame
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            EventManager.Instance.Invoke(EEventType.SceneLoaded);
+            EventManager.Instance.Invoke(EEventType.SceneLoaded, scene.buildIndex);
             _activeWorld = FindObjectOfType<WorldManager>();
         }
     }

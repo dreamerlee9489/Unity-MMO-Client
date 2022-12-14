@@ -1,26 +1,27 @@
 ﻿using Frame;
+using Google.Protobuf;
 using Net;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Panel
+namespace UI
 {
     public class RolesPanel : BasePanel
     {
+        private Button _playBtn = null, _createBtn = null;
         private string _token, _account;
-        private Button _playBtn, _createBtn;
-        public ScrollRect RolesRect { get; private set; }
+        public ScrollRect _rolesRect { get; private set; }
 
         protected override void Awake()
         {
             base.Awake();
             _panelType = PanelType.RolesPanel;
+            _rolesRect = transform.Find("RolesRect").GetComponent<ScrollRect>();
             _playBtn = transform.Find("PlayBtn").GetComponent<Button>();
             _createBtn = transform.Find("CreateBtn").GetComponent<Button>();
-            RolesRect = transform.Find("RolesRect").GetComponent<ScrollRect>();
 
-            RolesRect.content.GetComponent<ToggleGroup>().allowSwitchOff = false;
+            _rolesRect.content.GetComponent<ToggleGroup>().allowSwitchOff = false;
             _createBtn.onClick.AddListener(() =>
             {
                 _canvas.GetPanel<CreatePanel>().Open();
@@ -28,12 +29,12 @@ namespace UI.Panel
             });
             _playBtn.onClick.AddListener(() =>
             {
-                for (int i = 0; i < RolesRect.content.childCount; ++i)
+                for (int i = 0; i < _rolesRect.content.childCount; ++i)
                 {
-                    if (RolesRect.content.GetChild(i).GetComponent<Toggle>().isOn)
+                    if (_rolesRect.content.GetChild(i).GetComponent<Toggle>().isOn)
                     {
                         Proto.SelectPlayer proto = new Proto.SelectPlayer();
-                        proto.PlayerSn = RolesRect.content.GetChild(i).GetComponent<RoleToggle>().Id;
+                        proto.PlayerSn = _rolesRect.content.GetChild(i).GetComponent<RoleToggle>().Id;
                         NetManager.Instance.SendPacket(Proto.MsgId.C2LSelectPlayer, proto);
                         break;
                     }
@@ -62,40 +63,47 @@ namespace UI.Panel
 
         public override void Close()
         {
-            int childCount = RolesRect.content.childCount;
+            int childCount = _rolesRect.content.childCount;
             for (int i = 0; i < childCount; ++i)
-                PoolManager.Instance.Push(PoolType.RoleToggle, RolesRect.content.GetChild(0).gameObject);
+                PoolManager.Instance.Push(PoolType.RoleToggle, _rolesRect.content.GetChild(0).gameObject);
             base.Close();
         }
 
-        private void GameTokenHandler(Google.Protobuf.IMessage msg)
+        private void GameTokenHandler(IMessage msg)
         {
-            if (msg is Proto.GameToken proto && NetManager.Instance.AppType == EAppType.Login)
+            Proto.GameToken proto = msg as Proto.GameToken;
+            if (proto != null && NetManager.Instance.AppType == EAppType.Login)
             {
+                //ModalPanel panel = GameManager.Instance.Canvas.GetPanel<ModalPanel>();
+                //panel.Title.text = "登录消息";
+                //panel.Msg.text = "正在连接游戏服务器";
+                //panel.Open();
                 _token = proto.Token;
                 _account = GameManager.Instance.AccountInfo.Account;
+                //print("RolesPanel.GameTokenHandler token=" + _token + " account=" + _account + " apptype=" + NetManager.Instance.AppType);
                 NetManager.Instance.Disconnect();
                 NetManager.Instance.Connect(proto.Ip, proto.Port, EAppType.Game);
             }
         }
 
-        private void LoginByTokenRsHandler(Google.Protobuf.IMessage msg)
+        private void LoginByTokenRsHandler(IMessage msg)
         {
-            if (msg is Proto.LoginByTokenRs proto)
+            Proto.LoginByTokenRs proto = msg as Proto.LoginByTokenRs;
+            if (proto == null)
+                return;
+            //print("RolesPanel.LoginByTokenRsHandler code: " + proto.ReturnCode);
+            switch (proto.ReturnCode)
             {
-                switch (proto.ReturnCode)
-                {
-                    case Proto.LoginByTokenRs.Types.ReturnCode.LgrcNotFoundAccount:
-                        break;
-                    case Proto.LoginByTokenRs.Types.ReturnCode.LgrcTokenWrong:
-                        break;
-                    case Proto.LoginByTokenRs.Types.ReturnCode.LgrcUnkonwn:
-                        break;
-                    case Proto.LoginByTokenRs.Types.ReturnCode.LgrcOk:
-                        break;
-                    default:
-                        break;
-                }
+                case Proto.LoginByTokenRs.Types.ReturnCode.LgrcNotFoundAccount:
+                    break;
+                case Proto.LoginByTokenRs.Types.ReturnCode.LgrcTokenWrong:
+                    break;
+                case Proto.LoginByTokenRs.Types.ReturnCode.LgrcUnkonwn:
+                    break;
+                case Proto.LoginByTokenRs.Types.ReturnCode.LgrcOk:
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -107,6 +115,7 @@ namespace UI.Panel
 
         private void DisconnectCallback(EAppType appType)
         {
+            //print("RolesPanel.DisconnectCallback apptype=" + appType);
         }
 
         private IEnumerator SendTokenDelay()

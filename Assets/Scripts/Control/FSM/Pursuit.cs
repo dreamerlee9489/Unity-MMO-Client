@@ -1,10 +1,11 @@
 ﻿using Net;
+using UnityEngine;
 
 namespace Control.FSM
 {
     public class Pursuit : FsmState
     {
-        public Pursuit(FsmController owner, PlayerController target) : base(owner, target)
+        public Pursuit(EnemyController owner, PlayerController target) : base(owner, target)
         {
             _type = FsmStateType.Pursuit;
             Enter();
@@ -68,6 +69,10 @@ namespace Control.FSM
         }
 
         public override void Exit()
+        {
+        }
+
+        public override void UpdateState(int code)
         {
         }
     }

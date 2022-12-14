@@ -11,8 +11,8 @@ namespace Frame
 
     public class PoolManager : MonoSingleton<PoolManager>
     {
-        private readonly Dictionary<string, List<GameObject>> _pool = new();
-        private readonly Dictionary<string, GameObject> _roots = new();
+        private Dictionary<string, List<GameObject>> _pool = new();
+        private Dictionary<string, GameObject> _roots = new();
 
         protected override void Awake()
         {
@@ -32,7 +32,7 @@ namespace Frame
         {
             if (!_roots.ContainsKey(poolType))
             {
-                GameObject root = new(poolType + "Root");
+                GameObject root = new GameObject(poolType + "Root");
                 root.transform.parent = transform;
                 _roots.Add(poolType, root);
                 _pool.Add(poolType, new List<GameObject>());
