@@ -68,13 +68,6 @@ namespace Control
                         _stateCode = 0;
                     break;
             }
-
-            _curPos.X = transform.position.x;
-            _curPos.Y = transform.position.y;
-            _curPos.Z = transform.position.z;
-            _hitPos.X = _hitPoint.x;
-            _hitPos.Y = _hitPoint.y;
-            _hitPos.Z = _hitPoint.z;
         }
 
         private void OnApplicationQuit()
@@ -90,10 +83,17 @@ namespace Control
                 yield return _sleep;
                 if (_state != PlayerStateType.Idle)
                 {
+                    _curPos.X = transform.position.x;
+                    _curPos.Y = transform.position.y;
+                    _curPos.Z = transform.position.z;
+                    _hitPos.X = _hitPoint.x;
+                    _hitPos.Y = _hitPoint.y;
+                    _hitPos.Z = _hitPoint.z;
+
                     Proto.PlayerSyncState proto = new()
                     {
                         PlayerSn = Sn,
-                        EnemyId = (!_hitTarget || _hitTarget.CompareTag("Terrain")) ? -1 : _hitTarget.GetComponent<EnemyController>().Id,
+                        EnemyId = (!_hitTarget || _hitTarget.CompareTag("Terrain")) ? -1 : _hitTarget.GetComponent<FsmController>().Id,
                         State = (int)_state,
                         Code = _stateCode,
                         CurPos = _curPos,

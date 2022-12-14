@@ -11,6 +11,8 @@ namespace Frame
 
         SceneLoading,
         SceneLoaded,
+
+        PlayerLoaded
     }
 
     interface IEventInfo { }

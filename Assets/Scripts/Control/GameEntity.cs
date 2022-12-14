@@ -4,8 +4,8 @@ using UnityEngine.AI;
 
 namespace Control
 {
-    [RequireComponent(typeof(CapsuleCollider), typeof(NavMeshAgent))]
-    public class GameEntity : MonoBehaviour
+    [RequireComponent(typeof(CapsuleCollider), typeof(NavMeshAgent), typeof(AnimExecutor))]
+    public abstract class GameEntity : MonoBehaviour
     {
         public static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
         public static readonly int Attack = Animator.StringToHash("Attack");

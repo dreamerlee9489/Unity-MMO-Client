@@ -1,6 +1,7 @@
 ﻿using Control;
 using Control.FSM;
 using Net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -9,11 +10,11 @@ namespace Frame
 {
     public class WorldManager : MonoBehaviour
     {
-        private List<EnemyController> _enemies = new();
+        private List<FsmController> _enemies = new();
         private Dictionary<ulong, AppearRole> _players = new();
 
         public string csvFile = "";
-        public List<EnemyController> Enemies => _enemies;
+        public List<FsmController> Enemies => _enemies;
         public Dictionary<ulong, AppearRole> Players => _players;
 
         private void Awake()
@@ -24,28 +25,7 @@ namespace Frame
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
-            PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
-        }
-
-        private void Start()
-        {
-            csvFile = Application.streamingAssetsPath + "/CSV/" + csvFile;
-            using StreamReader reader = File.OpenText(csvFile);
-            reader.ReadLine();
-            string line;
-            int id = 0;
-            while ((line = reader.ReadLine()) != null)
-            {
-                string[] strs = line.Split(',');
-                GameObject obj = ResourceManager.Instance.Load<GameObject>("Entity/Enemy/" + strs[1]);
-                EnemyController enemyObj = Instantiate(obj).GetComponent<EnemyController>();
-                enemyObj.gameObject.SetActive(false);
-                enemyObj.Id = id++;
-                enemyObj.Hp = int.Parse(strs[2]);
-                enemyObj.transform.position = GetPos(strs[3]);
-                enemyObj.gameObject.SetActive(true);
-                _enemies.Add(enemyObj);
-            }
+            EventManager.Instance.AddListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
 
         private void OnApplicationQuit()
@@ -56,6 +36,7 @@ namespace Frame
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
+            EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
 
         private Vector3 GetPos(string posStr)
@@ -151,6 +132,29 @@ namespace Frame
         {
             if (msg is Proto.RequestLinkPlayer proto)
                 _enemies[proto.EnemyId].LinkPlayer();
+        }
+
+        private void PlayerLoadedCallback()
+        {
+            csvFile = Application.streamingAssetsPath + "/CSV/" + csvFile;
+            using StreamReader reader = File.OpenText(csvFile);
+            reader.ReadLine();
+            string line;
+            int id = 0;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                GameObject obj = ResourceManager.Instance.Load<GameObject>("Entity/Enemy/" + strs[1]);
+                FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
+                enemyObj.gameObject.SetActive(false);
+                enemyObj.Id = id++;
+                enemyObj.Hp = int.Parse(strs[2]);
+                enemyObj.transform.position = GetPos(strs[3]);
+                enemyObj.gameObject.SetActive(true);
+                _enemies.Add(enemyObj);
+            }
+            Proto.RequestSyncEnemies proto = new() { PlayerSn = GameManager.Instance.MainPlayer.Sn };
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemies, proto);
         }
     }
 }

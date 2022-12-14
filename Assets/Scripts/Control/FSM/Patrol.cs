@@ -8,7 +8,7 @@ namespace Control.FSM
         private int _index;
         private PatrolPath _patrolPath;
 
-        public Patrol(EnemyController owner, PlayerController target = null, int code = 0) : base(owner, target)
+        public Patrol(FsmController owner, PlayerController target = null, int code = 0) : base(owner, target)
         {
             _type = FsmStateType.Patrol;
             _index = code;

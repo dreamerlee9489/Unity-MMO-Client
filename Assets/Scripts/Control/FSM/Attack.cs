@@ -5,7 +5,7 @@ namespace Control.FSM
 {
     public class Attack : FsmState
     {
-        public Attack(EnemyController owner, PlayerController target = null) : base(owner, target)
+        public Attack(FsmController owner, PlayerController target = null) : base(owner, target)
         {
             _type = FsmStateType.Attack;
         }

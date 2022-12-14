@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Control
 {
-    public class EnemyController : GameEntity
+    public class FsmController : GameEntity
     {
         private FsmState _prevState;
         private FsmState _currState;
@@ -24,10 +24,6 @@ namespace Control
         {
             base.Awake();
             _agent.speed = RunSpeed;
-        }
-
-        private void Start()
-        {
             _patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
             _patrolPath.transform.position = transform.position;
         }
@@ -35,8 +31,13 @@ namespace Control
         protected override void Update()
         {
             base.Update();
-            if (_currState != null)
-                _currState.Execute();
+            _currState?.Execute();
+        }
+
+        private void OnApplicationQuit()
+        {
+            PoolManager.Instance.Push(PoolType.PatrolPath, _patrolPath.gameObject);
+            _patrolPath = null;
         }
 
         public void ChangeState(FsmState newState)

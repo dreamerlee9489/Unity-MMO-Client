@@ -41,6 +41,7 @@ namespace Frame
         {
             MonoManager.Instance.StartCoroutine(ConnectServer());
             PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
+            PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
 
         private void OnDestroy()
