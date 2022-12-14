@@ -71,9 +71,5 @@ namespace Control.FSM
         {
             _owner.Anim.SetBool(GameEntity.Attack, false);
         }
-
-        public override void UpdateState(int code)
-        {
-        }
     }
 }

@@ -11,7 +11,7 @@ namespace Control
         private FsmState _prevState;
         private FsmState _currState;
         private PatrolPath _patrolPath;
-        private WaitForSeconds _sleep = new(0.5f);
+        private readonly WaitForSeconds _sleep = new(0.5f);
 
         public FsmState CurrState => _currState;
         public PatrolPath PatrolPath => _patrolPath;

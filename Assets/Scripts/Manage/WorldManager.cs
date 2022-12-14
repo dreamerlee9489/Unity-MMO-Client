@@ -49,7 +49,7 @@ namespace Manage
                         _players[sn].Parse(role);
                     else
                     {
-                        AppearRole appearRole = new AppearRole();
+                        AppearRole appearRole = new();
                         appearRole.Parse(role);
                         appearRole.LoadObj();
                         _players.Add(sn, appearRole);

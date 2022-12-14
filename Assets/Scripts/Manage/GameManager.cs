@@ -81,7 +81,7 @@ namespace Manage
                     Canvas.GetPanel<CreatePanel>().Open();
                 else
                 {
-                    Transform content = Canvas.GetPanel<RolesPanel>()._rolesRect.content;
+                    Transform content = Canvas.GetPanel<RolesPanel>().RolesRect.content;
                     for (int i = 0; i < _accountInfo.Players.Count; i++)
                     {
                         RoleToggle roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
@@ -98,7 +98,6 @@ namespace Manage
         {
             if (msg is Proto.EnterWorld proto && proto.WorldId > 2)
             {
-                //Debug.Log("GameManager.EnterWorldHandler id: " + proto.WorldId);
                 SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
                 Canvas.GetPanel<StartPanel>().Close();
             }
@@ -108,7 +107,6 @@ namespace Manage
         {
             if (msg is Proto.SyncPlayer proto)
             {
-                //print("GameManager.SyncPlayerHandler sn: " + proto.Player.Sn);
                 _mainPlayer ??= new Player();
                 _mainPlayer.Parse(proto.Player);
             }

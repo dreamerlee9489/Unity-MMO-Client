@@ -1,6 +1,4 @@
 ﻿using Manage;
-using Net;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI
@@ -8,7 +6,7 @@ namespace UI
     public class CreatePanel : BasePanel
     {
         ToggleGroup _toggleGroup = null;
-        Toggle _femaleToggle = null, _maleToggle = null;
+        Toggle _maleToggle = null;
         InputField _roleName = null;
         Button _createBtn = null;
 
@@ -18,7 +16,6 @@ namespace UI
             _panelType = PanelType.CreatePanel;
             _toggleGroup = transform.Find("ToggleGroup").GetComponent<ToggleGroup>();
             _maleToggle = _toggleGroup.transform.Find("MaleToggle").GetComponent<Toggle>();
-            _femaleToggle = _toggleGroup.transform.Find("FemaleToggle").GetComponent<Toggle>();
             _roleName = transform.Find("RoleName").GetComponent<InputField>();
             _createBtn = transform.Find("CreateBtn").GetComponent<Button>();
 

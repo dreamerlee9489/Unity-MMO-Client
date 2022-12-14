@@ -11,8 +11,8 @@ namespace Manage
 
     public class PoolManager : MonoSingleton<PoolManager>
     {
-        private Dictionary<string, List<GameObject>> _pool = new();
-        private Dictionary<string, GameObject> _roots = new();
+        private readonly Dictionary<string, List<GameObject>> _pool = new();
+        private readonly Dictionary<string, GameObject> _roots = new();
 
         protected override void Awake()
         {

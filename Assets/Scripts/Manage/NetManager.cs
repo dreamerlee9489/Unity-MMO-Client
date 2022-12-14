@@ -95,9 +95,9 @@ namespace Manage
             {
                 while (_recvIdx >= PacketHead.SIZE)
                 {
-                    PacketHead head = new PacketHead();
-                    MemoryStream ms = new MemoryStream(_recvBuf);
-                    BinaryReader reader = new BinaryReader(ms);
+                    PacketHead head = new();
+                    MemoryStream ms = new(_recvBuf);
+                    BinaryReader reader = new(ms);
                     int totalLen = reader.ReadUInt16();
                     int headLen = reader.ReadUInt16();
                     head.msgId = reader.ReadUInt16();
@@ -121,22 +121,22 @@ namespace Manage
         public void Connect(string ip, int port, EAppType appType)
         {
             _state = ENetState.Connecting;
-            EventManager.Instance.Invoke(EEventType.Connecting, appType);
             _sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _sock.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
             _sock.Blocking = true;
             _sock.SendBufferSize = _recvBuf.Length;
+            EventManager.Instance.Invoke(EEventType.Connecting, appType);
             _sock.BeginConnect(ip, port, (result) =>
             {
                 try
                 {
                     if (result.IsCompleted)
                     {
-                        Socket sock = result.AsyncState as Socket;
-                        if (sock != null && sock.Connected)
+                        _sock = result.AsyncState as Socket;
+                        if (_sock != null && _sock.Connected)
                         {
-                            sock.EndConnect(result);
-                            sock.Blocking = false;
+                            _sock.EndConnect(result);
+                            _sock.Blocking = false;
                         }
                     }
                 }
@@ -166,15 +166,15 @@ namespace Manage
         {
             int size = PacketHead.SIZE;
             size += msg != null ? msg.CalculateSize() : 0;
-            MemoryStream ms = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(ms);
+            MemoryStream ms = new();
+            BinaryWriter writer = new(ms);
             writer.Write((ushort)size);
             writer.Write((ushort)2);
             writer.Write((ushort)msgId);
 
             if (msg != null)
             {
-                Google.Protobuf.CodedOutputStream os = new Google.Protobuf.CodedOutputStream(ms);
+                Google.Protobuf.CodedOutputStream os = new(ms);
                 msg.WriteTo(os);
                 os.Flush();
             }
@@ -221,7 +221,7 @@ namespace Manage
         private Google.Protobuf.IMessage ParsePacket<T>(byte[] bytes, int offset, int length) where T : Google.Protobuf.IMessage, new()
         {
             T msg = new T();
-            Google.Protobuf.CodedInputStream stream = new Google.Protobuf.CodedInputStream(bytes, offset, length);
+            Google.Protobuf.CodedInputStream stream = new(bytes, offset, length);
             msg.MergeFrom(stream);
             return msg;
         }
@@ -235,7 +235,7 @@ namespace Manage
         public string Md5(byte[] data)
         {
             byte[] bin;
-            using (MD5CryptoServiceProvider md5Crypto = new MD5CryptoServiceProvider())
+            using (MD5CryptoServiceProvider md5Crypto = new())
                 bin = md5Crypto.ComputeHash(data);
             return BitConverter.ToString(bin).Replace("-", "").ToLower();
         }

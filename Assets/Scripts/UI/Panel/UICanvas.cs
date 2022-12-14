@@ -5,7 +5,7 @@ namespace UI
 {
     public class UICanvas : BasePanel
     {
-        private Dictionary<string, BasePanel> panelDict = new();
+        private readonly Dictionary<string, BasePanel> _panelDict = new();
 
         protected override void Awake()
         {
@@ -21,20 +21,19 @@ namespace UI
         public T GetPanel<T>() where T : BasePanel
         {
             string type = typeof(T).Name;
-            if (panelDict.ContainsKey(type))
-                return panelDict[type].GetComponent<T>();
+            if (_panelDict.ContainsKey(type))
+                return _panelDict[type].GetComponent<T>();
             return null;
         }
 
         public void AddPanel(string type, BasePanel panel)
         {
-            if (!panelDict.ContainsKey(type))
-                panelDict.Add(type, panel);
+            if (!_panelDict.ContainsKey(type))
+                _panelDict.Add(type, panel);
         }
 
         private void DisconnectCallback(EAppType appType)
         {
-            //print("UICanvas.DisconnectCallback apptype=" + appType);
         }
     }
 }

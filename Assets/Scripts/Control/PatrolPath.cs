@@ -12,9 +12,7 @@ namespace Control
         private void Awake()
         {
             for (int i = 0; i < transform.childCount; i++)
-            {
                 _path.Add(transform.GetChild(i));
-            }
         }
     }
 }

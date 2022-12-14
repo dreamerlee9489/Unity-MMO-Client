@@ -61,10 +61,5 @@ namespace Control.FSM
         public override void Exit()
         {
         }
-
-        public override void UpdateState(int code)
-        {
-
-        }
     }
 }

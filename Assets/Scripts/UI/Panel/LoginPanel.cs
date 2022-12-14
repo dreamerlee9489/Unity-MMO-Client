@@ -1,13 +1,12 @@
 ﻿using Manage;
-using Net;
 using UnityEngine.UI;
 
 namespace UI
 {
     public class LoginPanel : BasePanel
     {
-        InputField _username = null, _password = null;
-        Button _loginBtn = null;
+        private InputField _username, _password;
+        private Button _loginBtn;
 
         protected override void Awake()
         {
@@ -18,7 +17,7 @@ namespace UI
 
             _loginBtn.onClick.AddListener(() =>
             {
-                Proto.AccountCheck proto = new Proto.AccountCheck
+                Proto.AccountCheck proto = new()
                 {
                     Account = _username.text,
                     Password = NetManager.Instance.Md5(System.Text.Encoding.Default.GetBytes(_password.text))
@@ -47,10 +46,8 @@ namespace UI
 
         private void AccountCheckRsHandler(Google.Protobuf.IMessage msg)
         {
-            Proto.AccountCheckRs proto = msg as Proto.AccountCheckRs;
-            if (proto != null)
+            if (msg is Proto.AccountCheckRs proto)
             {
-                //print("LoginPanel.AccountCheckRsHandler code=" + proto.ReturnCode);
                 Proto.AccountCheckReturnCode code = proto.ReturnCode;
                 switch (code)
                 {
@@ -78,24 +75,11 @@ namespace UI
         private void ConnectedCallback(EAppType appType)
         {
             if (appType == EAppType.Login)
-            {
                 Open();
-                //if (!string.IsNullOrEmpty(_username.text))
-                //{
-                //    Proto.AccountCheck proto = new Proto.AccountCheck
-                //    {
-                //        Account = _username.text,
-                //        Password = NetManager.Instance.Md5(System.Text.Encoding.UTF8.GetBytes(_username.text))
-                //    };
-                //    NetManager.Instance.SendPacket(Proto.MsgId.C2LAccountCheck, proto);
-                //}
-            }
-            //print("LoginPanel.ConnectedCallback apptype=" + appType);
         }
 
         private void DisconnectCallback(EAppType appType)
         {
-            //print("LoginPanel.DisconnectCallback apptype=" + appType);
         }
     }
 }
