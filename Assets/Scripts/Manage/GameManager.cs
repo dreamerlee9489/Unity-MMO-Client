@@ -40,17 +40,24 @@ namespace Manage
 
         private void Start()
         {
+            SceneManager.sceneLoaded += OnSceneLoaded;
             MonoManager.Instance.StartCoroutine(ConnectServer());
         }
 
         private void OnDestroy()
         {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
         }
 
-        IEnumerator ConnectServer()
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            _activeWorld = FindObjectOfType<WorldManager>();
+        }
+
+        private IEnumerator ConnectServer()
         {
             UnityWebRequest request = UnityWebRequest.Get($"http://{ip}:{port}/login");
             request.SetRequestHeader("Content-Type", "application/json;charset=utf-8");

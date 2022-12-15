@@ -61,7 +61,6 @@ namespace Control
         public void ParseEnemy(Proto.Enemy proto)
         {
             transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
-            gameObject.SetActive(true);
         }
 
         public FsmStateType GetCurrStateType()
@@ -74,14 +73,12 @@ namespace Control
             if (isLinker)
             {
                 MonoManager.Instance.StartCoroutine(UploadData());
-                GameManager.Instance.Canvas.Debug.text = GameManager.Instance.MainPlayer.Name + " is Linking Enemy:" + Id;
-                print(GameManager.Instance.MainPlayer.Name + " is Linking Enemy:" + Id);
+                print(GameManager.Instance.MainPlayer.Name + " is linking Enemy: " + Id);
             }
             else
             {
                 MonoManager.Instance.StopCoroutine(UploadData());
-                GameManager.Instance.Canvas.Debug.text = "";
-                print(GameManager.Instance.MainPlayer.Name + " is dislink Enemy:" + Id);
+                print(GameManager.Instance.MainPlayer.Name + " is dislink Enemy: " + Id);
             }
         }
 

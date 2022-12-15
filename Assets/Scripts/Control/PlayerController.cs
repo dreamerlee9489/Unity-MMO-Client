@@ -75,6 +75,8 @@ namespace Control
             MonoManager.Instance.StopCoroutine(SyncStateCoroutine());
         }
 
+        private void ResetState() => _state = PlayerStateType.Idle;
+
         private IEnumerator SyncStateCoroutine()
         {
             yield return new WaitForSeconds(0.5f);
@@ -121,13 +123,11 @@ namespace Control
                     _agent.destination = pos;
                     break;
                 case PlayerStateType.Attack:
-                    bool code = proto.Code != 0;
+                    bool atk = proto.Code != 0;
                     int id = proto.EnemyId;
-                    _anim.SetBool(Attack, code);
-                    Transform target = null;
-                    if (id < GameManager.Instance.ActiveWorld.Enemies.Count)
-                        target = GameManager.Instance.ActiveWorld.Enemies[id].transform;
-                    if (!code)
+                    _anim.SetBool(Attack, atk);
+                    Transform target = GameManager.Instance.ActiveWorld.Enemies[id].transform;
+                    if (!atk)
                         _agent.destination = target.position;
                     transform.LookAt(target);
                     break;

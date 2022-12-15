@@ -12,7 +12,7 @@ namespace Manage
             {
                 if (instance == null)
                 {
-                    GameObject go = new GameObject(typeof(T).Name);
+                    GameObject go = new(typeof(T).Name);
                     instance = go.AddComponent<T>();
                     DontDestroyOnLoad(go);
                 }
@@ -22,8 +22,11 @@ namespace Manage
 
         virtual protected void Awake()
         {
-            instance = this as T;
-            DontDestroyOnLoad(this);
+            if (instance == null)
+            {
+                instance = this as T;
+                DontDestroyOnLoad(this);
+            }
         }
     }
 }

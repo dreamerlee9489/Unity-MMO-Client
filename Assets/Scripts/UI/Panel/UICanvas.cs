@@ -20,6 +20,10 @@ namespace UI
             EventManager.Instance.RemoveListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
         }
 
+        private void DisconnectCallback(EAppType appType)
+        {
+        }
+
         public T GetPanel<T>() where T : BasePanel
         {
             string type = typeof(T).Name;
@@ -34,8 +38,9 @@ namespace UI
                 _panelDict.Add(type, panel);
         }
 
-        private void DisconnectCallback(EAppType appType)
+        public void DebugLog(string log)
         {
+            Debug.text = log;
         }
     }
 }

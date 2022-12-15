@@ -1,4 +1,5 @@
 ﻿using Manage;
+using UnityEngine;
 
 namespace Control.FSM
 {
@@ -11,9 +12,9 @@ namespace Control.FSM
 
         public override void Enter()
         {
-            _owner.Anim.SetBool(GameEntity.Attack, true);
             _owner.Agent.speed = _owner.WalkSpeed;
             _owner.Agent.destination = _target.transform.position;
+            _owner.Anim.SetBool(GameEntity.Attack, true);
         }
 
         public override void Execute()

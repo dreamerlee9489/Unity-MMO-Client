@@ -38,6 +38,17 @@ namespace Manage
             EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
 
+        private Vector3 GetPos(string posStr)
+        {
+            Vector3 pos = Vector3.zero;
+            posStr = posStr[1..^1];
+            string[] strs = posStr.Split(';');
+            pos.x = float.Parse(strs[0]);
+            pos.y = float.Parse(strs[1]);
+            pos.z = float.Parse(strs[2]);
+            return pos;
+        }
+
         private void RoleAppearHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.RoleAppear proto)
@@ -128,20 +139,19 @@ namespace Manage
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
-                ResourceManager.Instance.LoadAsync<GameObject>("Entity/Enemy/" + strs[1], (obj) =>
+                GameObject obj = ResourceManager.Instance.Load<GameObject>("Entity/Enemy/" + strs[1]);
+                FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
+                enemyObj.Id = id++;
+                enemyObj.Hp = int.Parse(strs[2]);
+                enemyObj.transform.position = GetPos(strs[3]);
+                enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.Id;
+                _enemies.Add(enemyObj);
+                Proto.RequestSyncEnemy proto = new()
                 {
-                    FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
-                    enemyObj.gameObject.SetActive(false);
-                    enemyObj.Id = id++;
-                    enemyObj.Hp = int.Parse(strs[2]);
-                    _enemies.Add(enemyObj);
-                    Proto.RequestSyncEnemy proto = new()
-                    {
-                        PlayerSn = GameManager.Instance.MainPlayer.Sn,
-                        EnemyId = enemyObj.Id
-                    };
-                    NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemy, proto);
-                });
+                    PlayerSn = GameManager.Instance.MainPlayer.Sn,
+                    EnemyId = enemyObj.Id
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemy, proto);
             }
         }
     }

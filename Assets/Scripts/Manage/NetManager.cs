@@ -196,6 +196,7 @@ namespace Manage
                 Disconnect();
                 return false;
             }
+            //Debug.Log("Send msgid: " + msgId);
             return true;
         }
 
@@ -207,6 +208,7 @@ namespace Manage
                 Debug.LogWarning("未找到解包函数: msgId = " + msgId);
                 return;
             }
+            //Debug.Log("Recv msgid: " + msgId);
             Google.Protobuf.IMessage msg = _funcDict[msgId](bytes, offset, length);
             MsgManager.Instance.HandleMsg(msgId, msg);
         }
