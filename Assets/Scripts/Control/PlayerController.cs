@@ -1,5 +1,4 @@
 ﻿using Manage;
-using Net;
 using System.Collections;
 using UnityEngine;
 
@@ -14,7 +13,7 @@ namespace Control
         private Transform _hitTarget = null;
         private RaycastHit _hit;
         private Vector3 _hitPoint = Vector3.zero;
-        private WaitForSeconds _sleep = new(0.02f);
+        private readonly WaitForSeconds _sleep = new(0.02f);
         private readonly Proto.Vector3 _curPos = new();
         private readonly Proto.Vector3 _hitPos = new();
 
@@ -55,11 +54,14 @@ namespace Control
                 }
             }
 
-            switch (_hitTarget?.tag)
+            switch (_hitTarget != null ? _hitTarget.tag : null)
             {
                 case "Terrain":
                     if (Vector3.Distance(transform.position, _hitPoint) <= _agent.stoppingDistance)
+                    {
                         _hitTarget = null;
+                        Invoke(nameof(ResetState), 3);
+                    }
                     break;
                 case "Enemy":
                     if (Vector3.Distance(transform.position, _hitTarget.transform.position) <= AttackRadius)
@@ -75,7 +77,11 @@ namespace Control
             MonoManager.Instance.StopCoroutine(SyncStateCoroutine());
         }
 
-        private void ResetState() => _state = PlayerStateType.Idle;
+        private void ResetState()
+        {
+            if (_hitTarget == null)
+                _state = PlayerStateType.Idle;
+        }
 
         private IEnumerator SyncStateCoroutine()
         {
@@ -115,7 +121,6 @@ namespace Control
                 y = proto.HitPos.Y,
                 z = proto.HitPos.Z
             };
-
             switch (state)
             {
                 case PlayerStateType.Move:

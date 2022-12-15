@@ -32,7 +32,7 @@ namespace Manage
         {
             if (!_roots.ContainsKey(poolType))
             {
-                GameObject root = new GameObject(poolType + "Root");
+                GameObject root = new(poolType + "Root");
                 root.transform.parent = transform;
                 _roots.Add(poolType, root);
                 _pool.Add(poolType, new List<GameObject>());

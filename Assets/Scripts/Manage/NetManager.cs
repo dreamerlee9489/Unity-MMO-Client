@@ -222,7 +222,7 @@ namespace Manage
 
         private Google.Protobuf.IMessage ParsePacket<T>(byte[] bytes, int offset, int length) where T : Google.Protobuf.IMessage, new()
         {
-            T msg = new T();
+            T msg = new();
             Google.Protobuf.CodedInputStream stream = new(bytes, offset, length);
             msg.MergeFrom(stream);
             return msg;

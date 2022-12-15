@@ -13,8 +13,7 @@ namespace Control.FSM
         public override void Enter()
         {
             _owner.Agent.speed = _owner.WalkSpeed;
-            if (_owner.gameObject.activeSelf)
-                _owner.Agent.isStopped = true;
+            _owner.Agent.isStopped = true;
             _target = GameManager.Instance.MainPlayer.GetGameObject().GetComponent<PlayerController>();
         }
 

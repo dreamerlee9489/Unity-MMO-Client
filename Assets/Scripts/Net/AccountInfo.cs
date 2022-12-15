@@ -17,7 +17,7 @@ namespace Net
 
             foreach (Proto.PlayerLittle roleProto in proto.Player)
             {
-                RoleInfo role = new RoleInfo();
+                RoleInfo role = new();
                 role.ParseProto(roleProto);
                 _players.Add(role);
             }

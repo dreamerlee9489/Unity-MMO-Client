@@ -5,10 +5,10 @@ namespace UI
 {
     public class CreatePanel : BasePanel
     {
-        ToggleGroup _toggleGroup = null;
-        Toggle _maleToggle = null;
-        InputField _roleName = null;
-        Button _createBtn = null;
+        private ToggleGroup _toggleGroup;
+        private Toggle _maleToggle;
+        private InputField _roleName;
+        private Button _createBtn;
 
         protected override void Awake()
         {
@@ -27,9 +27,11 @@ namespace UI
                     GameManager.Instance.Canvas.GetPanel<ModalPanel>().Open("创建角色", "角色名不能为空");
                     return;
                 }
-                Proto.CreatePlayer proto = new Proto.CreatePlayer();
-                proto.Name = _roleName.text;
-                proto.Gender = _maleToggle.isOn ? Proto.Gender.Male : Proto.Gender.Female;
+                Proto.CreatePlayer proto = new()
+                {
+                    Name = _roleName.text,
+                    Gender = _maleToggle.isOn ? Proto.Gender.Male : Proto.Gender.Female
+                };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2LCreatePlayer, proto);
                 Close();
             });

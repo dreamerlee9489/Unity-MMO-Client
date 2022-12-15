@@ -31,8 +31,10 @@ namespace UI
                 {
                     if (RolesRect.content.GetChild(i).GetComponent<Toggle>().isOn)
                     {
-                        Proto.SelectPlayer proto = new Proto.SelectPlayer();
-                        proto.PlayerSn = RolesRect.content.GetChild(i).GetComponent<RoleToggle>().Id;
+                        Proto.SelectPlayer proto = new()
+                        {
+                            PlayerSn = RolesRect.content.GetChild(i).GetComponent<RoleToggle>().Id
+                        };
                         NetManager.Instance.SendPacket(Proto.MsgId.C2LSelectPlayer, proto);
                         break;
                     }
@@ -111,7 +113,7 @@ namespace UI
         private IEnumerator SendTokenDelay()
         {
             yield return new WaitForSeconds(1);
-            Proto.LoginByToken proto = new Proto.LoginByToken
+            Proto.LoginByToken proto = new()
             {
                 Token = _token,
                 Account = _account

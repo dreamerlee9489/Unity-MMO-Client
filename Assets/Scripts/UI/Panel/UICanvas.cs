@@ -7,7 +7,7 @@ namespace UI
     public class UICanvas : BasePanel
     {
         private readonly Dictionary<string, BasePanel> _panelDict = new();
-        public Text Debug;
+        private readonly Text _debug;
 
         protected override void Awake()
         {
@@ -40,7 +40,7 @@ namespace UI
 
         public void DebugLog(string log)
         {
-            Debug.text = log;
+            _debug.text = log;
         }
     }
 }

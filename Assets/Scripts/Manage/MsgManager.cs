@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace Manage
 {
@@ -23,12 +22,8 @@ namespace Manage
 
         public void HandleMsg(Proto.MsgId msgId, Google.Protobuf.IMessage msg)
         {
-            if (!_handlerDict.ContainsKey(msgId))
-            {
-                Debug.Log("未处理消息 msgid=" + msgId);
-                return;
-            }
-            _handlerDict[msgId]?.Invoke(msg);
+            if (_handlerDict.ContainsKey(msgId))
+                _handlerDict[msgId]?.Invoke(msg);
         }
     }
 }

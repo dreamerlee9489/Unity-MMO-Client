@@ -117,6 +117,9 @@ namespace Manage
                 ulong playSn = proto.Sn;
                 if (_players.ContainsKey(playSn))
                 {
+                    foreach (var enemy in _enemies)
+                        if (enemy.CurrState.Target.gameObject == _players[playSn].Obj)
+                            enemy.ResetState();
                     Destroy(_players[playSn].Obj);
                     _players.Remove(playSn);
                 }

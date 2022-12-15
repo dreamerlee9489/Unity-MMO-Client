@@ -1,16 +1,25 @@
 ﻿using Manage;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
     public class ModalPanel : BasePanel
     {
-        private ModalBox _modalBox;
+        private Transform _modalBox;
+        private Button _closeBtn;
+        private Text _title;
+        private Text _msg;
 
         protected override void Awake()
         {
             base.Awake();
             _panelType = PanelType.ModalPanel;
-            _modalBox = transform.Find("ModalBox").GetComponent<ModalBox>();
+            _modalBox = transform.Find("ModalBox");
+            _title = _modalBox.Find("Title").GetChild(0).GetComponent<Text>();
+            _msg = _modalBox.Find("Msg").GetComponent<Text>();
+            _closeBtn = _modalBox.Find("CloseBtn").GetComponent<Button>();
+            _closeBtn.onClick.AddListener(Close);
             EventManager.Instance.AddListener<EAppType>(EEventType.Connected, ConnectedCallback);
             EventManager.Instance.AddListener<EAppType>(EEventType.Connecting, ConnectingCallback);
         }
@@ -29,8 +38,8 @@ namespace UI
 
         public void Open(string title, string msg)
         {
-            _modalBox.Title.text = title;
-            _modalBox.Msg.text = msg;
+            _title.text = title;
+            _msg.text = msg;
             base.Open();
         }
 
