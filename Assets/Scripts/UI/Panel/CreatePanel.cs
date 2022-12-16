@@ -13,7 +13,6 @@ namespace UI
         protected override void Awake()
         {
             base.Awake();
-            _panelType = PanelType.CreatePanel;
             _toggleGroup = transform.Find("ToggleGroup").GetComponent<ToggleGroup>();
             _maleToggle = _toggleGroup.transform.Find("MaleToggle").GetComponent<Toggle>();
             _roleName = transform.Find("RoleName").GetComponent<InputField>();

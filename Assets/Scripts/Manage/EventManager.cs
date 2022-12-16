@@ -9,10 +9,11 @@ namespace Manage
         Connected,
         Disconnect,
 
+        HotUpdated,
         SceneLoading,
         SceneLoaded,
 
-        PlayerLoaded
+        PlayerLoaded,
     }
 
     interface IEventInfo { }

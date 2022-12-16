@@ -14,7 +14,6 @@ namespace UI
         protected override void Awake()
         {
             base.Awake();
-            _panelType = PanelType.RolesPanel;
             _playBtn = transform.Find("PlayBtn").GetComponent<Button>();
             _createBtn = transform.Find("CreateBtn").GetComponent<Button>();
             RolesRect = transform.Find("RolesRect").GetComponent<ScrollRect>();

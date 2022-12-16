@@ -10,7 +10,7 @@ namespace UI
 
         protected override void Awake()
         {
-            _panelType = PanelType.LoginPanel;
+            base.Awake();
             _username = transform.Find("Username").GetComponent<InputField>();
             _password = transform.Find("Password").GetComponent<InputField>();
             _loginBtn = transform.Find("LoginBtn").GetComponent<Button>();

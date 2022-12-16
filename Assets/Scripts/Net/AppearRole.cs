@@ -30,9 +30,9 @@ namespace Net
                     _obj.name = "MainPlayer";
                     Object.DontDestroyOnLoad(_obj);
                     GameManager.Instance.MainPlayer.SetGameObject(_obj);
-                    GameManager.Instance.VirtualCamera.transform.position = _position + new Vector3(0, 6, -8);
-                    GameManager.Instance.VirtualCamera.transform.rotation = Quaternion.AngleAxis(-45, Vector3.left);
-                    GameManager.Instance.VirtualCamera.Follow = _obj.transform;
+                    GameManager.Instance.VirtualCam.transform.position = _position + new Vector3(0, 6, -8);
+                    GameManager.Instance.VirtualCam.transform.rotation = Quaternion.AngleAxis(-45, Vector3.left);
+                    GameManager.Instance.VirtualCam.Follow = _obj.transform;
                     EventManager.Instance.Invoke(EEventType.PlayerLoaded);
                 }
                 _obj.GetComponent<GameEntity>().NameBar.Name.text = _name;

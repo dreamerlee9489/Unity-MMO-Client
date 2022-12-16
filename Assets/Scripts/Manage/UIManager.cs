@@ -1,17 +1,18 @@
-﻿using Manage;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UI;
 using UnityEngine.UI;
 
-namespace UI
+namespace Manage
 {
-    public class UICanvas : BasePanel
+    public class UIManager : MonoSingleton<UIManager>
     {
+        private Text _debug;
         private readonly Dictionary<string, BasePanel> _panelDict = new();
-        private readonly Text _debug;
 
         protected override void Awake()
         {
-            DontDestroyOnLoad(this);
+            base.Awake();
+            _debug = transform.Find("Debug").GetComponent<Text>();
             EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
         }
 
@@ -26,9 +27,8 @@ namespace UI
 
         public T GetPanel<T>() where T : BasePanel
         {
-            string type = typeof(T).Name;
-            if (_panelDict.ContainsKey(type))
-                return _panelDict[type].GetComponent<T>();
+            if (_panelDict.ContainsKey(typeof(T).Name))
+                return _panelDict[typeof(T).Name].GetComponent<T>();
             return null;
         }
 

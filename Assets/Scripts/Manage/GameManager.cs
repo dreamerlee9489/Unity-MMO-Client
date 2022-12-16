@@ -1,39 +1,39 @@
-﻿using Net;
+﻿using Cinemachine;
 using LitJson;
+using Net;
 using System.Collections;
+using UI;
 using UnityEngine;
 using UnityEngine.Networking;
-using UI;
 using UnityEngine.SceneManagement;
-using Cinemachine;
 
 namespace Manage
 {
     public class GameManager : MonoSingleton<GameManager>
     {
-        private UICanvas _canvas;
+        private UIManager _canvas;
         private AccountInfo _accountInfo;
         private PlayerInfo _mainPlayer;
-        private CinemachineVirtualCamera _virtualCamera;
+        private CinemachineVirtualCamera _virtualCam;
         private WorldManager _activeWorld;
 
-        public string ip;
-        public int port;
-
-        public UICanvas Canvas => _canvas;
+        public UIManager Canvas => _canvas;
         public AccountInfo AccountInfo => _accountInfo;
         public PlayerInfo MainPlayer => _mainPlayer;
-        public CinemachineVirtualCamera VirtualCamera => _virtualCamera;
+        public CinemachineVirtualCamera VirtualCam => _virtualCam;
         public WorldManager ActiveWorld => _activeWorld;
+
+        public string serverIp;
+        public int serverPort;
 
         protected override void Awake()
         {
             base.Awake();
-            _canvas = GameObject.Find("UICanvas").GetComponent<UICanvas>();
-            _virtualCamera = transform.GetChild(1).GetComponent<CinemachineVirtualCamera>();
-            MsgManager.Instance.RegistMsgHandler(Net.MsgId.L2CPlayerList, PlayerListHandler);
-            MsgManager.Instance.RegistMsgHandler(Net.MsgId.G2CSyncPlayer, SyncPlayerHandler);
-            MsgManager.Instance.RegistMsgHandler(Net.MsgId.S2CEnterWorld, EnterWorldHandler);
+            _canvas = GameObject.Find("UIManager").GetComponent<UIManager>();
+            _virtualCam = transform.GetChild(1).GetComponent<CinemachineVirtualCamera>();
+            MsgManager.Instance.RegistMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
             PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
             PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
@@ -42,14 +42,15 @@ namespace Manage
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
             MonoManager.Instance.StartCoroutine(ConnectServer());
+            HotUpdateManager.Instance.CheckUpdate();
         }
 
         private void OnDestroy()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.L2CPlayerList, PlayerListHandler);
-            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.G2CSyncPlayer, SyncPlayerHandler);
-            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.S2CEnterWorld, EnterWorldHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -59,7 +60,7 @@ namespace Manage
 
         private IEnumerator ConnectServer()
         {
-            UnityWebRequest request = UnityWebRequest.Get($"http://{ip}:{port}/login");
+            UnityWebRequest request = UnityWebRequest.Get($"http://{serverIp}:{serverPort}/login");
             request.SetRequestHeader("Content-Type", "application/json;charset=utf-8");
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
@@ -78,7 +79,7 @@ namespace Manage
 
         private void PlayerListHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Net.PlayerList proto)
+            if (msg is PlayerList proto)
             {
                 _accountInfo ??= new AccountInfo();
                 _accountInfo.ParseProto(proto);
@@ -101,7 +102,7 @@ namespace Manage
 
         private void EnterWorldHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Net.EnterWorld proto && proto.WorldId > 2)
+            if (msg is EnterWorld proto && proto.WorldId > 2)
             {
                 SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
                 Canvas.GetPanel<StartPanel>().Close();
@@ -110,7 +111,7 @@ namespace Manage
 
         private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Net.SyncPlayer proto)
+            if (msg is SyncPlayer proto)
             {
                 _mainPlayer ??= new PlayerInfo();
                 _mainPlayer.Parse(proto.Player);

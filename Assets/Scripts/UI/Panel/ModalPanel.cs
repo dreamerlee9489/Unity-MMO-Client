@@ -14,7 +14,6 @@ namespace UI
         protected override void Awake()
         {
             base.Awake();
-            _panelType = PanelType.ModalPanel;
             _modalBox = transform.Find("ModalBox");
             _title = _modalBox.Find("Title").GetChild(0).GetComponent<Text>();
             _msg = _modalBox.Find("Msg").GetComponent<Text>();
