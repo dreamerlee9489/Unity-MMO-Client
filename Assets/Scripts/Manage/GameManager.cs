@@ -1,6 +1,7 @@
 ﻿using Cinemachine;
 using LitJson;
 using Net;
+using System;
 using System.Collections;
 using UI;
 using UnityEngine;
@@ -34,6 +35,7 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
+            EventManager.Instance.AddListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
             PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
             PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
@@ -41,8 +43,6 @@ namespace Manage
         private void Start()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
-            MonoManager.Instance.StartCoroutine(ConnectServer());
-            HotUpdateManager.Instance.CheckUpdate();
         }
 
         private void OnDestroy()
@@ -51,6 +51,7 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
+            EventManager.Instance.RemoveListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -115,6 +116,20 @@ namespace Manage
             {
                 _mainPlayer ??= new PlayerInfo();
                 _mainPlayer.Parse(proto.Player);
+            }
+        }
+
+        private void HotUpdatedCallback(bool updateOver)
+        {
+            UIManager.Instance.GetPanel<StartPanel>().Open();
+            if (updateOver)
+                MonoManager.Instance.StartCoroutine(ConnectServer());
+            else
+            {
+                UIManager.Instance.GetPanel<ModalPanel>().Open("检查更新", "更新失败！", ModalPanelType.Hint, () =>
+                {
+                    Application.Quit();
+                });
             }
         }
     }

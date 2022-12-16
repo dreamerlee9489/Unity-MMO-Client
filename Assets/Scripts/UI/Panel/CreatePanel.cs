@@ -23,7 +23,7 @@ namespace UI
             {
                 if (string.IsNullOrEmpty(_roleName.text))
                 {
-                    GameManager.Instance.Canvas.GetPanel<ModalPanel>().Open("创建角色", "角色名不能为空");
+                    GameManager.Instance.Canvas.GetPanel<ModalPanel>().Open("创建角色", "角色名不能为空", ModalPanelType.Hint);
                     return;
                 }
                 Net.CreatePlayer proto = new()

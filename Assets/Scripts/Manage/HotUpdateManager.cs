@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using UI;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -62,19 +63,21 @@ namespace Manage
         private readonly Dictionary<string, ABInfo> _remoteInfoDict = new();
         private readonly Dictionary<string, ABInfo> _localInfoDict = new();
         private readonly List<string> _downloadList = new();
+        private ModalPanel _modalPanel = null;
+        private bool _isOver = false;
 
-        private bool DownloadFile(string fileName, string localPath)
+        public bool DownloadFile(string remotePath, string localPath)
         {
             try
             {
-                FtpWebRequest request = WebRequest.Create(new Uri($"{_ftpIp}/AssetBundles/{_platform}/{fileName}")) as FtpWebRequest;
+                FtpWebRequest request = WebRequest.Create(new Uri($"{_ftpIp}/{remotePath}")) as FtpWebRequest;
                 request.Credentials = new NetworkCredential("ftpuser", "edward199473");
                 request.Proxy = null;
                 request.KeepAlive = false;
                 request.UseBinary = true;
                 request.Method = WebRequestMethods.Ftp.DownloadFile;
                 Stream respStream = request.GetResponse().GetResponseStream();
-                using FileStream fileStream = File.Create(localPath);
+                using FileStream fileStream = File.Create($"{localPath}");
                 byte[] bytes = new byte[4096];
                 int length = respStream.Read(bytes, 0, bytes.Length);
                 while (length > 0)
@@ -88,7 +91,7 @@ namespace Manage
             }
             catch (Exception ex)
             {
-                Debug.LogError(fileName + " 下载失败 " + ex.Message);
+                Debug.LogError(remotePath + " 下载失败 " + ex.Message);
                 return false;
             }
         }
@@ -96,13 +99,13 @@ namespace Manage
         private async void GetRemoteInfoList(Action<bool> callback)
         {
             print(Application.persistentDataPath);
-            string localPath = $"{Application.persistentDataPath}/AssetBundles/{_platform}/";
+            string localDir = $"{Application.persistentDataPath}/AssetBundles/{_platform}";
             bool isOver = false;
             for (int i = 0; !isOver || i < 3; i++)
             {
                 await Task.Run(() =>
                 {
-                    isOver = DownloadFile("ABInfoList.txt", localPath + "ABInfoList_TMP.txt");
+                    isOver = DownloadFile($"AssetBundles/{_platform}/ABInfoList.txt", $"{localDir}/ABInfoList_TMP.txt");
                 });
             }
             callback(isOver);
@@ -146,7 +149,7 @@ namespace Manage
 
         private async void DownloadAssetBundles(Action<bool> callback)
         {
-            string localPath = Application.persistentDataPath + $"/AssetBundles/{_platform}/";
+            string localDir = $"{Application.persistentDataPath}/AssetBundles/{_platform}";
             int downloadedNum = 0, downloadCount = _downloadList.Count;
             List<string> tempList = new();
             for (int round = 0; _downloadList.Count > 0 || round < 3; round++)
@@ -156,11 +159,11 @@ namespace Manage
                     bool isOver = false;
                     await Task.Run(() =>
                     {
-                        isOver = DownloadFile(_downloadList[index], localPath + _downloadList[index]);
+                        isOver = DownloadFile($"AssetBundles/{_platform}/{_downloadList[index]}", $"{localDir}/{_downloadList[index]}");
                     });
                     if (isOver)
                     {
-                        print("更新进度：" + ++downloadedNum + "/" + downloadCount);
+                        _modalPanel.SetMsg("更新进度：" + ++downloadedNum + "/" + downloadCount);
                         tempList.Add(_downloadList[index]);
                     }
                 }
@@ -175,6 +178,8 @@ namespace Manage
         {
             if (!Directory.Exists($"{Application.persistentDataPath}/AssetBundles/{_platform}/"))
                 Directory.CreateDirectory($"{Application.persistentDataPath}/AssetBundles/{_platform}/");
+            _modalPanel = UIManager.Instance.GetPanel<ModalPanel>();
+            _modalPanel.Open("检查更新", "", ModalPanelType.Hint, () => { EventManager.Instance.Invoke(EEventType.HotUpdated, _isOver); });
             GetRemoteInfoList((isOver) =>
             {
                 if (!isOver)
@@ -203,12 +208,12 @@ namespace Manage
                         }
                         DownloadAssetBundles((isOver) =>
                         {
+                            _isOver = isOver;
                             if (isOver)
                             {
-                                print("更新完成");
+                                _modalPanel.SetMsg("更新完成");
                                 File.WriteAllText($"{Application.persistentDataPath}/AssetBundles/{_platform}/ABInfoList.txt", remoteInfoList);
                             }
-                            EventManager.Instance.Invoke(EEventType.HotUpdated, isOver);
                         });
                     });
                 }
