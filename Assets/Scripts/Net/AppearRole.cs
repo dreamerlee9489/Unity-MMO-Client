@@ -8,7 +8,7 @@ namespace Net
     {
         protected ulong _sn;
         protected string _name;
-        protected UnityEngine.Vector3 _position;
+        protected Vector3 _position;
         protected Gender _gender;
         protected GameObject _obj;
 
@@ -30,8 +30,8 @@ namespace Net
                     _obj.name = "MainPlayer";
                     Object.DontDestroyOnLoad(_obj);
                     GameManager.Instance.MainPlayer.SetGameObject(_obj);
-                    GameManager.Instance.VirtualCamera.transform.position = _position + new UnityEngine.Vector3(0, 6, -8);
-                    GameManager.Instance.VirtualCamera.transform.rotation = Quaternion.AngleAxis(-45, UnityEngine.Vector3.left);
+                    GameManager.Instance.VirtualCamera.transform.position = _position + new Vector3(0, 6, -8);
+                    GameManager.Instance.VirtualCamera.transform.rotation = Quaternion.AngleAxis(-45, Vector3.left);
                     GameManager.Instance.VirtualCamera.Follow = _obj.transform;
                     EventManager.Instance.Invoke(EEventType.PlayerLoaded);
                 }

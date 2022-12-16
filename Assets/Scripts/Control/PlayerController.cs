@@ -14,8 +14,8 @@ namespace Control
         private RaycastHit _hit;
         private Vector3 _hitPoint = Vector3.zero;
         private readonly WaitForSeconds _sleep = new(0.02f);
-        private readonly Net.Vector3 _curPos = new();
-        private readonly Net.Vector3 _hitPos = new();
+        private readonly Net.Vector3D _curPos = new();
+        private readonly Net.Vector3D _hitPos = new();
 
         public ulong Sn { get; set; }
 
