@@ -5,22 +5,22 @@ namespace Manage
     public class MsgManager : BaseSingleton<MsgManager>
     {
         public delegate void MsgHandler(Google.Protobuf.IMessage msg);
-        private readonly Dictionary<Proto.MsgId, MsgHandler> _handlerDict = new();
+        private readonly Dictionary<Net.MsgId, MsgHandler> _handlerDict = new();
 
-        public void RegistMsgHandler(Proto.MsgId msgId, MsgHandler handler)
+        public void RegistMsgHandler(Net.MsgId msgId, MsgHandler handler)
         {
             if (!_handlerDict.ContainsKey(msgId))
                 _handlerDict.Add(msgId, null);
             _handlerDict[msgId] += handler;
         }
 
-        public void RemoveMsgHandler(Proto.MsgId msgId, MsgHandler handler)
+        public void RemoveMsgHandler(Net.MsgId msgId, MsgHandler handler)
         {
             if (!_handlerDict.ContainsKey(msgId) && handler != null)
                 _handlerDict[msgId] -= handler;
         }
 
-        public void HandleMsg(Proto.MsgId msgId, Google.Protobuf.IMessage msg)
+        public void HandleMsg(Net.MsgId msgId, Google.Protobuf.IMessage msg)
         {
             if (_handlerDict.ContainsKey(msgId))
                 _handlerDict[msgId]?.Invoke(msg);

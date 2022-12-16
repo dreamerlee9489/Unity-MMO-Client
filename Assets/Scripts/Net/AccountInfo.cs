@@ -10,12 +10,12 @@ namespace Net
         public string Account => _account;
         public List<RoleInfo> Players => _players;
 
-        public void ParseProto(Proto.PlayerList proto)
+        public void ParseProto(Net.PlayerList proto)
         {
             _account = proto.Account;
             _players.Clear();
 
-            foreach (Proto.PlayerLittle roleProto in proto.Player)
+            foreach (Net.PlayerLittle roleProto in proto.Player)
             {
                 RoleInfo role = new();
                 role.ParseProto(roleProto);

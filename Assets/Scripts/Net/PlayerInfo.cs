@@ -2,11 +2,11 @@
 
 namespace Net
 {
-    public class Player
+    public class PlayerInfo
     {
         protected ulong _sn;
         protected string _name;
-        protected Proto.Gender _gender;
+        protected Net.Gender _gender;
         protected GameObject _obj = null;
         public ulong Sn => _sn;
         public string Name => _name;
@@ -15,7 +15,7 @@ namespace Net
 
         public GameObject GetGameObject() => _obj;
 
-        public void Parse(Proto.Player proto)
+        public void Parse(Net.Player proto)
         {
             _sn = proto.Sn;
             _name = proto.Name;

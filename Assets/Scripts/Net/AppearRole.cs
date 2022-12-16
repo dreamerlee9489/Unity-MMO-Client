@@ -8,8 +8,8 @@ namespace Net
     {
         protected ulong _sn;
         protected string _name;
-        protected Vector3 _position;
-        protected Proto.Gender _gender;
+        protected UnityEngine.Vector3 _position;
+        protected Gender _gender;
         protected GameObject _obj;
 
         public ulong Sn => _sn;
@@ -17,7 +17,7 @@ namespace Net
 
         public void LoadObj()
         {
-            string path = _gender == Proto.Gender.Male ? "Entity/Player/Player_Knight" : "Entity/Player/Player_Warrior";
+            string path = _gender == Gender.Male ? "Entity/Player/Player_Knight" : "Entity/Player/Player_Warrior";
             ResourceManager.Instance.LoadAsync<GameObject>(path, (obj) =>
             {
                 _obj = Object.Instantiate(obj);
@@ -30,7 +30,8 @@ namespace Net
                     _obj.name = "MainPlayer";
                     Object.DontDestroyOnLoad(_obj);
                     GameManager.Instance.MainPlayer.SetGameObject(_obj);
-                    GameManager.Instance.VirtualCamera.transform.SetPositionAndRotation(_position + new Vector3(0, 6, -8), Quaternion.AngleAxis(-45, Vector3.left));
+                    GameManager.Instance.VirtualCamera.transform.position = _position + new UnityEngine.Vector3(0, 6, -8);
+                    GameManager.Instance.VirtualCamera.transform.rotation = Quaternion.AngleAxis(-45, UnityEngine.Vector3.left);
                     GameManager.Instance.VirtualCamera.Follow = _obj.transform;
                     EventManager.Instance.Invoke(EEventType.PlayerLoaded);
                 }
@@ -40,7 +41,7 @@ namespace Net
             });
         }
 
-        public void Parse(Proto.Role proto)
+        public void Parse(Role proto)
         {
             _sn = proto.Sn;
             _name = proto.Name;

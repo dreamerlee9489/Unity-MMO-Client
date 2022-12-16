@@ -18,29 +18,29 @@ namespace Manage
 
         private void Awake()
         {
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnemy, EnemyHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.S2CRoleAppear, RoleAppearHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.S2CEnemy, EnemyHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             EventManager.Instance.AddListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
 
         private void OnApplicationQuit()
         {
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnemy, EnemyHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.S2CRoleAppear, RoleAppearHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.S2CEnemy, EnemyHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.S2CFsmSyncState, FsmSyncStateHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
 
-        private Vector3 GetPos(string posStr)
+        private UnityEngine.Vector3 GetPos(string posStr)
         {
-            Vector3 pos = Vector3.zero;
+            UnityEngine.Vector3 pos = UnityEngine.Vector3.zero;
             posStr = posStr[1..^1];
             string[] strs = posStr.Split(';');
             pos.x = float.Parse(strs[0]);
@@ -51,9 +51,9 @@ namespace Manage
 
         private void RoleAppearHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.RoleAppear proto)
+            if (msg is Net.RoleAppear proto)
             {
-                foreach (Proto.Role role in proto.Role)
+                foreach (Net.Role role in proto.Role)
                 {
                     ulong sn = role.Sn;
                     if (_players.ContainsKey(sn))
@@ -71,7 +71,7 @@ namespace Manage
 
         private void PlayerSyncStateHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.PlayerSyncState proto)
+            if (msg is Net.PlayerSyncState proto)
             {
                 ulong playSn = proto.PlayerSn;
                 if (_players.ContainsKey(playSn))
@@ -88,7 +88,7 @@ namespace Manage
 
         private void EnemyHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.Enemy proto && _enemies.Count > 0)
+            if (msg is Net.Enemy proto && _enemies.Count > 0)
             {
                 int id = proto.Id;
                 _enemies[id].ParseEnemy(proto);
@@ -97,7 +97,7 @@ namespace Manage
 
         private void FsmSyncStateHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.FsmSyncState proto && _enemies.Count > 0)
+            if (msg is Net.FsmSyncState proto && _enemies.Count > 0)
             {
                 FsmStateType type = (FsmStateType)proto.State;
                 int code = proto.Code;
@@ -112,7 +112,7 @@ namespace Manage
 
         private void RoleDisAppearHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.RoleDisAppear proto)
+            if (msg is Net.RoleDisAppear proto)
             {
                 ulong playSn = proto.Sn;
                 if (_players.ContainsKey(playSn))
@@ -128,7 +128,7 @@ namespace Manage
 
         private void RequestLinkPlayerHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.RequestLinkPlayer proto)
+            if (msg is Net.RequestLinkPlayer proto)
                 _enemies[proto.EnemyId].LinkPlayer(proto.IsLinker);
         }
 
@@ -149,12 +149,12 @@ namespace Manage
                 enemyObj.transform.position = GetPos(strs[3]);
                 enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.Id;
                 _enemies.Add(enemyObj);
-                Proto.RequestSyncEnemy proto = new()
+                Net.RequestSyncEnemy proto = new()
                 {
                     PlayerSn = GameManager.Instance.MainPlayer.Sn,
                     EnemyId = enemyObj.Id
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemy, proto);
+                NetManager.Instance.SendPacket(Net.MsgId.C2SRequestSyncEnemy, proto);
             }
         }
     }

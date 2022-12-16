@@ -22,25 +22,25 @@ namespace Control.FSM
             _owner.transform.LookAt(_target.transform);
             if (!_owner.CanSee(_target))
             {
-                Proto.FsmSyncState proto = new()
+                Net.FsmSyncState proto = new()
                 {
                     EnemyId = _owner.Id,
                     PlayerSn = _target.Sn,
                     State = (int)FsmStateType.Idle,
                     Code = -1,
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SFsmSyncState, proto);
+                NetManager.Instance.SendPacket(Net.MsgId.C2SFsmSyncState, proto);
             }
             if (!_owner.CanAttack(_target))
             {
-                Proto.FsmSyncState proto = new()
+                Net.FsmSyncState proto = new()
                 {
                     EnemyId = _owner.Id,
                     PlayerSn = _target.Sn,
                     State = (int)FsmStateType.Pursuit,
                     Code = -1,
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SFsmSyncState, proto);
+                NetManager.Instance.SendPacket(Net.MsgId.C2SFsmSyncState, proto);
             }
         }
 

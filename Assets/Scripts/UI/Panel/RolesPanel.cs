@@ -31,18 +31,18 @@ namespace UI
                 {
                     if (RolesRect.content.GetChild(i).GetComponent<Toggle>().isOn)
                     {
-                        Proto.SelectPlayer proto = new()
+                        Net.SelectPlayer proto = new()
                         {
                             PlayerSn = RolesRect.content.GetChild(i).GetComponent<RoleToggle>().Id
                         };
-                        NetManager.Instance.SendPacket(Proto.MsgId.C2LSelectPlayer, proto);
+                        NetManager.Instance.SendPacket(Net.MsgId.C2LSelectPlayer, proto);
                         break;
                     }
                 }
             });
 
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CGameToken, GameTokenHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2GLoginByTokenRs, LoginByTokenRsHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.L2CGameToken, GameTokenHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.C2GLoginByTokenRs, LoginByTokenRsHandler);
             EventManager.Instance.AddListener<EAppType>(EEventType.Connected, ConnectedCallback);
             EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
         }
@@ -55,8 +55,8 @@ namespace UI
 
         private void OnApplicationQuit()
         {
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CGameToken, GameTokenHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2GLoginByTokenRs, GameTokenHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.L2CGameToken, GameTokenHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.C2GLoginByTokenRs, GameTokenHandler);
             EventManager.Instance.RemoveListener<EAppType>(EEventType.Connected, ConnectedCallback);
             EventManager.Instance.RemoveListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
         }
@@ -71,7 +71,7 @@ namespace UI
 
         private void GameTokenHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.GameToken proto && NetManager.Instance.AppType == EAppType.Login)
+            if (msg is Net.GameToken proto && NetManager.Instance.AppType == EAppType.Login)
             {
                 _token = proto.Token;
                 _account = GameManager.Instance.AccountInfo.Account;
@@ -82,17 +82,17 @@ namespace UI
 
         private void LoginByTokenRsHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.LoginByTokenRs proto)
+            if (msg is Net.LoginByTokenRs proto)
             {
                 switch (proto.ReturnCode)
                 {
-                    case Proto.LoginByTokenRs.Types.ReturnCode.LgrcNotFoundAccount:
+                    case Net.LoginByTokenRs.Types.ReturnCode.LgrcNotFoundAccount:
                         break;
-                    case Proto.LoginByTokenRs.Types.ReturnCode.LgrcTokenWrong:
+                    case Net.LoginByTokenRs.Types.ReturnCode.LgrcTokenWrong:
                         break;
-                    case Proto.LoginByTokenRs.Types.ReturnCode.LgrcUnkonwn:
+                    case Net.LoginByTokenRs.Types.ReturnCode.LgrcUnkonwn:
                         break;
-                    case Proto.LoginByTokenRs.Types.ReturnCode.LgrcOk:
+                    case Net.LoginByTokenRs.Types.ReturnCode.LgrcOk:
                         break;
                     default:
                         break;
@@ -113,12 +113,12 @@ namespace UI
         private IEnumerator SendTokenDelay()
         {
             yield return new WaitForSeconds(1);
-            Proto.LoginByToken proto = new()
+            Net.LoginByToken proto = new()
             {
                 Token = _token,
                 Account = _account
             };
-            NetManager.Instance.SendPacket(Proto.MsgId.C2GLoginByToken, proto);
+            NetManager.Instance.SendPacket(Net.MsgId.C2GLoginByToken, proto);
         }
     }
 }

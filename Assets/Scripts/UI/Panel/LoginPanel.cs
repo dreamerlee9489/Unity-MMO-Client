@@ -17,16 +17,16 @@ namespace UI
 
             _loginBtn.onClick.AddListener(() =>
             {
-                Proto.AccountCheck proto = new()
+                Net.AccountCheck proto = new()
                 {
                     Account = _username.text,
                     Password = NetManager.Instance.Md5(System.Text.Encoding.Default.GetBytes(_password.text))
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2LAccountCheck, proto);
+                NetManager.Instance.SendPacket(Net.MsgId.C2LAccountCheck, proto);
                 Close();
             });
 
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2LAccountCheckRs, AccountCheckRsHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.C2LAccountCheckRs, AccountCheckRsHandler);
             EventManager.Instance.AddListener<EAppType>(EEventType.Connected, ConnectedCallback);
             EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
         }
@@ -39,31 +39,31 @@ namespace UI
 
         private void OnApplicationQuit()
         {
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2LAccountCheckRs, AccountCheckRsHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.C2LAccountCheckRs, AccountCheckRsHandler);
             EventManager.Instance.RemoveListener<EAppType>(EEventType.Connected, ConnectedCallback);
             EventManager.Instance.RemoveListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
         }
 
         private void AccountCheckRsHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.AccountCheckRs proto)
+            if (msg is Net.AccountCheckRs proto)
             {
-                Proto.AccountCheckReturnCode code = proto.ReturnCode;
+                Net.AccountCheckReturnCode code = proto.ReturnCode;
                 switch (code)
                 {
-                    case Proto.AccountCheckReturnCode.ArcOk:
+                    case Net.AccountCheckReturnCode.ArcOk:
                         break;
-                    case Proto.AccountCheckReturnCode.ArcUnkonwn:
+                    case Net.AccountCheckReturnCode.ArcUnkonwn:
                         break;
-                    case Proto.AccountCheckReturnCode.ArcNotFoundAccount:
+                    case Net.AccountCheckReturnCode.ArcNotFoundAccount:
                         break;
-                    case Proto.AccountCheckReturnCode.ArcPasswordWrong:
+                    case Net.AccountCheckReturnCode.ArcPasswordWrong:
                         break;
-                    case Proto.AccountCheckReturnCode.ArcLogging:
+                    case Net.AccountCheckReturnCode.ArcLogging:
                         break;
-                    case Proto.AccountCheckReturnCode.ArcTimeout:
+                    case Net.AccountCheckReturnCode.ArcTimeout:
                         break;
-                    case Proto.AccountCheckReturnCode.ArcOnline:
+                    case Net.AccountCheckReturnCode.ArcOnline:
                         break;
                     default:
                         break;

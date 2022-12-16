@@ -21,14 +21,14 @@ namespace Control.FSM
         {
             if (_owner.CanSee(_target))
             {
-                Proto.FsmSyncState proto = new()
+                Net.FsmSyncState proto = new()
                 {
                     EnemyId = _owner.Id,
                     PlayerSn = _target.Sn,
                     State = (int)FsmStateType.Pursuit,
                     Code = -1,
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SFsmSyncState, proto);
+                NetManager.Instance.SendPacket(Net.MsgId.C2SFsmSyncState, proto);
             }
         }
 

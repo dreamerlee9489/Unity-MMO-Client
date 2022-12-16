@@ -13,7 +13,7 @@ namespace Manage
     {
         private UICanvas _canvas;
         private AccountInfo _accountInfo;
-        private Player _mainPlayer;
+        private PlayerInfo _mainPlayer;
         private CinemachineVirtualCamera _virtualCamera;
         private WorldManager _activeWorld;
 
@@ -22,7 +22,7 @@ namespace Manage
 
         public UICanvas Canvas => _canvas;
         public AccountInfo AccountInfo => _accountInfo;
-        public Player MainPlayer => _mainPlayer;
+        public PlayerInfo MainPlayer => _mainPlayer;
         public CinemachineVirtualCamera VirtualCamera => _virtualCamera;
         public WorldManager ActiveWorld => _activeWorld;
 
@@ -31,9 +31,9 @@ namespace Manage
             base.Awake();
             _canvas = GameObject.Find("UICanvas").GetComponent<UICanvas>();
             _virtualCamera = transform.GetChild(1).GetComponent<CinemachineVirtualCamera>();
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.L2CPlayerList, PlayerListHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.G2CSyncPlayer, SyncPlayerHandler);
+            MsgManager.Instance.RegistMsgHandler(Net.MsgId.S2CEnterWorld, EnterWorldHandler);
             PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
             PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
@@ -47,9 +47,9 @@ namespace Manage
         private void OnDestroy()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.L2CPlayerList, PlayerListHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.G2CSyncPlayer, SyncPlayerHandler);
+            MsgManager.Instance.RemoveMsgHandler(Net.MsgId.S2CEnterWorld, EnterWorldHandler);
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -78,7 +78,7 @@ namespace Manage
 
         private void PlayerListHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.PlayerList proto)
+            if (msg is Net.PlayerList proto)
             {
                 _accountInfo ??= new AccountInfo();
                 _accountInfo.ParseProto(proto);
@@ -101,7 +101,7 @@ namespace Manage
 
         private void EnterWorldHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.EnterWorld proto && proto.WorldId > 2)
+            if (msg is Net.EnterWorld proto && proto.WorldId > 2)
             {
                 SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
                 Canvas.GetPanel<StartPanel>().Close();
@@ -110,9 +110,9 @@ namespace Manage
 
         private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.SyncPlayer proto)
+            if (msg is Net.SyncPlayer proto)
             {
-                _mainPlayer ??= new Player();
+                _mainPlayer ??= new PlayerInfo();
                 _mainPlayer.Parse(proto.Player);
             }
         }
