@@ -125,12 +125,7 @@ namespace Manage
             if (updateOver)
                 MonoManager.Instance.StartCoroutine(ConnectServer());
             else
-            {
-                UIManager.Instance.GetPanel<ModalPanel>().Open("检查更新", "更新失败！", ModalPanelType.Hint, () =>
-                {
-                    Application.Quit();
-                });
-            }
+                UIManager.Instance.GetPanel<ModalPanel>().Open("检查更新", "更新失败！", ModalPanelType.Hint);
         }
     }
 }

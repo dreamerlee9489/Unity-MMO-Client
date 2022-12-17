@@ -36,6 +36,20 @@ namespace Manage
 
     public class HotUpdateManager : MonoBehaviour
     {
+        private readonly string _platform =
+#if UNITY_ANDROID
+    "Android";
+#elif UNITY_IOS
+    "IOS";
+#else
+    "Windows";
+#endif
+        private readonly string _ftpIp = "ftp://192.168.11.129";
+        private readonly Dictionary<string, ABInfo> _remoteInfoDict = new();
+        private readonly Dictionary<string, ABInfo> _localInfoDict = new();
+        private readonly List<string> _downloadList = new();
+        private ModalPanel _modalPanel = null;
+
         private static HotUpdateManager _instance;
 
         public static HotUpdateManager Instance
@@ -50,21 +64,6 @@ namespace Manage
                 return _instance;
             }
         }
-
-        private readonly string _platform =
-#if UNITY_ANDROID
-    "Android";
-#elif UNITY_IOS
-    "IOS";
-#else
-    "Windows";
-#endif
-        private readonly string _ftpIp = "ftp://192.168.11.129";
-        private readonly Dictionary<string, ABInfo> _remoteInfoDict = new();
-        private readonly Dictionary<string, ABInfo> _localInfoDict = new();
-        private readonly List<string> _downloadList = new();
-        private ModalPanel _modalPanel = null;
-        private bool _isOver = false;
 
         public bool DownloadFile(string remotePath, string localPath)
         {
@@ -179,7 +178,7 @@ namespace Manage
             if (!Directory.Exists($"{Application.persistentDataPath}/AssetBundles/{_platform}/"))
                 Directory.CreateDirectory($"{Application.persistentDataPath}/AssetBundles/{_platform}/");
             _modalPanel = UIManager.Instance.GetPanel<ModalPanel>();
-            _modalPanel.Open("检查更新", "", ModalPanelType.Hint, () => { EventManager.Instance.Invoke(EEventType.HotUpdated, _isOver); });
+            _modalPanel.Open("检查更新", "", ModalPanelType.Hint);
             GetRemoteInfoList((isOver) =>
             {
                 if (!isOver)
@@ -208,12 +207,12 @@ namespace Manage
                         }
                         DownloadAssetBundles((isOver) =>
                         {
-                            _isOver = isOver;
                             if (isOver)
                             {
                                 _modalPanel.SetMsg("更新完成");
                                 File.WriteAllText($"{Application.persistentDataPath}/AssetBundles/{_platform}/ABInfoList.txt", remoteInfoList);
                             }
+                            EventManager.Instance.Invoke(EEventType.HotUpdated, isOver);
                         });
                     });
                 }

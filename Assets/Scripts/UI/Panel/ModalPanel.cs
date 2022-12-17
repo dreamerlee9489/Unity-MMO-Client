@@ -14,7 +14,6 @@ namespace UI
         private Text _hintMsg, _updateMsg;
         private Button _hintCloseBtn, _updateCloseBtn;
         private RectTransform _hint, _update;
-        private Action _closeFunc;
 
         protected override void Awake()
         {
@@ -65,9 +64,8 @@ namespace UI
 
         private void ConnectedCallback(EAppType appType) => Close();
 
-        public void Open(string title, string msg, ModalPanelType type, Action closeFunc = null)
+        public void Open(string title, string msg, ModalPanelType type)
         {
-            _closeFunc = closeFunc;
             switch (type)
             {
                 case ModalPanelType.Notice:
@@ -106,7 +104,6 @@ namespace UI
 
         public void Close(ModalPanelType type)
         {
-            _closeFunc?.Invoke();
             switch (type)
             {
                 case ModalPanelType.Notice:
