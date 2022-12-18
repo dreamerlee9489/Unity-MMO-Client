@@ -14,7 +14,7 @@ namespace Control
         public FsmState CurrState => _currState;
         public PatrolPath PatrolPath => _patrolPath;
 
-        public int Id { get; set; }
+        public int id = 0;
 
         protected override void Awake()
         {
@@ -46,7 +46,7 @@ namespace Control
             {
                 Net.Enemy proto = new()
                 {
-                    Id = Id,
+                    Id = id,
                     Pos = new()
                     {
                         X = transform.position.x,

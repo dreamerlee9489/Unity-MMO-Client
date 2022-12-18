@@ -101,7 +101,7 @@ namespace Control
                     Net.PlayerSyncState proto = new()
                     {
                         PlayerSn = Sn,
-                        EnemyId = (!_hitTarget || _hitTarget.CompareTag("Terrain")) ? -1 : _hitTarget.GetComponent<FsmController>().Id,
+                        EnemyId = (!_hitTarget || _hitTarget.CompareTag("Terrain")) ? -1 : _hitTarget.GetComponent<FsmController>().id,
                         State = (int)_state,
                         Code = _stateCode,
                         CurPos = _curPos,

@@ -28,8 +28,6 @@ namespace Control
         public NavMeshAgent Agent => _agent;
         public NameBar NameBar => _nameBar;
 
-        public int Hp { get; set; }
-
         protected virtual void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();

@@ -139,23 +139,36 @@ namespace Manage
             reader.ReadLine();
             string line;
             int id = 0;
+            Vector3 pos = Vector3.zero;
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
                 GameObject obj = ResourceManager.Instance.Load<GameObject>("Entity/Enemy/" + strs[1]);
                 FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
-                enemyObj.Id = id++;
-                enemyObj.Hp = int.Parse(strs[2]);
-                enemyObj.transform.position = GetPos(strs[3]);
-                enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.Id;
+                enemyObj.id = id++;
+                enemyObj.transform.position = pos.Parse(strs[3]);
+                enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.id;
                 _enemies.Add(enemyObj);
                 RequestSyncEnemy proto = new()
                 {
                     PlayerSn = GameManager.Instance.MainPlayer.Sn,
-                    EnemyId = enemyObj.Id
+                    EnemyId = enemyObj.id
                 };
                 NetManager.Instance.SendPacket(MsgId.C2SRequestSyncEnemy, proto);
             }
         }
+    }
+}
+
+public static partial class Utils
+{
+    public static Vector3 Parse(this Vector3 pos, string str)
+    {
+        str = str[1..^1];
+        string[] strs = str.Split(';');
+        pos.x = float.Parse(strs[0]);
+        pos.y = float.Parse(strs[1]);
+        pos.z = float.Parse(strs[2]);
+        return pos;
     }
 }

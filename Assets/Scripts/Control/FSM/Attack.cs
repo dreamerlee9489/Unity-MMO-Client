@@ -24,7 +24,7 @@ namespace Control.FSM
             {
                 Net.FsmSyncState proto = new()
                 {
-                    EnemyId = _owner.Id,
+                    EnemyId = _owner.id,
                     PlayerSn = _target.Sn,
                     State = (int)FsmStateType.Idle,
                     Code = -1,
@@ -35,7 +35,7 @@ namespace Control.FSM
             {
                 Net.FsmSyncState proto = new()
                 {
-                    EnemyId = _owner.Id,
+                    EnemyId = _owner.id,
                     PlayerSn = _target.Sn,
                     State = (int)FsmStateType.Pursuit,
                     Code = -1,
