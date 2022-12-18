@@ -44,27 +44,27 @@ namespace Manage
         private ENetState _state = ENetState.NoConnect;
         private int _recvIdx = 0;
         private readonly byte[] _recvBuf = new byte[512 * 1024];
-        private readonly Dictionary<Net.MsgId, ParseFunc> _funcDict = new();
+        private readonly Dictionary<Proto.MsgId, ParseFunc> _funcDict = new();
 
         public EAppType AppType => _appType;
 
         protected override void Awake()
         {
             base.Awake();
-            RegistParseFunc(Net.MsgId.C2LAccountCheckRs, ParsePacket<Net.AccountCheckRs>);
-            RegistParseFunc(Net.MsgId.C2LCreatePlayerRs, ParsePacket<Net.CreatePlayerRs>);
-            RegistParseFunc(Net.MsgId.C2LSelectPlayerRs, ParsePacket<Net.SelectPlayerRs>);
-            RegistParseFunc(Net.MsgId.S2CEnterWorld, ParsePacket<Net.EnterWorld>);
-            RegistParseFunc(Net.MsgId.L2CGameToken, ParsePacket<Net.GameToken>);
-            RegistParseFunc(Net.MsgId.C2GLoginByTokenRs, ParsePacket<Net.LoginByTokenRs>);
-            RegistParseFunc(Net.MsgId.L2CPlayerList, ParsePacket<Net.PlayerList>);
-            RegistParseFunc(Net.MsgId.G2CSyncPlayer, ParsePacket<Net.SyncPlayer>);
-            RegistParseFunc(Net.MsgId.S2CRoleAppear, ParsePacket<Net.RoleAppear>);
-            RegistParseFunc(Net.MsgId.S2CEnemy, ParsePacket<Net.Enemy>);
-            RegistParseFunc(Net.MsgId.S2CFsmSyncState, ParsePacket<Net.FsmSyncState>);
-            RegistParseFunc(Net.MsgId.S2CPlayerSyncState, ParsePacket<Net.PlayerSyncState>);
-            RegistParseFunc(Net.MsgId.S2CRoleDisAppear, ParsePacket<Net.RoleDisAppear>);
-            RegistParseFunc(Net.MsgId.S2CRequestLinkPlayer, ParsePacket<Net.RequestLinkPlayer>);
+            RegistParseFunc(Proto.MsgId.C2LAccountCheckRs, ParsePacket<Proto.AccountCheckRs>);
+            RegistParseFunc(Proto.MsgId.C2LCreatePlayerRs, ParsePacket<Proto.CreatePlayerRs>);
+            RegistParseFunc(Proto.MsgId.C2LSelectPlayerRs, ParsePacket<Proto.SelectPlayerRs>);
+            RegistParseFunc(Proto.MsgId.S2CEnterWorld, ParsePacket<Proto.EnterWorld>);
+            RegistParseFunc(Proto.MsgId.L2CGameToken, ParsePacket<Proto.GameToken>);
+            RegistParseFunc(Proto.MsgId.C2GLoginByTokenRs, ParsePacket<Proto.LoginByTokenRs>);
+            RegistParseFunc(Proto.MsgId.L2CPlayerList, ParsePacket<Proto.PlayerList>);
+            RegistParseFunc(Proto.MsgId.G2CSyncPlayer, ParsePacket<Proto.SyncPlayer>);
+            RegistParseFunc(Proto.MsgId.S2CRoleAppear, ParsePacket<Proto.RoleAppear>);
+            RegistParseFunc(Proto.MsgId.S2CEnemy, ParsePacket<Proto.Enemy>);
+            RegistParseFunc(Proto.MsgId.S2CFsmSyncState, ParsePacket<Proto.FsmSyncState>);
+            RegistParseFunc(Proto.MsgId.S2CPlayerSyncState, ParsePacket<Proto.PlayerSyncState>);
+            RegistParseFunc(Proto.MsgId.S2CRoleDisAppear, ParsePacket<Proto.RoleDisAppear>);
+            RegistParseFunc(Proto.MsgId.S2CRequestLinkPlayer, ParsePacket<Proto.RequestLinkPlayer>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
         }
 
@@ -162,7 +162,7 @@ namespace Manage
             }
         }
 
-        public bool SendPacket(Net.MsgId msgId, Google.Protobuf.IMessage msg)
+        public bool SendPacket(Proto.MsgId msgId, Google.Protobuf.IMessage msg)
         {
             int size = PacketHead.SIZE;
             size += msg != null ? msg.CalculateSize() : 0;
@@ -202,7 +202,7 @@ namespace Manage
 
         public void UnPacket(PacketHead head, byte[] bytes, int offset, int length)
         {
-            Net.MsgId msgId = (Net.MsgId)head.msgId;
+            Proto.MsgId msgId = (Proto.MsgId)head.msgId;
             if (!_funcDict.ContainsKey(msgId))
             {
                 Debug.LogWarning("未找到解包函数: msgId = " + msgId);
@@ -213,7 +213,7 @@ namespace Manage
             MsgManager.Instance.HandleMsg(msgId, msg);
         }
 
-        private void RegistParseFunc(Net.MsgId msgId, ParseFunc func)
+        private void RegistParseFunc(Proto.MsgId msgId, ParseFunc func)
         {
             if (!_funcDict.ContainsKey(msgId))
                 _funcDict.Add(msgId, null);
@@ -231,7 +231,7 @@ namespace Manage
         private void SendPingMsg()
         {
             if (_state == ENetState.Connected)
-                SendPacket(Net.MsgId.MiPing, null);
+                SendPacket(Proto.MsgId.MiPing, null);
         }
 
         public string Md5(byte[] data)

@@ -14,8 +14,8 @@ namespace Control
         private RaycastHit _hit;
         private Vector3 _hitPoint = Vector3.zero;
         private readonly WaitForSeconds _sleep = new(0.02f);
-        private readonly Net.Vector3D _curPos = new();
-        private readonly Net.Vector3D _hitPos = new();
+        private readonly Proto.Vector3D _curPos = new();
+        private readonly Proto.Vector3D _hitPos = new();
 
         public ulong Sn { get; set; }
 
@@ -98,7 +98,7 @@ namespace Control
                     _hitPos.Y = _hitPoint.y;
                     _hitPos.Z = _hitPoint.z;
 
-                    Net.PlayerSyncState proto = new()
+                    Proto.PlayerSyncState proto = new()
                     {
                         PlayerSn = Sn,
                         EnemyId = (!_hitTarget || _hitTarget.CompareTag("Terrain")) ? -1 : _hitTarget.GetComponent<FsmController>().id,
@@ -107,12 +107,12 @@ namespace Control
                         CurPos = _curPos,
                         HitPos = _hitPos
                     };
-                    NetManager.Instance.SendPacket(Net.MsgId.C2SPlayerSyncState, proto);
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncState, proto);
                 }
             }
         }
 
-        public void ParseSyncState(Net.PlayerSyncState proto)
+        public void ParseSyncState(Proto.PlayerSyncState proto)
         {
             PlayerStateType state = (PlayerStateType)proto.State;
             Vector3 pos = new()

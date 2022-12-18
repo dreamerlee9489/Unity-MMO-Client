@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Net
+namespace Proto
 {
     public class AccountInfo
     {
@@ -10,12 +10,12 @@ namespace Net
         public string Account => _account;
         public List<RoleInfo> Players => _players;
 
-        public void ParseProto(Net.PlayerList proto)
+        public void ParseProto(PlayerList proto)
         {
             _account = proto.Account;
             _players.Clear();
 
-            foreach (Net.PlayerLittle roleProto in proto.Player)
+            foreach (PlayerLittle roleProto in proto.Player)
             {
                 RoleInfo role = new();
                 role.ParseProto(roleProto);

@@ -2,20 +2,20 @@
 using Manage;
 using UnityEngine;
 
-namespace Net
+namespace Proto
 {
     public class PlayerInfo
     {
         protected ulong _sn;
         protected string _name;
-        protected Net.Gender _gender;
+        protected Gender _gender;
         protected GameObject _obj = null;
 
         public ulong Sn => _sn;
         public string Name => _name;
         public GameObject Obj => _obj;
 
-        public void LoadPlayer(Net.Player proto)
+        public void LoadPlayer(Player proto)
         {
             _sn = proto.Sn;
             _name = proto.Name;

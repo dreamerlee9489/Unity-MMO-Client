@@ -26,12 +26,12 @@ namespace UI
                     GameManager.Instance.Canvas.GetPanel<ModalPanel>().Open("创建角色", "角色名不能为空", ModalPanelType.Hint);
                     return;
                 }
-                Net.CreatePlayer proto = new()
+                Proto.CreatePlayer proto = new()
                 {
                     Name = _roleName.text,
-                    Gender = _maleToggle.isOn ? Net.Gender.Male : Net.Gender.Female
+                    Gender = _maleToggle.isOn ? Proto.Gender.Male : Proto.Gender.Female
                 };
-                NetManager.Instance.SendPacket(Net.MsgId.C2LCreatePlayer, proto);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2LCreatePlayer, proto);
                 Close();
             });
         }

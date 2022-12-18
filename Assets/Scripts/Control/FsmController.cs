@@ -35,7 +35,7 @@ namespace Control
         {
             while (true)
             {
-                Net.Enemy proto = new()
+                Proto.Enemy proto = new()
                 {
                     Id = id,
                     Pos = new()
@@ -45,7 +45,7 @@ namespace Control
                         Z = transform.position.z
                     }
                 };
-                NetManager.Instance.SendPacket(Net.MsgId.C2SEnemy, proto);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SEnemy, proto);
                 yield return _sleep;
             }
         }
@@ -65,7 +65,7 @@ namespace Control
             }
         }
 
-        public void ParseEnemy(Net.Enemy proto)
+        public void ParseEnemy(Proto.Enemy proto)
         {
             gameObject.SetActive(false);
             transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);

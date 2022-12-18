@@ -2,7 +2,7 @@
 using Manage;
 using UnityEngine;
 
-namespace Net
+namespace Proto
 {
     public class AppearRole
     {
@@ -45,7 +45,7 @@ namespace Net
                 _obj.transform.SetPositionAndRotation(_position, Quaternion.identity);
                 _obj.SetActive(true);
                 GameManager.Instance.VirtualCam.transform.position = _position + new Vector3(0, 6, -8);
-                GameManager.Instance.VirtualCam.transform.rotation = Quaternion.AngleAxis(-45, Vector3.left);
+                GameManager.Instance.VirtualCam.transform.rotation = Quaternion.AngleAxis(-50, Vector3.left);
                 GameManager.Instance.VirtualCam.Follow = _obj.transform;
                 EventManager.Instance.Invoke(EEventType.PlayerLoaded);
             }
