@@ -111,7 +111,7 @@ namespace Manage
 
         private void RequestLinkPlayerHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is RequestLinkPlayer proto)
+            if (msg is RequestLinkPlayer proto && _enemies.Count > 0)
                 _enemies[proto.EnemyId].LinkPlayer(proto.IsLinker);
         }
 
@@ -126,22 +126,24 @@ namespace Manage
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
-                GameObject obj = ResourceManager.Instance.Load<GameObject>("Entity/Enemy/" + strs[1]);
-                FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
-                enemyObj.gameObject.SetActive(false);
-                enemyObj.id = id++;
-                enemyObj.transform.position = pos.Parse(strs[3]);
-                enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.id;
-                enemyObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
-                enemyObj.patrolPath.transform.position = enemyObj.transform.position;
-                enemyObj.gameObject.SetActive(true);
-                _enemies.Add(enemyObj);
-                RequestSyncEnemy proto = new()
+                ResourceManager.Instance.LoadAsync<GameObject>("Entity/Enemy/" + strs[1], (obj) =>
                 {
-                    PlayerSn = GameManager.Instance.MainPlayer.Sn,
-                    EnemyId = enemyObj.id
-                };
-                NetManager.Instance.SendPacket(MsgId.C2SRequestSyncEnemy, proto);
+                    FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
+                    enemyObj.gameObject.SetActive(false);
+                    enemyObj.id = id++;
+                    enemyObj.transform.position = pos.Parse(strs[3]);
+                    enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.id;
+                    enemyObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
+                    enemyObj.patrolPath.transform.position = enemyObj.transform.position;
+                    enemyObj.gameObject.SetActive(true);
+                    _enemies.Add(enemyObj);
+                    RequestSyncEnemy proto = new()
+                    {
+                        PlayerSn = GameManager.Instance.MainPlayer.Sn,
+                        EnemyId = enemyObj.id
+                    };
+                    NetManager.Instance.SendPacket(MsgId.C2SRequestSyncEnemy, proto);
+                });
             }
         }
     }

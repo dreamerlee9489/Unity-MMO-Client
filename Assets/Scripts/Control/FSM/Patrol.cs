@@ -1,5 +1,4 @@
 ﻿using Manage;
-using UnityEngine;
 
 namespace Control.FSM
 {
@@ -25,17 +24,6 @@ namespace Control.FSM
 
         public override void Execute()
         {
-            if (_owner.CanSee(_target))
-            {
-                Net.FsmSyncState proto = new()
-                {
-                    EnemyId = _owner.id,
-                    PlayerSn = _target.Sn,
-                    State = (int)FsmStateType.Pursuit,
-                    Code = -1,
-                };
-                NetManager.Instance.SendPacket(Net.MsgId.C2SFsmSyncState, proto);
-            }
         }
 
         public override void Exit()

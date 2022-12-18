@@ -7,7 +7,7 @@ namespace Control
 {
     public class FsmController : GameEntity
     {
-        private readonly WaitForSeconds _sleep = new(0.5f);
+        private readonly WaitForSeconds _sleep = new(0.1f);
 
         public int id = 0;
         public FsmState currState;
@@ -67,7 +67,9 @@ namespace Control
 
         public void ParseEnemy(Net.Enemy proto)
         {
+            gameObject.SetActive(false);
             transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
+            gameObject.SetActive(true);
         }
 
         public void LinkPlayer(bool isLinker)
