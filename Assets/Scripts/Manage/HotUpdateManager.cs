@@ -97,7 +97,7 @@ namespace Manage
 
         private async void GetRemoteInfoList(Action<bool> callback)
         {
-            print(Application.persistentDataPath);
+            //print(Application.persistentDataPath);
             string localDir = $"{Application.persistentDataPath}/AssetBundles/{_platform}";
             bool isOver = false;
             for (int i = 0; !isOver || i < 3; i++)

@@ -38,17 +38,6 @@ namespace Manage
             EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
 
-        private Vector3 GetPos(string posStr)
-        {
-            Vector3 pos = Vector3.zero;
-            posStr = posStr[1..^1];
-            string[] strs = posStr.Split(';');
-            pos.x = float.Parse(strs[0]);
-            pos.y = float.Parse(strs[1]);
-            pos.z = float.Parse(strs[2]);
-            return pos;
-        }
-
         private void RoleAppearHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is RoleAppear proto)
@@ -56,15 +45,9 @@ namespace Manage
                 foreach (Role role in proto.Role)
                 {
                     ulong sn = role.Sn;
-                    if (_players.ContainsKey(sn))
-                        _players[sn].Parse(role);
-                    else
-                    {
-                        AppearRole appearRole = new();
-                        appearRole.Parse(role);
-                        appearRole.LoadObj();
-                        _players.Add(sn, appearRole);
-                    }
+                    AppearRole appearRole = new();
+                    appearRole.LoadRole(role);
+                    _players.Add(sn, appearRole);
                 }
             }
         }
@@ -118,7 +101,7 @@ namespace Manage
                 if (_players.ContainsKey(playSn))
                 {
                     foreach (var enemy in _enemies)
-                        if (enemy.CurrState.Target.gameObject == _players[playSn].Obj)
+                        if (enemy.currState.Target.gameObject == _players[playSn].Obj)
                             enemy.ResetState();
                     Destroy(_players[playSn].Obj);
                     _players.Remove(playSn);
@@ -134,7 +117,7 @@ namespace Manage
 
         private void PlayerLoadedCallback()
         {
-            csvFile = Application.streamingAssetsPath + "/CSV/" + csvFile;
+            csvFile = $"{Application.streamingAssetsPath}/CSV/{csvFile}";
             using StreamReader reader = File.OpenText(csvFile);
             reader.ReadLine();
             string line;
@@ -145,9 +128,13 @@ namespace Manage
                 string[] strs = line.Split(',');
                 GameObject obj = ResourceManager.Instance.Load<GameObject>("Entity/Enemy/" + strs[1]);
                 FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
+                enemyObj.gameObject.SetActive(false);
                 enemyObj.id = id++;
                 enemyObj.transform.position = pos.Parse(strs[3]);
                 enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.id;
+                enemyObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
+                enemyObj.patrolPath.transform.position = enemyObj.transform.position;
+                enemyObj.gameObject.SetActive(true);
                 _enemies.Add(enemyObj);
                 RequestSyncEnemy proto = new()
                 {

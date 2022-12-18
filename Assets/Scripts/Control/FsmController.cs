@@ -7,14 +7,11 @@ namespace Control
 {
     public class FsmController : GameEntity
     {
-        private FsmState _currState;
-        private PatrolPath _patrolPath;
         private readonly WaitForSeconds _sleep = new(0.5f);
 
-        public FsmState CurrState => _currState;
-        public PatrolPath PatrolPath => _patrolPath;
-
         public int id = 0;
+        public FsmState currState;
+        public PatrolPath patrolPath;
 
         protected override void Awake()
         {
@@ -22,22 +19,16 @@ namespace Control
             _agent.speed = RunSpeed;
         }
 
-        private void Start()
-        {
-            _patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
-            _patrolPath.transform.position = transform.position;
-        }
-
         protected override void Update()
         {
             base.Update();
-            _currState?.Execute();
+            currState?.Execute();
         }
 
         private void OnApplicationQuit()
         {
-            PoolManager.Instance.Push(PoolType.PatrolPath, _patrolPath.gameObject);
-            _patrolPath = null;
+            PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
+            patrolPath = null;
         }
 
         private IEnumerator UploadData()
@@ -61,17 +52,16 @@ namespace Control
 
         public void ParseSyncState(FsmStateType type, int code, PlayerController target)
         {
-            if (_currState == null)
+            if (currState == null)
             {
-                _currState = FsmState.GenState(type, code, this, target);
-                _currState.Enter();
-                return;
+                currState = FsmState.GenState(type, code, this, target);
+                currState.Enter();
             }
-            if (_currState.Type != type)
+            else
             {
-                _currState.Exit();
-                _currState = FsmState.GenState(type, code, this, target);
-                _currState.Enter();
+                currState.Exit();
+                currState = FsmState.GenState(type, code, this, target);
+                currState.Enter();
             }
         }
 
@@ -90,9 +80,9 @@ namespace Control
 
         public void ResetState()
         {
-            _currState.Exit();
-            _currState = new Idle(this);
-            _currState.Enter();
+            currState.Exit();
+            currState = new Idle(this);
+            currState.Enter();
         }
     }
 }

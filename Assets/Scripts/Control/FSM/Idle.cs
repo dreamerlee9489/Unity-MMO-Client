@@ -14,7 +14,7 @@ namespace Control.FSM
         {
             _owner.Agent.speed = _owner.WalkSpeed;
             _owner.Agent.isStopped = true;
-            _target = GameManager.Instance.MainPlayer.GetGameObject().GetComponent<PlayerController>();
+            _target = GameManager.Instance.MainPlayer.Obj.GetComponent<PlayerController>();
         }
 
         public override void Execute()

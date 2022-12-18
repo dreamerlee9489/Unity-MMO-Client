@@ -115,7 +115,7 @@ namespace Manage
             if (msg is SyncPlayer proto)
             {
                 _mainPlayer ??= new PlayerInfo();
-                _mainPlayer.Parse(proto.Player);
+                _mainPlayer.LoadPlayer(proto.Player);
             }
         }
 
