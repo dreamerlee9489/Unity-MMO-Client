@@ -71,10 +71,11 @@ namespace Manage
 
         private void EnemyHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Enemy proto && _enemies.Count > 0)
+            if (msg is Enemy proto)
             {
                 int id = proto.Id;
-                _enemies[id].ParseEnemy(proto);
+                if (_enemies.Count >= id)
+                    _enemies[id].ParseEnemy(proto);
             }
         }
 
@@ -89,7 +90,8 @@ namespace Manage
                 PlayerController player = null;
                 if (_players.ContainsKey(playerSn))
                     player = _players[playerSn].Obj.GetComponent<PlayerController>();
-                _enemies[enemyId].ParseSyncState(type, code, player);
+                if (_enemies.Count >= enemyId)
+                    _enemies[enemyId].ParseSyncState(type, code, player);
             }
         }
 
