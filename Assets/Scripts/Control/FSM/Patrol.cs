@@ -1,6 +1,4 @@
-﻿using Manage;
-
-namespace Control.FSM
+﻿namespace Control.FSM
 {
     public class Patrol : FsmState
     {
@@ -19,7 +17,6 @@ namespace Control.FSM
             _owner.Anim.SetBool(GameEntity.Attack, false);
             _owner.Agent.speed = _owner.WalkSpeed;
             _owner.Agent.destination = _patrolPath.Path[_index].position;
-            _target = GameManager.Instance.MainPlayer.Obj.GetComponent<PlayerController>();
         }
 
         public override void Execute()

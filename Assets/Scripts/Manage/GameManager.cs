@@ -1,7 +1,6 @@
 ﻿using Cinemachine;
 using LitJson;
 using Proto;
-using System;
 using System.Collections;
 using UI;
 using UnityEngine;
@@ -42,6 +41,7 @@ namespace Manage
 
         private void Start()
         {
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
@@ -52,6 +52,11 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
             EventManager.Instance.RemoveListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
+        }
+
+        private void OnSceneUnloaded(Scene scene)
+        {
+            MonoManager.Instance.StartCoroutine(UIManager.Instance.FadeAlpha());
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

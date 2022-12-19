@@ -1,6 +1,4 @@
-﻿using Manage;
-
-namespace Control.FSM
+﻿namespace Control.FSM
 {
     public class Idle : FsmState
     {
@@ -13,7 +11,6 @@ namespace Control.FSM
         {
             _owner.Agent.speed = _owner.WalkSpeed;
             _owner.Agent.isStopped = true;
-            _target = GameManager.Instance.MainPlayer.Obj.GetComponent<PlayerController>();
         }
 
         public override void Execute()
