@@ -47,14 +47,14 @@ public class AssetBundlesTool : EditorWindow
 
     private void CreateABInfoList()
     {
-        DirectoryInfo directory = Directory.CreateDirectory($"{Application.dataPath}/Resources/AssetBundles/{_platforms[_index]}");
+        DirectoryInfo directory = Directory.CreateDirectory($"{Application.dataPath}/AssetBundles/{_platforms[_index]}");
         FileInfo[] files = directory.GetFiles();
         string abInfoList = "";
         foreach (FileInfo file in files)
             if (file.Extension.Equals(""))
                 abInfoList += file.Name + "\t" + file.Length + "\t" + GetMD5(file.FullName) + "\n";
         abInfoList = abInfoList[..^1];
-        File.WriteAllText($"{Application.dataPath}/Resources/AssetBundles/{_platforms[_index]}/ABInfoList.txt", abInfoList);
+        File.WriteAllText($"{Application.dataPath}/AssetBundles/{_platforms[_index]}/ABInfoList.txt", abInfoList);
         AssetDatabase.Refresh();
     }
 
@@ -115,7 +115,7 @@ public class AssetBundlesTool : EditorWindow
 
     private void UploadAssetBundles()
     {
-        DirectoryInfo directory = Directory.CreateDirectory($"{Application.dataPath}/Resources/AssetBundles/{_platforms[_index]}/");
+        DirectoryInfo directory = Directory.CreateDirectory($"{Application.dataPath}/AssetBundles/{_platforms[_index]}/");
         FileInfo[] files = directory.GetFiles();
         foreach (FileInfo file in files)
             if (file.Extension.Equals("") || file.Extension.Equals(".txt"))
