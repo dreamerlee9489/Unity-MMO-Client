@@ -28,7 +28,8 @@ namespace Control
         private void Start()
         {
             _agent.speed = RunSpeed * 1.5f;
-            MonoManager.Instance.StartCoroutine(SyncStateCoroutine());
+            if (Sn == GameManager.Instance.MainPlayer.Sn)
+                MonoManager.Instance.StartCoroutine(SyncStateCoroutine());
         }
 
         protected override void Update()
@@ -74,7 +75,8 @@ namespace Control
 
         private void OnApplicationQuit()
         {
-            MonoManager.Instance.StopCoroutine(SyncStateCoroutine());
+            if (Sn == GameManager.Instance.MainPlayer.Sn)
+                MonoManager.Instance.StopCoroutine(SyncStateCoroutine());
         }
 
         private void ResetState()
