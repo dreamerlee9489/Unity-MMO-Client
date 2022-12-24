@@ -13,6 +13,7 @@ namespace Proto
         protected GameObject _obj;
 
         public ulong Sn => _sn;
+        public string Name => _name;
         public GameObject Obj => _obj;
 
         public void LoadRole(Role proto)

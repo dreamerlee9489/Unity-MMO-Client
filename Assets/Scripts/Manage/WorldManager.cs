@@ -19,10 +19,10 @@ namespace Manage
         private void Awake()
         {
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleAppear, RoleAppearHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleDisAppear, RoleDisappearHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnemy, EnemyHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             EventManager.Instance.AddListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
@@ -30,10 +30,10 @@ namespace Manage
         private void OnApplicationQuit()
         {
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleAppear, RoleAppearHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleDisAppear, RoleDisappearHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnemy, EnemyHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleDisAppear, RoleDisAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
@@ -95,7 +95,7 @@ namespace Manage
             }
         }
 
-        private void RoleDisAppearHandler(Google.Protobuf.IMessage msg)
+        private void RoleDisappearHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is RoleDisAppear proto)
             {
@@ -103,7 +103,7 @@ namespace Manage
                 if (_players.ContainsKey(playSn))
                 {
                     foreach (var enemy in _enemies)
-                        if (enemy.currState.Target.gameObject == _players[playSn].Obj)
+                        if (enemy.currState.Target == _players[playSn].Obj.GetComponent<PlayerController>())
                             enemy.ResetState();
                     Destroy(_players[playSn].Obj);
                     _players.Remove(playSn);
@@ -139,12 +139,6 @@ namespace Manage
                     enemyObj.patrolPath.transform.position = enemyObj.transform.position;
                     enemyObj.gameObject.SetActive(true);
                     _enemies.Add(enemyObj);
-                    RequestSyncEnemy proto = new()
-                    {
-                        PlayerSn = GameManager.Instance.MainPlayer.Sn,
-                        EnemyId = enemyObj.id
-                    };
-                    NetManager.Instance.SendPacket(MsgId.C2SRequestSyncEnemy, proto);
                 });
             }
         }

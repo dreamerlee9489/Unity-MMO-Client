@@ -75,8 +75,8 @@ namespace Control
 
         private void OnApplicationQuit()
         {
-            if (Sn == GameManager.Instance.MainPlayer.Sn)
-                MonoManager.Instance.StopCoroutine(SyncStateCoroutine());
+            _state = PlayerStateType.Idle;
+            MonoManager.Instance.StopAllCoroutines();
         }
 
         private void ResetState()
