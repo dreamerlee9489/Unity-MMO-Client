@@ -46,9 +46,8 @@ namespace UI
             EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
         }
 
-        protected override void Start()
+        private void Start()
         {
-            base.Start();
             Close();
         }
 

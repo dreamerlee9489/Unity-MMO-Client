@@ -32,9 +32,8 @@ namespace UI
             EventManager.Instance.AddListener<EAppType>(EEventType.Connecting, ConnectingCallback);
         }
 
-        protected override void Start()
+        private void Start()
         {
-            base.Start();
             Close(ModalPanelType.Hint);
             Open("更新公告", "", ModalPanelType.Notice);
         }

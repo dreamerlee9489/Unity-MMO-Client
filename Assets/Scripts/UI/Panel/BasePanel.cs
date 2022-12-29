@@ -20,10 +20,6 @@ namespace UI
             if (_canvas == null)
                 _canvas = GameObject.Find("UIManager").GetComponent<UIManager>();
             _panelType = GetType().Name;
-        }
-
-        protected virtual void Start()
-        {
             _canvas.AddPanel(_panelType, this);
         }
     }

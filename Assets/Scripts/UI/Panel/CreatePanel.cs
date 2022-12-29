@@ -36,9 +36,8 @@ namespace UI
             });
         }
 
-        protected override void Start()
+        private void Start()
         {
-            base.Start();
             Close();
         }
     }
