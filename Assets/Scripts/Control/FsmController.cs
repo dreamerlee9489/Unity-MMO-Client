@@ -27,6 +27,7 @@ namespace Control
 
         private void OnApplicationQuit()
         {
+            ResetState();
             PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
             patrolPath = null;
         }
