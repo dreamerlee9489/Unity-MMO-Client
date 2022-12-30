@@ -397,6 +397,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6703964762456463617, guid: 2a888d65e3e253e4882c87d8d6ac83b8, type: 3}
+      propertyPath: serverIp
+      value: 8.130.45.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6703964762456463617, guid: 2a888d65e3e253e4882c87d8d6ac83b8, type: 3}
+      propertyPath: serverPort
+      value: 7071
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a888d65e3e253e4882c87d8d6ac83b8, type: 3}
 --- !u!1001 &5031338932258312349
@@ -517,7 +525,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6966337819713277392, guid: 4f7882e605f3a4042a1e6d04ae281a63, type: 3}
       propertyPath: serverIp
-      value: 127.0.0.1
+      value: 8.130.45.1
       objectReference: {fileID: 0}
     - target: {fileID: 6966337819713277392, guid: 4f7882e605f3a4042a1e6d04ae281a63, type: 3}
       propertyPath: serverPort

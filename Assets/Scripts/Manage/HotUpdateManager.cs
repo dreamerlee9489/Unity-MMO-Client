@@ -44,7 +44,7 @@ namespace Manage
 #else
     "Windows";
 #endif
-        private readonly string _ftpIp = "ftp://192.168.120.128";
+        private readonly string _ftpIp = "ftp://8.130.45.1";
         private readonly Dictionary<string, ABInfo> _remoteInfoDict = new();
         private readonly Dictionary<string, ABInfo> _localInfoDict = new();
         private readonly List<string> _downloadList = new();
@@ -74,6 +74,7 @@ namespace Manage
                 request.Proxy = null;
                 request.KeepAlive = false;
                 request.UseBinary = true;
+                request.UsePassive= true;
                 request.Method = WebRequestMethods.Ftp.DownloadFile;
                 Stream respStream = request.GetResponse().GetResponseStream();
                 using FileStream fileStream = File.Create($"{localPath}");

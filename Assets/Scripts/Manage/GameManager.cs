@@ -26,6 +26,7 @@ namespace Manage
         public string serverIp;
         public int serverPort;
 
+
         protected override void Awake()
         {
             base.Awake();

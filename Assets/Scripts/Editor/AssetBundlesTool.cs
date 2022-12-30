@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class AssetBundlesTool : EditorWindow
 {
-    private string _ftpIp = "ftp://192.168.120.128";
+    private string _ftpIp = "ftp://8.130.45.1";
     private int _index = 0;
     private readonly string[] _platforms = { "Windows", "Android", "IOS" };
 
@@ -91,8 +91,9 @@ public class AssetBundlesTool : EditorWindow
                 request.Credentials = new NetworkCredential("ftpuser", "edward199473");
                 request.Proxy = null;
                 request.KeepAlive = false;
-                request.Method = WebRequestMethods.Ftp.UploadFile;
                 request.UseBinary = true;
+                request.UsePassive = true;
+                request.Method = WebRequestMethods.Ftp.UploadFile;
                 Stream reqStream = request.GetRequestStream();
                 using FileStream fileStream = File.OpenRead(filePath);
                 byte[] bytes = new byte[4096];
