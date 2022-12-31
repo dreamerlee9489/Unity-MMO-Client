@@ -10,19 +10,17 @@ namespace Control
     {
         private PlayerStateType _state = PlayerStateType.Idle;
         private int _stateCode = 0;
-        private Transform _hitTarget = null;
         private RaycastHit _hit;
         private Vector3 _hitPoint = Vector3.zero;
         private readonly WaitForSeconds _sleep = new(0.02f);
         private readonly Proto.Vector3D _curPos = new();
         private readonly Proto.Vector3D _hitPos = new();
 
-        public ulong Sn { get; set; }
+        public ulong Sn = 0;
 
         protected override void Awake()
         {
             base.Awake();
-            _hitTarget = null;
         }
 
         private void Start()
@@ -42,12 +40,12 @@ namespace Control
                     switch (_hit.collider.tag)
                     {
                         case "Terrain":
-                            _hitTarget = _hit.transform;
+                            target = _hit.transform;
                             _hitPoint = _hit.point;
                             _state = PlayerStateType.Move;
                             break;
                         case "Enemy":
-                            _hitTarget = _hit.transform;
+                            target = _hit.transform;
                             _hitPoint = _hit.transform.position;
                             _state = PlayerStateType.Attack;
                             break;
@@ -55,17 +53,17 @@ namespace Control
                 }
             }
 
-            switch (_hitTarget != null ? _hitTarget.tag : null)
+            switch (target != null ? target.tag : null)
             {
                 case "Terrain":
                     if (Vector3.Distance(transform.position, _hitPoint) <= _agent.stoppingDistance)
                     {
-                        _hitTarget = null;
+                        target = null;
                         Invoke(nameof(ResetState), 3);
                     }
                     break;
                 case "Enemy":
-                    if (Vector3.Distance(transform.position, _hitTarget.transform.position) <= AttackRadius)
+                    if (Vector3.Distance(transform.position, target.transform.position) <= AttackRadius)
                         _stateCode = 1;
                     else
                         _stateCode = 0;
@@ -81,7 +79,7 @@ namespace Control
 
         private void ResetState()
         {
-            if (_hitTarget == null)
+            if (target == null)
                 _state = PlayerStateType.Idle;
         }
 
@@ -103,8 +101,8 @@ namespace Control
                     Proto.PlayerSyncState proto = new()
                     {
                         PlayerSn = Sn,
-                        EnemyId = (!_hitTarget || _hitTarget.CompareTag("Terrain")) ? -1 : _hitTarget.GetComponent<FsmController>().id,
-                        State = (int)_state,
+                        EnemyId = (!target || target.CompareTag("Terrain")) ? -1 : target.GetComponent<FsmController>().id,
+                        State = target ? (int)_state : 1,
                         Code = _stateCode,
                         CurPos = _curPos,
                         HitPos = _hitPos

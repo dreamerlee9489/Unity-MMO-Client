@@ -525,7 +525,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6966337819713277392, guid: 4f7882e605f3a4042a1e6d04ae281a63, type: 3}
       propertyPath: serverIp
-      value: 8.130.45.1
+      value: 127.0.0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6966337819713277392, guid: 4f7882e605f3a4042a1e6d04ae281a63, type: 3}
       propertyPath: serverPort

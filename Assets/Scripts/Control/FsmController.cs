@@ -36,7 +36,7 @@ namespace Control
         {
             while (true)
             {
-                Proto.Enemy proto = new()
+                Proto.EnemySyncPos proto = new()
                 {
                     Id = id,
                     Pos = new()
@@ -46,13 +46,14 @@ namespace Control
                         Z = transform.position.z
                     }
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SEnemy, proto);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SEnemySyncPos, proto);
                 yield return _sleep;
             }
         }
 
         public void ParseSyncState(FsmStateType type, int code, PlayerController target)
         {
+            this.target = target != null ? target.transform : null;
             if (currState == null)
             {
                 currState = FsmState.GenState(type, code, this, target);
@@ -66,7 +67,7 @@ namespace Control
             }
         }
 
-        public void ParseEnemy(Proto.Enemy proto)
+        public void ParseSyncPos(Proto.EnemySyncPos proto)
         {
             gameObject.SetActive(false);
             transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);

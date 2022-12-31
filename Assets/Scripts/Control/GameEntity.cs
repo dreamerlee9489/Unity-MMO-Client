@@ -9,6 +9,7 @@ namespace Control
     {
         public static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
         public static readonly int Attack = Animator.StringToHash("Attack");
+        public static readonly int Death = Animator.StringToHash("Death");
 
         protected float _walkSpeed = 1.56f;
         protected float _runSpeed = 5.56f;
@@ -27,6 +28,10 @@ namespace Control
         public Animator Anim => _anim;
         public NavMeshAgent Agent => _agent;
         public NameBar NameBar => _nameBar;
+
+        public Transform target;
+
+        public int lv = 1, hp = 100, atk = 10;
 
         protected virtual void Awake()
         {
@@ -54,6 +59,12 @@ namespace Control
             if (direction.magnitude <= AttackRadius)
                 return true;
             return false;
+        }
+
+        public void SetHp(GameEntity attacker, int currHp)
+        {
+            if ((hp = currHp) == 0)
+                attacker.target = null;
         }
     }
 }

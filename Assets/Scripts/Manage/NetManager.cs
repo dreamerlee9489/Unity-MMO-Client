@@ -60,11 +60,12 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.L2CPlayerList, ParsePacket<Proto.PlayerList>);
             RegistParseFunc(Proto.MsgId.G2CSyncPlayer, ParsePacket<Proto.SyncPlayer>);
             RegistParseFunc(Proto.MsgId.S2CRoleAppear, ParsePacket<Proto.RoleAppear>);
-            RegistParseFunc(Proto.MsgId.S2CEnemy, ParsePacket<Proto.Enemy>);
+            RegistParseFunc(Proto.MsgId.S2CEnemySyncPos, ParsePacket<Proto.EnemySyncPos>);
             RegistParseFunc(Proto.MsgId.S2CFsmSyncState, ParsePacket<Proto.FsmSyncState>);
             RegistParseFunc(Proto.MsgId.S2CPlayerSyncState, ParsePacket<Proto.PlayerSyncState>);
-            RegistParseFunc(Proto.MsgId.S2CRoleDisAppear, ParsePacket<Proto.RoleDisAppear>);
+            RegistParseFunc(Proto.MsgId.S2CRoleDisappear, ParsePacket<Proto.RoleDisappear>);
             RegistParseFunc(Proto.MsgId.S2CRequestLinkPlayer, ParsePacket<Proto.RequestLinkPlayer>);
+            RegistParseFunc(Proto.MsgId.S2CAtkAnimEvent, ParsePacket<Proto.AtkAnimEvent>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
         }
 

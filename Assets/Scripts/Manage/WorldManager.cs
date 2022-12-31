@@ -1,6 +1,7 @@
 ﻿using Control;
 using Control.FSM;
 using Proto;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -19,22 +20,24 @@ namespace Manage
         private void Awake()
         {
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleDisAppear, RoleDisappearHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnemy, EnemyHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnemySyncPos, EnemyHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
             EventManager.Instance.AddListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
 
         private void OnApplicationQuit()
         {
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleAppear, RoleAppearHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleDisAppear, RoleDisappearHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnemy, EnemyHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnemySyncPos, EnemyHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
             EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
         }
 
@@ -71,11 +74,11 @@ namespace Manage
 
         private void EnemyHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Enemy proto)
+            if (msg is EnemySyncPos proto)
             {
                 int id = proto.Id;
                 if (_enemies.Count >= id)
-                    _enemies[id].ParseEnemy(proto);
+                    _enemies[id].ParseSyncPos(proto);
             }
         }
 
@@ -97,7 +100,7 @@ namespace Manage
 
         private void RoleDisappearHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is RoleDisAppear proto)
+            if (msg is RoleDisappear proto)
             {
                 ulong playSn = proto.Sn;
                 if (_players.ContainsKey(playSn))
@@ -117,6 +120,19 @@ namespace Manage
                 _enemies[proto.EnemyId].LinkPlayer(proto.IsLinker);
         }
 
+        private void AtkAnimEventHandler(Google.Protobuf.IMessage msg)
+        {
+            if(msg is AtkAnimEvent proto)
+            {
+                PlayerController player = _players[proto.PlayerSn].Obj.GetComponent<PlayerController>();
+                FsmController enemy = _enemies[proto.EnemyId];
+                if(proto.AtkEnemy)
+                    enemy.SetHp(player, proto.CurrHp);
+                else
+                    player.SetHp(enemy, proto.CurrHp);
+            }
+        }
+
         private void PlayerLoadedCallback()
         {
             csvFile = $"{Application.streamingAssetsPath}/CSV/{csvFile}";
@@ -133,7 +149,10 @@ namespace Manage
                     FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
                     enemyObj.gameObject.SetActive(false);
                     enemyObj.id = id++;
-                    enemyObj.transform.position = pos.Parse(strs[3]);
+                    enemyObj.lv = int.Parse(strs[2]);
+                    enemyObj.hp = int.Parse(strs[3]);
+                    enemyObj.atk = int.Parse(strs[4]);
+                    enemyObj.transform.position = pos.Parse(strs[5]);
                     enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.id;
                     enemyObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
                     enemyObj.patrolPath.transform.position = enemyObj.transform.position;

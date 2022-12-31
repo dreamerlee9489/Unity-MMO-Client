@@ -1,6 +1,6 @@
 ﻿namespace Control.FSM
 {
-    public enum FsmStateType { Idle, Patrol, Pursuit, Attack }
+    public enum FsmStateType { Idle, Patrol, Pursuit, Attack, Death }
 
     public abstract class FsmState
     {
@@ -25,6 +25,7 @@
                 FsmStateType.Patrol => new Patrol(owner, null, code),
                 FsmStateType.Pursuit => new Pursuit(owner, target),
                 FsmStateType.Attack => new Attack(owner, target),
+                FsmStateType.Death => new Death(owner, null),
                 _ => null,
             };
         }
