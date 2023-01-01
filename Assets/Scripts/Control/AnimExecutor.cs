@@ -14,7 +14,7 @@ namespace Control
 
         public void AtkAnimEvent()
         {
-            if(CompareTag("Player") && _owner.GetComponent<PlayerController>().Sn == GameManager.Instance.MainPlayer.Sn)
+            if(CompareTag("Player") && _owner.GetComponent<PlayerController>().sn == GameManager.Instance.MainPlayer.Sn)
             {
                 Proto.AtkAnimEvent proto = new()
                 {
@@ -25,7 +25,7 @@ namespace Control
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
             }
-            else if(CompareTag("Enemy") && _owner.target.GetComponent<PlayerController>().Sn == GameManager.Instance.MainPlayer.Sn)
+            else if(CompareTag("Enemy") && _owner.target.GetComponent<PlayerController>().sn == GameManager.Instance.MainPlayer.Sn)
             {
                 Proto.AtkAnimEvent proto = new()
                 { 

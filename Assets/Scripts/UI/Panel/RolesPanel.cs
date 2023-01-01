@@ -21,7 +21,7 @@ namespace UI
             RolesRect.content.GetComponent<ToggleGroup>().allowSwitchOff = false;
             _createBtn.onClick.AddListener(() =>
             {
-                _canvas.GetPanel<CreatePanel>().Open();
+                _canvas.FindPanel<CreatePanel>().Open();
                 Close();
             });
             _playBtn.onClick.AddListener(() =>
@@ -44,10 +44,6 @@ namespace UI
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2GLoginByTokenRs, LoginByTokenRsHandler);
             EventManager.Instance.AddListener<EAppType>(EEventType.Connected, ConnectedCallback);
             EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
-        }
-
-        private void Start()
-        {
             Close();
         }
 

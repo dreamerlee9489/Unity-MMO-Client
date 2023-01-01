@@ -1,14 +1,30 @@
 ﻿using Cinemachine;
-using LitJson;
+using Item;
 using Proto;
-using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using UI;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
 namespace Manage
 {
+    public class PlayerBaseData
+    {
+        public int xp, hp, mp, atk, def;
+
+        public PlayerBaseData() { }
+
+        public PlayerBaseData(int xp, int hp, int mp, int atk, int def)
+        {
+            this.xp = xp;
+            this.hp = hp;
+            this.mp = mp;
+            this.atk = atk;
+            this.def = def;
+        }
+    }
+
     public class GameManager : MonoSingleton<GameManager>
     {
         private UIManager _canvas;
@@ -16,6 +32,8 @@ namespace Manage
         private PlayerInfo _mainPlayer;
         private CinemachineVirtualCamera _virtualCam;
         private WorldManager _activeWorld;
+        private List<PlayerBaseData> _playerBaseDatas;
+        private Dictionary<int, string> _dropPotionDict, _dropWeaponDict;
 
         public UIManager Canvas => _canvas;
         public AccountInfo AccountInfo => _accountInfo;
@@ -23,19 +41,21 @@ namespace Manage
         public CinemachineVirtualCamera VirtualCam => _virtualCam;
         public WorldManager ActiveWorld => _activeWorld;
 
-        public string serverIp;
-        public int serverPort;
-
+        public List<PlayerBaseData> PlayerBaseDatas => _playerBaseDatas;
+        public Dictionary<int, string> DropPotionDict => _dropPotionDict;
+        public Dictionary<int, string> DropWeaponDict => _dropWeaponDict;
 
         protected override void Awake()
         {
             base.Awake();
             _canvas = GameObject.Find("UIManager").GetComponent<UIManager>();
             _virtualCam = transform.GetChild(1).GetComponent<CinemachineVirtualCamera>();
+            ParsePlayerBaseCsv();
+            ParseItemPotionsCsv();
+            ParseItemWeaponsCsv();
             MsgManager.Instance.RegistMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
-            EventManager.Instance.AddListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
             PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
             PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
@@ -52,37 +72,19 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
-            EventManager.Instance.RemoveListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
         }
 
         private void OnSceneUnloaded(Scene scene)
         {
+            _canvas.FindPanel<HUDPanel>().Close();
             MonoManager.Instance.StartCoroutine(UIManager.Instance.FadeAlpha());
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             _activeWorld = FindObjectOfType<WorldManager>();
-        }
-
-        private IEnumerator ConnectServer()
-        {
-            UnityWebRequest request = UnityWebRequest.Get($"http://{serverIp}:{serverPort}/login");
-            request.SetRequestHeader("Content-Type", "application/json;charset=utf-8");
-            request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
-            if (request.result == UnityWebRequest.Result.ProtocolError)
-                Debug.Log("ConnectServer error: " + request.error);
-            else
-            {
-                string result = request.downloadHandler.text;
-                HttpJson data = JsonMapper.ToObject<HttpJson>(result);
-                if (data.returncode == 0)
-                    NetManager.Instance.Connect(data.ip, data.port, EAppType.Login);
-                else
-                    Debug.Log("ConnectServer error: " + request.error);
-            }
-        }
+            _canvas.FindPanel<HUDPanel>().Open();
+        }       
 
         private void PlayerListHandler(Google.Protobuf.IMessage msg)
         {
@@ -91,10 +93,10 @@ namespace Manage
                 _accountInfo ??= new AccountInfo();
                 _accountInfo.ParseProto(proto);
                 if (_accountInfo.Players.Count == 0)
-                    Canvas.GetPanel<CreatePanel>().Open();
+                    Canvas.FindPanel<CreatePanel>().Open();
                 else
                 {
-                    Transform content = Canvas.GetPanel<RolesPanel>().RolesRect.content;
+                    Transform content = Canvas.FindPanel<RolesPanel>().RolesRect.content;
                     for (int i = 0; i < _accountInfo.Players.Count; i++)
                     {
                         RoleToggle roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
@@ -102,7 +104,7 @@ namespace Manage
                         roleToggle.Level.text = "Lv " + _accountInfo.Players[i].Level;
                         roleToggle.Id = _accountInfo.Players[i].Id;
                     }
-                    Canvas.GetPanel<RolesPanel>().Open();
+                    Canvas.FindPanel<RolesPanel>().Open();
                 }
             }
         }
@@ -112,7 +114,7 @@ namespace Manage
             if (msg is EnterWorld proto && proto.WorldId > 2)
             {
                 SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
-                Canvas.GetPanel<StartPanel>().Close();
+                _canvas.FindPanel<StartPanel>().Close();
             }
         }
 
@@ -125,13 +127,51 @@ namespace Manage
             }
         }
 
-        private void HotUpdatedCallback(bool updateOver)
+        private void ParsePlayerBaseCsv()
         {
-            UIManager.Instance.GetPanel<StartPanel>().Open();
-            if (updateOver)
-                MonoManager.Instance.StartCoroutine(ConnectServer());
-            else
-                UIManager.Instance.GetPanel<ModalPanel>().Open("检查更新", "更新失败！", ModalPanelType.Hint);
+            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/player_base.csv");
+            reader.ReadLine();
+            _playerBaseDatas = new() { new PlayerBaseData() };
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                PlayerBaseData baseData = new()
+                {
+                    xp = int.Parse(strs[1]),
+                    hp = int.Parse(strs[2]),
+                    mp = int.Parse(strs[3]),
+                    atk = int.Parse(strs[4]),
+                    def = int.Parse(strs[5])
+                };
+                _playerBaseDatas.Add(baseData);
+            }
+        }
+
+        private void ParseItemPotionsCsv()
+        {
+            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/ItemPotions.csv");
+            reader.ReadLine();
+            string line;
+            _dropPotionDict = new();
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                _dropPotionDict.Add(int.Parse(strs[0]), strs[1]);
+            }
+        }
+
+        private void ParseItemWeaponsCsv()
+        {
+            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/ItemWeapons.csv");
+            reader.ReadLine();
+            string line;
+            _dropWeaponDict = new();
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                _dropWeaponDict.Add(int.Parse(strs[0]), strs[1]);
+            }
         }
     }
 }

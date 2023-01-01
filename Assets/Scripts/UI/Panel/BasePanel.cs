@@ -8,10 +8,6 @@ namespace UI
         protected string _panelType;
         protected static UIManager _canvas;
 
-        public virtual void Open() => gameObject.SetActive(true);
-
-        public virtual void Close() => gameObject.SetActive(false);
-
         /// <summary>
         /// 必须在子类Awake()中赋值_panelType并获取组件
         /// </summary>
@@ -22,5 +18,9 @@ namespace UI
             _panelType = GetType().Name;
             _canvas.AddPanel(_panelType, this);
         }
+
+        public virtual void Open() => gameObject.SetActive(true);
+
+        public virtual void Close() => gameObject.SetActive(false);
     }
 }

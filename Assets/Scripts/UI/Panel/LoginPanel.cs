@@ -29,10 +29,6 @@ namespace UI
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2LAccountCheckRs, AccountCheckRsHandler);
             EventManager.Instance.AddListener<EAppType>(EEventType.Connected, ConnectedCallback);
             EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
-        }
-
-        private void Start()
-        {
             Close();
         }
 

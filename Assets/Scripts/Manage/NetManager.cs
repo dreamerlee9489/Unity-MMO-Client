@@ -1,9 +1,13 @@
-﻿using System.IO;
-using System.Net.Sockets;
+﻿using LitJson;
 using System;
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Sockets;
 using System.Security.Cryptography;
+using UI;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Manage
 {
@@ -48,6 +52,9 @@ namespace Manage
 
         public EAppType AppType => _appType;
 
+        public string remoteIp;
+        public int remotePort;
+
         protected override void Awake()
         {
             base.Awake();
@@ -59,14 +66,16 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.C2GLoginByTokenRs, ParsePacket<Proto.LoginByTokenRs>);
             RegistParseFunc(Proto.MsgId.L2CPlayerList, ParsePacket<Proto.PlayerList>);
             RegistParseFunc(Proto.MsgId.G2CSyncPlayer, ParsePacket<Proto.SyncPlayer>);
-            RegistParseFunc(Proto.MsgId.S2CRoleAppear, ParsePacket<Proto.RoleAppear>);
+            RegistParseFunc(Proto.MsgId.S2CAllRoleAppear, ParsePacket<Proto.AllRoleAppear>);
             RegistParseFunc(Proto.MsgId.S2CEnemySyncPos, ParsePacket<Proto.EnemySyncPos>);
             RegistParseFunc(Proto.MsgId.S2CFsmSyncState, ParsePacket<Proto.FsmSyncState>);
             RegistParseFunc(Proto.MsgId.S2CPlayerSyncState, ParsePacket<Proto.PlayerSyncState>);
             RegistParseFunc(Proto.MsgId.S2CRoleDisappear, ParsePacket<Proto.RoleDisappear>);
             RegistParseFunc(Proto.MsgId.S2CRequestLinkPlayer, ParsePacket<Proto.RequestLinkPlayer>);
             RegistParseFunc(Proto.MsgId.S2CAtkAnimEvent, ParsePacket<Proto.AtkAnimEvent>);
+            RegistParseFunc(Proto.MsgId.S2CItemList, ParsePacket<Proto.ItemList>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
+            EventManager.Instance.AddListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
         }
 
         private void Update()
@@ -116,6 +125,7 @@ namespace Manage
 
         private void OnApplicationQuit()
         {
+            EventManager.Instance.RemoveListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
             Disconnect();
         }
 
@@ -241,6 +251,34 @@ namespace Manage
             using (MD5CryptoServiceProvider md5Crypto = new())
                 bin = md5Crypto.ComputeHash(data);
             return BitConverter.ToString(bin).Replace("-", "").ToLower();
+        }
+
+        private void HotUpdatedCallback(bool updateOver)
+        {
+            UIManager.Instance.FindPanel<StartPanel>().Open();
+            if (updateOver)
+                MonoManager.Instance.StartCoroutine(ConnectServer());
+            else
+                UIManager.Instance.FindPanel<ModalPanel>().Open("检查更新", "更新失败！", ModalPanelType.Hint);
+        }
+
+        private IEnumerator ConnectServer()
+        {
+            UnityWebRequest request = UnityWebRequest.Get($"http://{remoteIp}:{remotePort}/login");
+            request.SetRequestHeader("Content-Type", "application/json;charset=utf-8");
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+            if (request.result == UnityWebRequest.Result.ProtocolError)
+                Debug.Log("ConnectServer error: " + request.error);
+            else
+            {
+                string result = request.downloadHandler.text;
+                HttpJson data = JsonMapper.ToObject<HttpJson>(result);
+                if (data.returncode == 0)
+                    Connect(data.ip, data.port, EAppType.Login);
+                else
+                    Debug.Log("ConnectServer error: " + request.error);
+            }
         }
     }
 }

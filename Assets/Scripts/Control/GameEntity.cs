@@ -1,4 +1,5 @@
-﻿using UI;
+﻿using Manage;
+using UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -31,7 +32,7 @@ namespace Control
 
         public Transform target;
 
-        public int lv = 1, hp = 100, atk = 10;
+        public int lv = 1, hp = 1000, mp = 1000, atk = 10, def = 0;
 
         protected virtual void Awake()
         {
@@ -64,7 +65,7 @@ namespace Control
         public void SetHp(GameEntity attacker, int currHp)
         {
             if ((hp = currHp) == 0)
-                attacker.target = null;
+                attacker.target = null;            
         }
     }
 }

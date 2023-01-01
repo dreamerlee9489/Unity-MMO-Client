@@ -10,11 +10,11 @@ namespace Proto
         protected string _name;
         protected Vector3 _position;
         protected Gender _gender;
-        protected GameObject _obj;
+        protected PlayerController _obj;
 
         public ulong Sn => _sn;
         public string Name => _name;
-        public GameObject Obj => _obj;
+        public PlayerController Obj => _obj;
 
         public void LoadRole(Role proto)
         {
@@ -30,25 +30,38 @@ namespace Proto
                 string path = _gender == Gender.Male ? "Entity/Player/Player_Knight" : "Entity/Player/Player_Warrior";
                 ResourceManager.Instance.LoadAsync<GameObject>(path, (obj) =>
                 {
-                    _obj = Object.Instantiate(obj);
-                    _obj.SetActive(false);
+                    _obj = Object.Instantiate(obj).GetComponent<PlayerController>();
+                    _obj.sn = _sn;
+                    _obj.lv = proto.Level;
+                    _obj.xp = proto.Xp;
+                    _obj.hp = proto.Hp;
+                    _obj.mp = proto.Mp;
+                    _obj.atk = proto.Atk;
+                    _obj.def = proto.Def;
                     _obj.name = "Sync_" + _name;
+                    _obj.NameBar.Name.text = _name;
+                    _obj.gameObject.SetActive(false);
                     _obj.transform.SetPositionAndRotation(_position, Quaternion.identity);
-                    _obj.GetComponent<GameEntity>().NameBar.Name.text = _name;
-                    _obj.GetComponent<PlayerController>().Sn = _sn;
-                    _obj.SetActive(true);
+                    _obj.gameObject.SetActive(true);
                 });
             }
             else
             {
                 _obj = GameManager.Instance.MainPlayer.Obj;
+                _obj.sn = _sn;
+                _obj.lv = proto.Level;
+                _obj.xp = proto.Xp;
+                _obj.hp = proto.Hp;
+                _obj.mp = proto.Mp;
+                _obj.atk = proto.Atk;
+                _obj.def = proto.Def;
                 _obj.name = "MainPlayer";
                 _obj.transform.SetPositionAndRotation(_position, Quaternion.identity);
-                _obj.SetActive(true);
+                _obj.gameObject.SetActive(true);
+                UIManager.Instance.FindPanel<PropPanel>().InitPanel();
                 GameManager.Instance.VirtualCam.transform.position = _position + new Vector3(0, 6, -8);
                 GameManager.Instance.VirtualCam.transform.rotation = Quaternion.AngleAxis(-50, Vector3.left);
                 GameManager.Instance.VirtualCam.Follow = _obj.transform;
-                EventManager.Instance.Invoke(EEventType.PlayerLoaded);
             }
         }
     }

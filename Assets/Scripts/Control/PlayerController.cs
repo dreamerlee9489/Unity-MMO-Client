@@ -16,7 +16,8 @@ namespace Control
         private readonly Proto.Vector3D _curPos = new();
         private readonly Proto.Vector3D _hitPos = new();
 
-        public ulong Sn = 0;
+        public ulong sn = 0;
+        public int xp = 0, gold = 0;
 
         protected override void Awake()
         {
@@ -26,14 +27,14 @@ namespace Control
         private void Start()
         {
             _agent.speed = RunSpeed * 1.5f;
-            if (Sn == GameManager.Instance.MainPlayer.Sn)
+            if (sn == GameManager.Instance.MainPlayer.Sn)
                 MonoManager.Instance.StartCoroutine(SyncStateCoroutine());
         }
 
         protected override void Update()
         {
             base.Update();
-            if (Input.GetMouseButtonDown(0) && Sn == GameManager.Instance.MainPlayer.Sn)
+            if (Input.GetMouseButtonDown(0) && sn == GameManager.Instance.MainPlayer.Sn)
             {
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out _hit))
                 {
@@ -49,8 +50,25 @@ namespace Control
                             _hitPoint = _hit.transform.position;
                             _state = PlayerStateType.Attack;
                             break;
+                        case "Item":
+                            target = _hit.transform;
+                            _hitPoint = _hit.point;
+                            _state = PlayerStateType.Move;
+                            break;
                     }
                 }
+            }
+
+            if(Input.GetKeyDown(KeyCode.UpArrow) && sn == GameManager.Instance.MainPlayer.Sn)
+            {
+                Proto.AtkAnimEvent proto = new()
+                {
+                    PlayerSn = GameManager.Instance.MainPlayer.Sn,
+                    EnemyId = -1,
+                    CurrHp = hp,
+                    AtkEnemy = true
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
             }
 
             switch (target != null ? target.tag : null)
@@ -100,8 +118,8 @@ namespace Control
 
                     Proto.PlayerSyncState proto = new()
                     {
-                        PlayerSn = Sn,
-                        EnemyId = (!target || target.CompareTag("Terrain")) ? -1 : target.GetComponent<FsmController>().id,
+                        PlayerSn = sn,
+                        EnemyId = (!target || !target.CompareTag("Enemy")) ? -1 : target.GetComponent<FsmController>().id,
                         State = target ? (int)_state : 1,
                         Code = _stateCode,
                         CurPos = _curPos,

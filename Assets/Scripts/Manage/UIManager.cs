@@ -3,22 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UI;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Manage
 {
     public class UIManager : MonoSingleton<UIManager>
     {
-        private Text _debug;
-        private CanvasGroup _image;
+        private CanvasGroup _cutImage;
         private readonly Dictionary<string, BasePanel> _panelDict = new();
 
         protected override void Awake()
         {
             base.Awake();
-            _debug = transform.Find("Debug").GetComponent<Text>();
-            _image = transform.Find("Image").GetComponent<CanvasGroup>();
+            _cutImage = transform.Find("CutImage").GetComponent<CanvasGroup>();
             EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
+        }
+
+        private void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.P))
+            {
+                PropPanel propPanel = FindPanel<PropPanel>();
+                if (propPanel.gameObject.activeSelf)
+                    propPanel.Close();
+                else
+                    propPanel.Open();
+            }
         }
 
         private void OnApplicationQuit()
@@ -30,7 +39,7 @@ namespace Manage
         {
         }
 
-        public T GetPanel<T>() where T : BasePanel
+        public T FindPanel<T>() where T : BasePanel
         {
             if (_panelDict.ContainsKey(typeof(T).Name))
                 return _panelDict[typeof(T).Name].GetComponent<T>();
@@ -43,14 +52,9 @@ namespace Manage
                 _panelDict.Add(type, panel);
         }
 
-        public void DebugLog(string log)
-        {
-            _debug.text = log;
-        }
-
         public IEnumerator FadeAlpha()
         {
-            _image.alpha = 1.0f;
+            _cutImage.alpha = 1.0f;
             yield return new WaitForSeconds(1f);
             foreach (var enemy in GameManager.Instance.ActiveWorld.Enemies)
             {
@@ -62,9 +66,9 @@ namespace Manage
                 NetManager.Instance.SendPacket(MsgId.C2SRequestSyncEnemy, proto);
             }
             WaitForSeconds sleep = new(0.02f);
-            while (_image.alpha > 0)
+            while (_cutImage.alpha > 0)
             {
-                _image.alpha -= 0.01f;
+                _cutImage.alpha -= 0.01f;
                 yield return sleep;
             }
         }

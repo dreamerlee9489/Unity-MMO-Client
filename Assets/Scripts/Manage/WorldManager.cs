@@ -12,40 +12,72 @@ namespace Manage
     {
         private readonly List<FsmController> _enemies = new();
         private readonly Dictionary<ulong, AppearRole> _players = new();
+        private PropPanel _propPanel;
 
-        public string csvFile = "";
+        public string fileName = "";
         public List<FsmController> Enemies => _enemies;
         public Dictionary<ulong, AppearRole> Players => _players;
 
         private void Awake()
         {
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleAppear, RoleAppearHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnemySyncPos, EnemyHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnemySyncPos, EnemySyncPosHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
-            EventManager.Instance.AddListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CItemList, ItemListHandler);
+
+            fileName = $"{Application.streamingAssetsPath}/CSV/{fileName}.csv";
+            using StreamReader reader = File.OpenText(fileName);
+            reader.ReadLine();
+            string line;
+            int id = 0;
+            Vector3 pos = Vector3.zero;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                ResourceManager.Instance.LoadAsync<GameObject>("Entity/Enemy/" + strs[1], (obj) =>
+                {
+                    FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
+                    enemyObj.gameObject.SetActive(false);
+                    enemyObj.id = id++;
+                    enemyObj.lv = int.Parse(strs[2]);
+                    enemyObj.hp = int.Parse(strs[3]);
+                    enemyObj.atk = int.Parse(strs[4]);
+                    enemyObj.transform.position = pos.Parse(strs[5]);
+                    enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.id;
+                    enemyObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
+                    enemyObj.patrolPath.transform.position = enemyObj.transform.position;
+                    enemyObj.gameObject.SetActive(true);
+                    _enemies.Add(enemyObj);
+                });
+            }
+        }
+
+        private void Start()
+        {
+            _propPanel = UIManager.Instance.FindPanel<PropPanel>();
         }
 
         private void OnApplicationQuit()
         {
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleAppear, RoleAppearHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnemySyncPos, EnemyHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnemySyncPos, EnemySyncPosHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
-            EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CItemList, ItemListHandler);
         }
 
-        private void RoleAppearHandler(Google.Protobuf.IMessage msg)
+        private void AllRoleAppearHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is RoleAppear proto)
+            if (msg is AllRoleAppear proto)
             {
-                foreach (Role role in proto.Role)
+                foreach (Role role in proto.Roles)
                 {
                     ulong sn = role.Sn;
                     AppearRole appearRole = new();
@@ -72,7 +104,7 @@ namespace Manage
             }
         }
 
-        private void EnemyHandler(Google.Protobuf.IMessage msg)
+        private void EnemySyncPosHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is EnemySyncPos proto)
             {
@@ -125,41 +157,29 @@ namespace Manage
             if(msg is AtkAnimEvent proto)
             {
                 PlayerController player = _players[proto.PlayerSn].Obj.GetComponent<PlayerController>();
+                if (proto.EnemyId == -1)
+                {
+                    player.SetHp(player, proto.CurrHp);
+                    _propPanel.UpdateHp(proto.CurrHp);
+                    return;
+                }
                 FsmController enemy = _enemies[proto.EnemyId];
-                if(proto.AtkEnemy)
+                if (proto.AtkEnemy)
+                {
                     enemy.SetHp(player, proto.CurrHp);
+                }
                 else
+                {
                     player.SetHp(enemy, proto.CurrHp);
+                    _propPanel.UpdateHp(proto.CurrHp);
+                }
             }
         }
 
-        private void PlayerLoadedCallback()
+        private void ItemListHandler(Google.Protobuf.IMessage msg)
         {
-            csvFile = $"{Application.streamingAssetsPath}/CSV/{csvFile}";
-            using StreamReader reader = File.OpenText(csvFile);
-            reader.ReadLine();
-            string line;
-            int id = 0;
-            Vector3 pos = Vector3.zero;
-            while ((line = reader.ReadLine()) != null)
-            {
-                string[] strs = line.Split(',');
-                ResourceManager.Instance.LoadAsync<GameObject>("Entity/Enemy/" + strs[1], (obj) =>
-                {
-                    FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
-                    enemyObj.gameObject.SetActive(false);
-                    enemyObj.id = id++;
-                    enemyObj.lv = int.Parse(strs[2]);
-                    enemyObj.hp = int.Parse(strs[3]);
-                    enemyObj.atk = int.Parse(strs[4]);
-                    enemyObj.transform.position = pos.Parse(strs[5]);
-                    enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.id;
-                    enemyObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
-                    enemyObj.patrolPath.transform.position = enemyObj.transform.position;
-                    enemyObj.gameObject.SetActive(true);
-                    _enemies.Add(enemyObj);
-                });
-            }
+            if(msg is ItemList itemList)
+                _enemies[itemList.EnemyId].DropItems(itemList);
         }
     }
 }
