@@ -13,7 +13,7 @@ namespace Control.FSM
         {
             _owner.Agent.isStopped = true;
             _owner.Agent.radius = 0;
-            _owner.Anim.SetBool(GameEntity.Death, true);
+            _owner.Anim.SetBool(GameEntity.death, true);
             _owner.GetComponent<CapsuleCollider>().enabled = false;
         }
 
@@ -25,7 +25,7 @@ namespace Control.FSM
         {
             _owner.Agent.isStopped = false;
             _owner.Agent.radius = 0.3f;
-            _owner.Anim.SetBool(GameEntity.Death, false);
+            _owner.Anim.SetBool(GameEntity.death, false);
             _owner.GetComponent<CapsuleCollider>().enabled = true;
         }
     }

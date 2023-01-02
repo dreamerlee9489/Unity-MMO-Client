@@ -58,11 +58,7 @@ namespace Manage
             yield return new WaitForSeconds(1f);
             foreach (var enemy in GameManager.Instance.ActiveWorld.Enemies)
             {
-                RequestSyncEnemy proto = new()
-                {
-                    PlayerSn = GameManager.Instance.MainPlayer.Sn,
-                    EnemyId = enemy.id
-                };
+                RequestSyncEnemy proto = new() { EnemyId = enemy.id };
                 NetManager.Instance.SendPacket(MsgId.C2SRequestSyncEnemy, proto);
             }
             WaitForSeconds sleep = new(0.02f);

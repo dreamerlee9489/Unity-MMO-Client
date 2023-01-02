@@ -1,28 +1,23 @@
-﻿using Manage;
+﻿using Control.CMD;
+using Manage;
 using System.Collections;
 using UnityEngine;
 
 namespace Control
 {
-    public enum PlayerStateType { Idle, Move, Attack }
-
-    public class PlayerController : GameEntity
+    public class PlayerController : GameEntity, IMoveExecutor, IAttackExecutor, IPickupExecutor
     {
-        private PlayerStateType _state = PlayerStateType.Idle;
-        private int _stateCode = 0;
         private RaycastHit _hit;
-        private Vector3 _hitPoint = Vector3.zero;
+        private ICommand _currCmd;
+        private CommandType _cmdType = CommandType.None;
         private readonly WaitForSeconds _sleep = new(0.02f);
-        private readonly Proto.Vector3D _curPos = new();
-        private readonly Proto.Vector3D _hitPos = new();
+
+        public ICommand CurrCmd => _currCmd;
 
         public ulong sn = 0;
         public int xp = 0, gold = 0;
 
-        protected override void Awake()
-        {
-            base.Awake();
-        }
+        protected override void Awake() => base.Awake();
 
         private void Start()
         {
@@ -34,6 +29,7 @@ namespace Control
         protected override void Update()
         {
             base.Update();
+            _currCmd?.Execute();
             if (Input.GetMouseButtonDown(0) && sn == GameManager.Instance.MainPlayer.Sn)
             {
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out _hit))
@@ -41,25 +37,19 @@ namespace Control
                     switch (_hit.collider.tag)
                     {
                         case "Terrain":
-                            target = _hit.transform;
-                            _hitPoint = _hit.point;
-                            _state = PlayerStateType.Move;
+                            _cmdType = CommandType.Move;
                             break;
                         case "Enemy":
-                            target = _hit.transform;
-                            _hitPoint = _hit.transform.position;
-                            _state = PlayerStateType.Attack;
+                            _cmdType = CommandType.Attack;
                             break;
                         case "Item":
-                            target = _hit.transform;
-                            _hitPoint = _hit.point;
-                            _state = PlayerStateType.Move;
+                            _cmdType = CommandType.Pickup;
                             break;
                     }
                 }
             }
 
-            if(Input.GetKeyDown(KeyCode.UpArrow) && sn == GameManager.Instance.MainPlayer.Sn)
+            if (Input.GetKeyDown(KeyCode.UpArrow) && sn == GameManager.Instance.MainPlayer.Sn)
             {
                 Proto.AtkAnimEvent proto = new()
                 {
@@ -70,93 +60,145 @@ namespace Control
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
             }
-
-            switch (target != null ? target.tag : null)
-            {
-                case "Terrain":
-                    if (Vector3.Distance(transform.position, _hitPoint) <= _agent.stoppingDistance)
-                    {
-                        target = null;
-                        Invoke(nameof(ResetState), 3);
-                    }
-                    break;
-                case "Enemy":
-                    if (Vector3.Distance(transform.position, target.transform.position) <= AttackRadius)
-                        _stateCode = 1;
-                    else
-                        _stateCode = 0;
-                    break;
-            }
         }
 
-        private void OnApplicationQuit()
-        {
-            _state = PlayerStateType.Idle;
-            MonoManager.Instance.StopAllCoroutines();
-        }
-
-        private void ResetState()
-        {
-            if (target == null)
-                _state = PlayerStateType.Idle;
-        }
+        private void OnApplicationQuit() => MonoManager.Instance.StopAllCoroutines();
 
         private IEnumerator SyncStateCoroutine()
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1f);
             while (true)
             {
                 yield return _sleep;
-                if (_state != PlayerStateType.Idle)
-                {
-                    _curPos.X = transform.position.x;
-                    _curPos.Y = transform.position.y;
-                    _curPos.Z = transform.position.z;
-                    _hitPos.X = _hitPoint.x;
-                    _hitPos.Y = _hitPoint.y;
-                    _hitPos.Z = _hitPoint.z;
+                Proto.PlayerSyncPos syncPos = new() 
+                { 
+                    Pos = new()
+                    { 
+                        X = transform.position.x,
+                        Y = transform.position.y,
+                        Z = transform.position.z
+                    }
+                };
 
-                    Proto.PlayerSyncState proto = new()
-                    {
-                        PlayerSn = sn,
-                        EnemyId = (!target || !target.CompareTag("Enemy")) ? -1 : target.GetComponent<FsmController>().id,
-                        State = target ? (int)_state : 1,
-                        Code = _stateCode,
-                        CurPos = _curPos,
-                        HitPos = _hitPos
-                    };
-                    NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncState, proto);
+                Proto.PlayerSyncCmd syncCmd = new();
+                switch (_cmdType)
+                {
+                    case CommandType.None:
+                        syncCmd.Type = 0;
+                        syncCmd.PlayerSn = sn;
+                        break;
+                    case CommandType.Move:
+                        syncCmd.Type = 1;
+                        syncCmd.PlayerSn = sn;
+                        syncCmd.TargetId = -1;
+                        syncCmd.Point = new()
+                        {
+                            X = _hit.point.x,
+                            Y = _hit.point.y,
+                            Z = _hit.point.z
+                        };
+                        break;
+                    case CommandType.Attack:
+                        syncCmd.Type = 2;
+                        syncCmd.PlayerSn = sn;
+                        syncCmd.TargetId = _hit.transform.GetComponent<FsmController>().id;
+                        syncCmd.Point = new()
+                        {
+                            X = _hit.transform.position.x,
+                            Y = _hit.transform.position.y,
+                            Z = _hit.transform.position.z
+                        };
+                        break;
+                    case CommandType.Pickup:
+                        syncCmd.Type = 3;
+                        syncCmd.PlayerSn = sn;
+                        syncCmd.TargetId = -1;
+                        syncCmd.Point = new()
+                        {
+                            X = _hit.point.x,
+                            Y = _hit.point.y,
+                            Z = _hit.point.z
+                        };
+                        break;
+                    default:
+                        break;
                 }
+
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncPos, syncPos);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncCmd, syncCmd);
             }
         }
 
-        public void ParseSyncState(Proto.PlayerSyncState proto)
+        public void ParseSyncCmd(Proto.PlayerSyncCmd proto)
         {
-            PlayerStateType state = (PlayerStateType)proto.State;
-            Vector3 pos = new()
+            Vector3 point;
+            switch (proto.Type)
             {
-                x = proto.HitPos.X,
-                y = proto.HitPos.Y,
-                z = proto.HitPos.Z
-            };
-            switch (state)
-            {
-                case PlayerStateType.Move:
-                    _anim.SetBool(Attack, false);
-                    _agent.destination = pos;
+                case 0:
+                    _currCmd?.Undo();
                     break;
-                case PlayerStateType.Attack:
-                    bool atk = proto.Code != 0;
-                    int id = proto.EnemyId;
-                    _anim.SetBool(Attack, atk);
-                    Transform target = GameManager.Instance.ActiveWorld.Enemies[id].transform;
-                    if (!atk)
-                        _agent.destination = target.position;
-                    transform.LookAt(target);
+                case 1:
+                    point = new Vector3(proto.Point.X, proto.Point.Y, proto.Point.Z);
+                    _currCmd = new MoveCommand(this, point);
+                    break;
+                case 2:
+                    target = GameManager.Instance.ActiveWorld.Enemies[proto.TargetId];
+                    _currCmd = new AttackCommand(this, target);
+                    break;
+                case 3:
+                    point = new Vector3(proto.Point.X, proto.Point.Y, proto.Point.Z);
+                    _currCmd = new PickupCommand(this, point);
                     break;
                 default:
                     break;
             }
+        }
+
+        public void ResetCmd() => _cmdType = CommandType.None;
+
+        public void Move(Vector3 point)
+        {
+            _agent.isStopped = false;
+            _agent.destination = point;
+        }
+
+        public void Attack(GameEntity target)
+        {
+            _agent.isStopped = false;
+            _agent.destination = target.transform.position;
+            this.target = target;
+            transform.LookAt(target.transform);
+            if (Vector3.Distance(transform.position, target.transform.position) <= AttackRadius)
+                _anim.SetBool(attack, true);
+            else
+                _anim.SetBool(attack, false);
+        }
+
+        public void Pickup(Vector3 point)
+        {
+            _agent.isStopped = false;
+            _agent.destination = point;
+            if (Vector3.Distance(transform.position, point) < _agent.stoppingDistance)
+                _cmdType = CommandType.None;
+        }
+
+        public void UnMove()
+        {
+            _agent.isStopped = true;
+            _currCmd = null;
+        }
+
+        public void UnAttack()
+        {
+            _agent.isStopped = true;
+            _anim.SetBool(attack, false);
+            _currCmd = null;
+        }
+
+        public void UnPickup()
+        {
+            _agent.isStopped = true;
+            _currCmd = null;
         }
     }
 }

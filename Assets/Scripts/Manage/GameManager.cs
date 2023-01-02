@@ -29,7 +29,7 @@ namespace Manage
     {
         private UIManager _canvas;
         private AccountInfo _accountInfo;
-        private PlayerInfo _mainPlayer;
+        private PlayerInfo _player;
         private CinemachineVirtualCamera _virtualCam;
         private WorldManager _activeWorld;
         private List<PlayerBaseData> _playerBaseDatas;
@@ -37,7 +37,7 @@ namespace Manage
 
         public UIManager Canvas => _canvas;
         public AccountInfo AccountInfo => _accountInfo;
-        public PlayerInfo MainPlayer => _mainPlayer;
+        public PlayerInfo MainPlayer => _player;
         public CinemachineVirtualCamera VirtualCam => _virtualCam;
         public WorldManager ActiveWorld => _activeWorld;
 
@@ -122,8 +122,8 @@ namespace Manage
         {
             if (msg is SyncPlayer proto)
             {
-                _mainPlayer ??= new PlayerInfo();
-                _mainPlayer.LoadPlayer(proto.Player);
+                _player ??= new PlayerInfo();
+                _player.LoadPlayer(proto.Player);
             }
         }
 

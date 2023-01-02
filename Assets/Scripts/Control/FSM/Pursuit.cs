@@ -9,7 +9,7 @@
 
         public override void Enter()
         {
-            _owner.Anim.SetBool(GameEntity.Attack, false);
+            _owner.Anim.SetBool(GameEntity.attack, false);
             _owner.Agent.speed = _owner.RunSpeed;
         }
 

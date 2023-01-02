@@ -1,5 +1,4 @@
-﻿using Manage;
-using UI;
+﻿using UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,9 +7,9 @@ namespace Control
     [RequireComponent(typeof(CapsuleCollider), typeof(NavMeshAgent), typeof(AnimExecutor))]
     public abstract class GameEntity : MonoBehaviour
     {
-        public static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
-        public static readonly int Attack = Animator.StringToHash("Attack");
-        public static readonly int Death = Animator.StringToHash("Death");
+        public static readonly int moveSpeed = Animator.StringToHash("moveSpeed");
+        public static readonly int attack = Animator.StringToHash("attack");
+        public static readonly int death = Animator.StringToHash("death");
 
         protected float _walkSpeed = 1.56f;
         protected float _runSpeed = 5.56f;
@@ -30,7 +29,7 @@ namespace Control
         public NavMeshAgent Agent => _agent;
         public NameBar NameBar => _nameBar;
 
-        public Transform target;
+        public GameEntity target;
 
         public int lv = 1, hp = 1000, mp = 1000, atk = 10, def = 0;
 
@@ -43,7 +42,7 @@ namespace Control
 
         protected virtual void Update()
         {
-            _anim.SetFloat(MoveSpeed, transform.InverseTransformVector(_agent.velocity).z);
+            _anim.SetFloat(moveSpeed, transform.InverseTransformVector(_agent.velocity).z);
         }
 
         public bool CanSee(GameEntity target)
@@ -65,7 +64,20 @@ namespace Control
         public void SetHp(GameEntity attacker, int currHp)
         {
             if ((hp = currHp) == 0)
-                attacker.target = null;            
+            {
+                switch (attacker)
+                {
+                    case PlayerController:
+                        attacker.target = null;
+                        (attacker as PlayerController).ResetCmd();
+                        break;
+                    case FsmController:
+                        (attacker as FsmController).ResetState();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

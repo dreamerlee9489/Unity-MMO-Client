@@ -14,7 +14,7 @@
         public override void Enter()
         {
             _patrolPath = _owner.patrolPath;
-            _owner.Anim.SetBool(GameEntity.Attack, false);
+            _owner.Anim.SetBool(GameEntity.attack, false);
             _owner.Agent.speed = _owner.WalkSpeed;
             _owner.Agent.destination = _patrolPath.Path[_index].position;
         }

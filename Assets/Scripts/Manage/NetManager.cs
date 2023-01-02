@@ -69,7 +69,8 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.S2CAllRoleAppear, ParsePacket<Proto.AllRoleAppear>);
             RegistParseFunc(Proto.MsgId.S2CEnemySyncPos, ParsePacket<Proto.EnemySyncPos>);
             RegistParseFunc(Proto.MsgId.S2CFsmSyncState, ParsePacket<Proto.FsmSyncState>);
-            RegistParseFunc(Proto.MsgId.S2CPlayerSyncState, ParsePacket<Proto.PlayerSyncState>);
+            RegistParseFunc(Proto.MsgId.S2CPlayerSyncPos, ParsePacket<Proto.PlayerSyncPos>);
+            RegistParseFunc(Proto.MsgId.S2CPlayerSyncCmd, ParsePacket<Proto.PlayerSyncCmd>);
             RegistParseFunc(Proto.MsgId.S2CRoleDisappear, ParsePacket<Proto.RoleDisappear>);
             RegistParseFunc(Proto.MsgId.S2CRequestLinkPlayer, ParsePacket<Proto.RequestLinkPlayer>);
             RegistParseFunc(Proto.MsgId.S2CAtkAnimEvent, ParsePacket<Proto.AtkAnimEvent>);

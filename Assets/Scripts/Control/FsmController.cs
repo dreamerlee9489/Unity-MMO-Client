@@ -2,7 +2,6 @@
 using Item;
 using Manage;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Control
@@ -13,7 +12,7 @@ namespace Control
 
         public int id = 0;
         public FsmState currState;
-        public PatrolPath patrolPath;
+        public PatrolPath patrolPath;       
 
         protected override void Awake()
         {
@@ -55,7 +54,7 @@ namespace Control
 
         public void ParseSyncState(FsmStateType type, int code, PlayerController target)
         {
-            this.target = target != null ? target.transform : null;
+            this.target = target;
             if (currState == null)
             {
                 currState = FsmState.GenState(type, code, this, target);

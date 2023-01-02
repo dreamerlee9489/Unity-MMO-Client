@@ -11,7 +11,7 @@
         {
             _owner.Agent.speed = _owner.WalkSpeed;
             _owner.Agent.destination = _target.transform.position;
-            _owner.Anim.SetBool(GameEntity.Attack, true);
+            _owner.Anim.SetBool(GameEntity.attack, true);
         }
 
         public override void Execute()
@@ -21,7 +21,7 @@
 
         public override void Exit()
         {
-            _owner.Anim.SetBool(GameEntity.Attack, false);
+            _owner.Anim.SetBool(GameEntity.attack, false);
         }
     }
 }

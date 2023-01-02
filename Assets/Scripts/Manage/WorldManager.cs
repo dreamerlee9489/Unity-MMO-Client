@@ -1,7 +1,6 @@
 ﻿using Control;
 using Control.FSM;
 using Proto;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -24,7 +23,7 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnemySyncPos, EnemySyncPosHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CPlayerSyncCmd, PlayerSyncCmdHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CItemList, ItemListHandler);
@@ -67,7 +66,7 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnemySyncPos, EnemySyncPosHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CPlayerSyncState, PlayerSyncStateHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CPlayerSyncCmd, PlayerSyncCmdHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CItemList, ItemListHandler);
@@ -87,9 +86,9 @@ namespace Manage
             }
         }
 
-        private void PlayerSyncStateHandler(Google.Protobuf.IMessage msg)
+        private void PlayerSyncCmdHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is PlayerSyncState proto)
+            if (msg is PlayerSyncCmd proto)
             {
                 ulong playSn = proto.PlayerSn;
                 if (_players.ContainsKey(playSn))
@@ -98,7 +97,7 @@ namespace Manage
                     if (player.Obj != null)
                     {
                         PlayerController entity = player.Obj.GetComponent<PlayerController>();
-                        entity.ParseSyncState(proto);
+                        entity.ParseSyncCmd(proto);
                     }
                 }
             }
@@ -149,7 +148,7 @@ namespace Manage
         private void RequestLinkPlayerHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is RequestLinkPlayer proto && _enemies.Count > 0)
-                _enemies[proto.EnemyId].LinkPlayer(proto.IsLinker);
+                _enemies[proto.EnemyId].LinkPlayer(proto.Linker);
         }
 
         private void AtkAnimEventHandler(Google.Protobuf.IMessage msg)

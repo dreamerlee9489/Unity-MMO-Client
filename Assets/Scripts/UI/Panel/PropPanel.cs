@@ -41,13 +41,19 @@ public class PropPanel : BasePanel
 
     public void UpdateHp(int currHp)
     {
-        hpTxt.text = $"{currHp} / {baseData.hp}";
-        hudPanel.UpdateHp(currHp, baseData.hp);
+        if(currHp <= baseData.hp) 
+        {
+            hpTxt.text = $"{currHp} / {baseData.hp}";
+            hudPanel.UpdateHp(currHp, baseData.hp);
+        }
     }
 
     public void UpdateXp(int currXp)
     {
-        xpTxt.text = $"{currXp} / {baseData.xp}";
-        hudPanel.UpdateXp(currXp, baseData.xp);
+        if(currXp <= baseData.xp)
+        {
+            xpTxt.text = $"{currXp} / {baseData.xp}";
+            hudPanel.UpdateXp(currXp, baseData.xp);
+        }
     }
 }
