@@ -1,6 +1,9 @@
 ﻿using Control.CMD;
+using Item;
 using Manage;
 using System.Collections;
+using System.Collections.Generic;
+using UI;
 using UnityEngine;
 
 namespace Control
@@ -8,11 +11,12 @@ namespace Control
     public class PlayerController : GameEntity, IMoveExecutor, IAttackExecutor, IPickupExecutor
     {
         private RaycastHit _hit;
-        private ICommand _currCmd;
+        private ICommand _currCmd, _prevCmd;
         private CommandType _cmdType = CommandType.None;
+        private Transform _knapsack, _handPos;
         private readonly WaitForSeconds _sleep = new(0.02f);
 
-        public ICommand CurrCmd => _currCmd;
+        public Transform Knapsack => _knapsack;
 
         public ulong sn = 0;
         public int xp = 0, gold = 0;
@@ -23,13 +27,16 @@ namespace Control
         {
             _agent.speed = RunSpeed * 1.5f;
             if (sn == GameManager.Instance.MainPlayer.Sn)
+            {
+                _knapsack = transform.Find("Knapsack");
+                _handPos = transform.Find("HandPos");
                 MonoManager.Instance.StartCoroutine(SyncStateCoroutine());
+            }
         }
 
         protected override void Update()
         {
             base.Update();
-            _currCmd?.Execute();
             if (Input.GetMouseButtonDown(0) && sn == GameManager.Instance.MainPlayer.Sn)
             {
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out _hit))
@@ -66,11 +73,12 @@ namespace Control
 
         private IEnumerator SyncStateCoroutine()
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SGetPlayerKnap, null);
             while (true)
             {
                 yield return _sleep;
-                Proto.PlayerSyncPos syncPos = new() 
+                Proto.PlayerPushPos syncPos = new() 
                 { 
                     Pos = new()
                     { 
@@ -124,7 +132,7 @@ namespace Control
                         break;
                 }
 
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncPos, syncPos);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerPushPos, syncPos);
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncCmd, syncCmd);
             }
         }
@@ -132,6 +140,7 @@ namespace Control
         public void ParseSyncCmd(Proto.PlayerSyncCmd proto)
         {
             Vector3 point;
+            _prevCmd = _currCmd;
             switch (proto.Type)
             {
                 case 0:
@@ -152,6 +161,9 @@ namespace Control
                 default:
                     break;
             }
+            if(_prevCmd != null && _currCmd != null && _prevCmd.GetCommandType() != _currCmd.GetCommandType())
+                _prevCmd.Undo();
+            _currCmd?.Execute();
         }
 
         public void ResetCmd() => _cmdType = CommandType.None;
@@ -166,7 +178,6 @@ namespace Control
         {
             _agent.isStopped = false;
             _agent.destination = target.transform.position;
-            this.target = target;
             transform.LookAt(target.transform);
             if (Vector3.Distance(transform.position, target.transform.position) <= AttackRadius)
                 _anim.SetBool(attack, true);
@@ -199,6 +210,71 @@ namespace Control
         {
             _agent.isStopped = true;
             _currCmd = null;
+        }
+
+        public void AddItemToKnap(GameItem item)
+        {
+            string key = item.GetKey();
+            item.gameObject.SetActive(false);
+            item.transform.SetParent(_knapsack);
+            ResourceManager.Instance.LoadAsync<GameObject>($"UI/ItemUI/{item.itemType}/{item.objName}", (obj) =>
+            {
+                ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();
+                itemUI.Item = item;
+                item.ItemUI = itemUI;
+                PoolManager.Instance.Push(item.objName, itemUI.gameObject);
+                itemUI.AddToKnap();
+            });
+        }
+
+        public void ParsePlayerKnap(Proto.PlayerKnap playerKnap)
+        {
+            gold = playerKnap.Gold;
+            UIManager.Instance.FindPanel<HUDPanel>().UpdateGold(gold);
+            var potionDict = GameManager.Instance.DropPotionDict;
+            var weaponDict = GameManager.Instance.DropWeaponDict;
+            foreach(Proto.ItemData data in playerKnap.Items)
+            {
+                switch (data.Type)
+                {
+                    case Proto.ItemData.Types.ItemType.None:
+                        break;
+                    case Proto.ItemData.Types.ItemType.Potion:
+                        for (int i = 0; i < data.Num; i++)
+                        {
+                            string key = (int)ItemType.Potion + "@" + data.Id;
+                            ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key][0]}", (obj) =>
+                            {
+                                Potion potion = Instantiate(obj).GetComponent<Potion>();
+                                potion.itemId = data.Id;
+                                potion.itemType = ItemType.Potion;
+                                potion.objName = potionDict[key][0];
+                                potion.SetNameBar(potionDict[key][1]);
+                                potion.transform.position = transform.position;
+                                AddItemToKnap(potion);
+                            });
+                        }
+                        break;
+                    case Proto.ItemData.Types.ItemType.Weapon:
+                        for (int i = 0; i < data.Num; i++)
+                        {
+                            string key = (int)ItemType.Weapon + "@" + data.Id;
+                            ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key][0]}", (obj) =>
+                            {
+                                Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
+                                weapon.itemId = data.Id;
+                                weapon.itemType = ItemType.Weapon;
+                                weapon.objName = weaponDict[key][0];
+                                weapon.SetNameBar(weaponDict[key][1]);
+                                weapon.transform.position = transform.position;
+                                AddItemToKnap(weapon);
+                            });
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

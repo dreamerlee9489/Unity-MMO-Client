@@ -33,7 +33,7 @@ namespace Manage
         private CinemachineVirtualCamera _virtualCam;
         private WorldManager _activeWorld;
         private List<PlayerBaseData> _playerBaseDatas;
-        private Dictionary<int, string> _dropPotionDict, _dropWeaponDict;
+        private Dictionary<string, List<string>> _dropPotionDict, _dropWeaponDict;
 
         public UIManager Canvas => _canvas;
         public AccountInfo AccountInfo => _accountInfo;
@@ -42,8 +42,8 @@ namespace Manage
         public WorldManager ActiveWorld => _activeWorld;
 
         public List<PlayerBaseData> PlayerBaseDatas => _playerBaseDatas;
-        public Dictionary<int, string> DropPotionDict => _dropPotionDict;
-        public Dictionary<int, string> DropWeaponDict => _dropWeaponDict;
+        public Dictionary<string, List<string>> DropPotionDict => _dropPotionDict;
+        public Dictionary<string, List<string>> DropWeaponDict => _dropWeaponDict;
 
         protected override void Awake()
         {
@@ -56,8 +56,8 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
-            PoolManager.Instance.Add(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
-            PoolManager.Instance.Add(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
+            PoolManager.Instance.Inject(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"));
+            PoolManager.Instance.Inject(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
 
         private void Start()
@@ -157,7 +157,7 @@ namespace Manage
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
-                _dropPotionDict.Add(int.Parse(strs[0]), strs[1]);
+                _dropPotionDict.Add((int)ItemType.Potion + "@" + strs[0], new List<string>() { strs[1], strs[2] });
             }
         }
 
@@ -170,7 +170,7 @@ namespace Manage
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
-                _dropWeaponDict.Add(int.Parse(strs[0]), strs[1]);
+                _dropWeaponDict.Add((int)ItemType.Weapon + "@" + strs[0], new List<string>() { strs[1], strs[2] });
             }
         }
     }

@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 1683816780471443599}
   - component: {fileID: 1683816780471443698}
   m_Layer: 5
-  m_Name: NameBar
+  m_Name: EntityNameBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

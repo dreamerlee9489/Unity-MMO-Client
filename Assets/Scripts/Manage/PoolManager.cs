@@ -14,6 +14,8 @@ namespace Manage
         private readonly Dictionary<string, List<GameObject>> _pool = new();
         private readonly Dictionary<string, GameObject> _roots = new();
 
+        public Dictionary<string, GameObject> Roots => _roots;
+
         protected override void Awake()
         {
             base.Awake();
@@ -28,7 +30,7 @@ namespace Manage
         /// <summary>
         /// 实例化count个GameObject并压入池中
         /// </summary>
-        public void Add(string poolType, GameObject obj, int count = 10)
+        public void Inject(string poolType, GameObject obj, int count = 10)
         {
             if (!_roots.ContainsKey(poolType))
             {
@@ -51,12 +53,16 @@ namespace Manage
         /// </summary>
         public void Push(string poolType, GameObject instObj)
         {
-            if (_roots.ContainsKey(poolType))
+            if (!_roots.ContainsKey(poolType))
             {
-                instObj.transform.SetParent(_roots[poolType].transform, false);
-                instObj.SetActive(false);
-                _pool[poolType].Add(instObj);
+                GameObject root = new(poolType + "Root");
+                root.transform.parent = transform;
+                _roots.Add(poolType, root);
+                _pool.Add(poolType, new List<GameObject>());
             }
+            instObj.transform.SetParent(_roots[poolType].transform, false);
+            instObj.SetActive(false);
+            _pool[poolType].Add(instObj);
         }
 
         /// <summary>

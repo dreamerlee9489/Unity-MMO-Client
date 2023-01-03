@@ -21,13 +21,10 @@ namespace Manage
         private void Update()
         {
             if(Input.GetKeyDown(KeyCode.P))
-            {
-                PropPanel propPanel = FindPanel<PropPanel>();
-                if (propPanel.gameObject.activeSelf)
-                    propPanel.Close();
-                else
-                    propPanel.Open();
-            }
+                FindPanel<PropPanel>().SwitchToggle();
+
+            if (Input.GetKeyDown(KeyCode.K))
+                FindPanel<KnapPanel>().SwitchToggle();
         }
 
         private void OnApplicationQuit()

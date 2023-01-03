@@ -1,3 +1,3 @@
-Id,ResName
-1,HpPotion
-2,MpPotion
+Id,ResPath,ItemName
+1,HpPotion,生命药水
+2,MpPotion,法力药水

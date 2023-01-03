@@ -67,14 +67,15 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.L2CPlayerList, ParsePacket<Proto.PlayerList>);
             RegistParseFunc(Proto.MsgId.G2CSyncPlayer, ParsePacket<Proto.SyncPlayer>);
             RegistParseFunc(Proto.MsgId.S2CAllRoleAppear, ParsePacket<Proto.AllRoleAppear>);
-            RegistParseFunc(Proto.MsgId.S2CEnemySyncPos, ParsePacket<Proto.EnemySyncPos>);
+            RegistParseFunc(Proto.MsgId.S2CEnemyPushPos, ParsePacket<Proto.EnemyPushPos>);
             RegistParseFunc(Proto.MsgId.S2CFsmSyncState, ParsePacket<Proto.FsmSyncState>);
-            RegistParseFunc(Proto.MsgId.S2CPlayerSyncPos, ParsePacket<Proto.PlayerSyncPos>);
+            RegistParseFunc(Proto.MsgId.S2CPlayerPushPos, ParsePacket<Proto.PlayerPushPos>);
             RegistParseFunc(Proto.MsgId.S2CPlayerSyncCmd, ParsePacket<Proto.PlayerSyncCmd>);
             RegistParseFunc(Proto.MsgId.S2CRoleDisappear, ParsePacket<Proto.RoleDisappear>);
             RegistParseFunc(Proto.MsgId.S2CRequestLinkPlayer, ParsePacket<Proto.RequestLinkPlayer>);
             RegistParseFunc(Proto.MsgId.S2CAtkAnimEvent, ParsePacket<Proto.AtkAnimEvent>);
-            RegistParseFunc(Proto.MsgId.S2CItemList, ParsePacket<Proto.ItemList>);
+            RegistParseFunc(Proto.MsgId.S2CDropItemList, ParsePacket<Proto.DropItemList>);
+            RegistParseFunc(Proto.MsgId.S2CGetPlayerKnap, ParsePacket<Proto.PlayerKnap>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
             EventManager.Instance.AddListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
         }

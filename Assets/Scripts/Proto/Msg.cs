@@ -128,10 +128,10 @@ namespace Proto {
             "CgNhdGsYCSABKAUSCwoDZGVmGAogASgFIisKDUFsbFJvbGVBcHBlYXISGgoF",
             "cm9sZXMYASADKAsyCy5Qcm90by5Sb2xlIhsKDVJvbGVEaXNhcHBlYXISCgoC",
             "c24YASABKAQiPAoETW92ZRIRCglwbGF5ZXJfc24YASABKAQSIQoIcG9zaXRp",
-            "b24YAiADKAsyDy5Qcm90by5WZWN0b3IzRCI4CgxFbmVteVN5bmNQb3MSCgoC",
+            "b24YAiADKAsyDy5Qcm90by5WZWN0b3IzRCI4CgxFbmVteVB1c2hQb3MSCgoC",
             "aWQYASABKAUSHAoDcG9zGAIgASgLMg8uUHJvdG8uVmVjdG9yM0QiUAoMRnNt",
             "U3luY1N0YXRlEg0KBXN0YXRlGAEgASgFEgwKBGNvZGUYAiABKAUSEAoIZW5l",
-            "bXlfaWQYAyABKAUSEQoJcGxheWVyX3NuGAQgASgEIi0KDVBsYXllclN5bmNQ",
+            "bXlfaWQYAyABKAUSEQoJcGxheWVyX3NuGAQgASgEIi0KDVBsYXllclB1c2hQ",
             "b3MSHAoDcG9zGAEgASgLMg8uUHJvdG8uVmVjdG9yM0QiYwoNUGxheWVyU3lu",
             "Y0NtZBIMCgR0eXBlGAEgASgFEh4KBXBvaW50GAIgASgLMg8uUHJvdG8uVmVj",
             "dG9yM0QSEQoJcGxheWVyX3NuGAMgASgEEhEKCXRhcmdldF9pZBgEIAEoBSIk",
@@ -139,18 +139,18 @@ namespace Proto {
             "c3RMaW5rUGxheWVyEhAKCGVuZW15X2lkGAEgASgFEg4KBmxpbmtlchgCIAEo",
             "CCJWCgxBdGtBbmltRXZlbnQSEQoJcGxheWVyX3NuGAEgASgEEhAKCGVuZW15",
             "X2lkGAIgASgFEg8KB2N1cnJfaHAYAyABKAUSEAoIYXRrRW5lbXkYBCABKAgi",
-            "PAoISXRlbUxpc3QSEAoIZW5lbXlfaWQYASABKAUSHgoFaXRlbXMYAiADKAsy",
-            "Dy5Qcm90by5JdGVtRGF0YSp4CgdUYWdUeXBlEg8KC1RhZ1R5cGVOb25lEAAS",
-            "EgoOVGFnVHlwZUFjY291bnQQARIOCgpUYWdUeXBlQXBwEAISEQoNVGFnVHlw",
-            "ZUVudGl0eRADEhIKDlRhZ1R5cGVUb1dvcmxkEAQSEQoNVGFnVHlwZVBsYXll",
-            "chAFKpoBChZBY2NvdW50Q2hlY2tSZXR1cm5Db2RlEgoKBkFSQ19PSxAAEg8K",
-            "C0FSQ19VTktPTldOEAESGQoVQVJDX05PVF9GT1VORF9BQ0NPVU5UEAISFgoS",
-            "QVJDX1BBU1NXT1JEX1dST05HEAMSDwoLQVJDX0xPR0dJTkcQBBIPCgtBUkNf",
-            "VElNRU9VVBAFEg4KCkFSQ19PTkxJTkUQBipHChNMb2dpbkh0dHBSZXR1cm5D",
-            "b2RlEgsKB0xIUkNfT0sQABIQCgxMSFJDX1RJTUVPVVQQARIRCg1MSFJDX05P",
-            "VEZPVU5EEAIqTAoWQ3JlYXRlUGxheWVyUmV0dXJuQ29kZRIRCg1DUFJfQ3Jl",
-            "YXRlX09LEAASDwoLQ1BSX1Vua29ud24QARIOCgpDUFJfUmVuYW1lEAJiBnBy",
-            "b3RvMw=="));
+            "QAoMRHJvcEl0ZW1MaXN0EhAKCGVuZW15X2lkGAEgASgFEh4KBWl0ZW1zGAIg",
+            "AygLMg8uUHJvdG8uSXRlbURhdGEqeAoHVGFnVHlwZRIPCgtUYWdUeXBlTm9u",
+            "ZRAAEhIKDlRhZ1R5cGVBY2NvdW50EAESDgoKVGFnVHlwZUFwcBACEhEKDVRh",
+            "Z1R5cGVFbnRpdHkQAxISCg5UYWdUeXBlVG9Xb3JsZBAEEhEKDVRhZ1R5cGVQ",
+            "bGF5ZXIQBSqaAQoWQWNjb3VudENoZWNrUmV0dXJuQ29kZRIKCgZBUkNfT0sQ",
+            "ABIPCgtBUkNfVU5LT05XThABEhkKFUFSQ19OT1RfRk9VTkRfQUNDT1VOVBAC",
+            "EhYKEkFSQ19QQVNTV09SRF9XUk9ORxADEg8KC0FSQ19MT0dHSU5HEAQSDwoL",
+            "QVJDX1RJTUVPVVQQBRIOCgpBUkNfT05MSU5FEAYqRwoTTG9naW5IdHRwUmV0",
+            "dXJuQ29kZRILCgdMSFJDX09LEAASEAoMTEhSQ19USU1FT1VUEAESEQoNTEhS",
+            "Q19OT1RGT1VORBACKkwKFkNyZWF0ZVBsYXllclJldHVybkNvZGUSEQoNQ1BS",
+            "X0NyZWF0ZV9PSxAAEg8KC0NQUl9VbmtvbnduEAESDgoKQ1BSX1JlbmFtZRAC",
+            "YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Proto.DbReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.TagType), typeof(global::Proto.AccountCheckReturnCode), typeof(global::Proto.LoginHttpReturnCode), typeof(global::Proto.CreatePlayerReturnCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -218,14 +218,14 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.AllRoleAppear), global::Proto.AllRoleAppear.Parser, new[]{ "Roles" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.RoleDisappear), global::Proto.RoleDisappear.Parser, new[]{ "Sn" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Move), global::Proto.Move.Parser, new[]{ "PlayerSn", "Position" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.EnemySyncPos), global::Proto.EnemySyncPos.Parser, new[]{ "Id", "Pos" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.EnemyPushPos), global::Proto.EnemyPushPos.Parser, new[]{ "Id", "Pos" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FsmSyncState), global::Proto.FsmSyncState.Parser, new[]{ "State", "Code", "EnemyId", "PlayerSn" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerSyncPos), global::Proto.PlayerSyncPos.Parser, new[]{ "Pos" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerPushPos), global::Proto.PlayerPushPos.Parser, new[]{ "Pos" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerSyncCmd), global::Proto.PlayerSyncCmd.Parser, new[]{ "Type", "Point", "PlayerSn", "TargetId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.RequestSyncEnemy), global::Proto.RequestSyncEnemy.Parser, new[]{ "EnemyId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.RequestLinkPlayer), global::Proto.RequestLinkPlayer.Parser, new[]{ "EnemyId", "Linker" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.AtkAnimEvent), global::Proto.AtkAnimEvent.Parser, new[]{ "PlayerSn", "EnemyId", "CurrHp", "AtkEnemy" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemList), global::Proto.ItemList.Parser, new[]{ "EnemyId", "Items" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.DropItemList), global::Proto.DropItemList.Parser, new[]{ "EnemyId", "Items" }, null, null, null, null)
           }));
     }
     #endregion
@@ -10691,11 +10691,11 @@ namespace Proto {
 
   }
 
-  public sealed partial class EnemySyncPos : pb::IMessage<EnemySyncPos> {
-    private static readonly pb::MessageParser<EnemySyncPos> _parser = new pb::MessageParser<EnemySyncPos>(() => new EnemySyncPos());
+  public sealed partial class EnemyPushPos : pb::IMessage<EnemyPushPos> {
+    private static readonly pb::MessageParser<EnemyPushPos> _parser = new pb::MessageParser<EnemyPushPos>(() => new EnemyPushPos());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<EnemySyncPos> Parser { get { return _parser; } }
+    public static pb::MessageParser<EnemyPushPos> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -10708,22 +10708,22 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public EnemySyncPos() {
+    public EnemyPushPos() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public EnemySyncPos(EnemySyncPos other) : this() {
+    public EnemyPushPos(EnemyPushPos other) : this() {
       id_ = other.id_;
       pos_ = other.pos_ != null ? other.pos_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public EnemySyncPos Clone() {
-      return new EnemySyncPos(this);
+    public EnemyPushPos Clone() {
+      return new EnemyPushPos(this);
     }
 
     /// <summary>Field number for the "id" field.</summary>
@@ -10750,11 +10750,11 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as EnemySyncPos);
+      return Equals(other as EnemyPushPos);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(EnemySyncPos other) {
+    public bool Equals(EnemyPushPos other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -10813,7 +10813,7 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(EnemySyncPos other) {
+    public void MergeFrom(EnemyPushPos other) {
       if (other == null) {
         return;
       }
@@ -11067,11 +11067,11 @@ namespace Proto {
 
   }
 
-  public sealed partial class PlayerSyncPos : pb::IMessage<PlayerSyncPos> {
-    private static readonly pb::MessageParser<PlayerSyncPos> _parser = new pb::MessageParser<PlayerSyncPos>(() => new PlayerSyncPos());
+  public sealed partial class PlayerPushPos : pb::IMessage<PlayerPushPos> {
+    private static readonly pb::MessageParser<PlayerPushPos> _parser = new pb::MessageParser<PlayerPushPos>(() => new PlayerPushPos());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<PlayerSyncPos> Parser { get { return _parser; } }
+    public static pb::MessageParser<PlayerPushPos> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -11084,21 +11084,21 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public PlayerSyncPos() {
+    public PlayerPushPos() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public PlayerSyncPos(PlayerSyncPos other) : this() {
+    public PlayerPushPos(PlayerPushPos other) : this() {
       pos_ = other.pos_ != null ? other.pos_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public PlayerSyncPos Clone() {
-      return new PlayerSyncPos(this);
+    public PlayerPushPos Clone() {
+      return new PlayerPushPos(this);
     }
 
     /// <summary>Field number for the "pos" field.</summary>
@@ -11114,11 +11114,11 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as PlayerSyncPos);
+      return Equals(other as PlayerPushPos);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(PlayerSyncPos other) {
+    public bool Equals(PlayerPushPos other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -11168,7 +11168,7 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(PlayerSyncPos other) {
+    public void MergeFrom(PlayerPushPos other) {
       if (other == null) {
         return;
       }
@@ -11920,11 +11920,11 @@ namespace Proto {
 
   }
 
-  public sealed partial class ItemList : pb::IMessage<ItemList> {
-    private static readonly pb::MessageParser<ItemList> _parser = new pb::MessageParser<ItemList>(() => new ItemList());
+  public sealed partial class DropItemList : pb::IMessage<DropItemList> {
+    private static readonly pb::MessageParser<DropItemList> _parser = new pb::MessageParser<DropItemList>(() => new DropItemList());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<ItemList> Parser { get { return _parser; } }
+    public static pb::MessageParser<DropItemList> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -11937,22 +11937,22 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ItemList() {
+    public DropItemList() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ItemList(ItemList other) : this() {
+    public DropItemList(DropItemList other) : this() {
       enemyId_ = other.enemyId_;
       items_ = other.items_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ItemList Clone() {
-      return new ItemList(this);
+    public DropItemList Clone() {
+      return new DropItemList(this);
     }
 
     /// <summary>Field number for the "enemy_id" field.</summary>
@@ -11978,11 +11978,11 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as ItemList);
+      return Equals(other as DropItemList);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(ItemList other) {
+    public bool Equals(DropItemList other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -12036,7 +12036,7 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(ItemList other) {
+    public void MergeFrom(DropItemList other) {
       if (other == null) {
         return;
       }

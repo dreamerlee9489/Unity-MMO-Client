@@ -39,7 +39,7 @@ namespace Proto
                     _obj.atk = proto.Atk;
                     _obj.def = proto.Def;
                     _obj.name = "Sync_" + _name;
-                    _obj.NameBar.Name.text = _name;
+                    _obj.SetNameBar(_name);
                     _obj.gameObject.SetActive(false);
                     _obj.transform.SetPositionAndRotation(_position, Quaternion.identity);
                     _obj.gameObject.SetActive(true);

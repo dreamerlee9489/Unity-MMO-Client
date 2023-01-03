@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class NameBar : MonoBehaviour
+    public class EntityNameBar : MonoBehaviour
     {
         public Text Name { get; set; }
 

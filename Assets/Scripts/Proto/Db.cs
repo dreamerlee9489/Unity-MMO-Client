@@ -34,13 +34,14 @@ namespace Proto {
             "V29ybGQSJgoMbGFzdF9kdW5nZW9uGAIgASgLMhAuUHJvdG8uTGFzdFdvcmxk",
             "EhYKDm9ubGluZV92ZXJzaW9uGAMgASgFIoUBCgZQbGF5ZXISCgoCc24YASAB",
             "KAQSDAoEbmFtZRgCIAEoCRIfCgRiYXNlGAMgASgLMhEuUHJvdG8uUGxheWVy",
-            "QmFzZRIfCgRwYWNrGAQgASgLMhEuUHJvdG8uUGxheWVyUGFjaxIfCgRtaXNj",
+            "QmFzZRIfCgRrbmFwGAQgASgLMhEuUHJvdG8uUGxheWVyS25hcBIfCgRtaXNj",
             "GAUgASgLMhEuUHJvdG8uUGxheWVyTWlzYyJ5CghJdGVtRGF0YRImCgR0eXBl",
             "GAEgASgOMhguUHJvdG8uSXRlbURhdGEuSXRlbVR5cGUSCgoCaWQYAiABKAUS",
             "CwoDbnVtGAMgASgFIiwKCEl0ZW1UeXBlEggKBE5vbmUQABIKCgZQb3Rpb24Q",
-            "ARIKCgZXZWFwb24QAiI6CgpQbGF5ZXJQYWNrEgwKBGdvbGQYASABKAUSHgoF",
-            "aXRlbXMYAiADKAsyDy5Qcm90by5JdGVtRGF0YSooCgZHZW5kZXISCAoEbm9u",
-            "ZRAAEggKBG1hbGUQARIKCgZmZW1hbGUQAmIGcHJvdG8z"));
+            "ARIKCgZXZWFwb24QAiI6CgpQbGF5ZXJLbmFwEgwKBGdvbGQYASABKAUSHgoF",
+            "aXRlbXMYAiADKAsyDy5Qcm90by5JdGVtRGF0YSIuCg1BZGRJdGVtVG9LbmFw",
+            "Eh0KBGl0ZW0YASABKAsyDy5Qcm90by5JdGVtRGF0YSooCgZHZW5kZXISCAoE",
+            "bm9uZRAAEggKBG1hbGUQARIKCgZmZW1hbGUQAmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.Gender), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -48,9 +49,10 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerBase), global::Proto.PlayerBase.Parser, new[]{ "Gender", "Level", "Xp", "Hp", "Mp", "Atk", "Def" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.LastWorld), global::Proto.LastWorld.Parser, new[]{ "WorldId", "WorldSn", "Position" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerMisc), global::Proto.PlayerMisc.Parser, new[]{ "LastWorld", "LastDungeon", "OnlineVersion" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Pack", "Misc" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Knap", "Misc" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Type", "Id", "Num" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType) }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerPack), global::Proto.PlayerPack.Parser, new[]{ "Gold", "Items" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerKnap), global::Proto.PlayerKnap.Parser, new[]{ "Gold", "Items" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.AddItemToKnap), global::Proto.AddItemToKnap.Parser, new[]{ "Item" }, null, null, null, null)
           }));
     }
     #endregion
@@ -978,7 +980,7 @@ namespace Proto {
       sn_ = other.sn_;
       name_ = other.name_;
       base_ = other.base_ != null ? other.base_.Clone() : null;
-      pack_ = other.pack_ != null ? other.pack_.Clone() : null;
+      knap_ = other.knap_ != null ? other.knap_.Clone() : null;
       misc_ = other.misc_ != null ? other.misc_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -1021,14 +1023,14 @@ namespace Proto {
       }
     }
 
-    /// <summary>Field number for the "pack" field.</summary>
-    public const int PackFieldNumber = 4;
-    private global::Proto.PlayerPack pack_;
+    /// <summary>Field number for the "knap" field.</summary>
+    public const int KnapFieldNumber = 4;
+    private global::Proto.PlayerKnap knap_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Proto.PlayerPack Pack {
-      get { return pack_; }
+    public global::Proto.PlayerKnap Knap {
+      get { return knap_; }
       set {
-        pack_ = value;
+        knap_ = value;
       }
     }
 
@@ -1059,7 +1061,7 @@ namespace Proto {
       if (Sn != other.Sn) return false;
       if (Name != other.Name) return false;
       if (!object.Equals(Base, other.Base)) return false;
-      if (!object.Equals(Pack, other.Pack)) return false;
+      if (!object.Equals(Knap, other.Knap)) return false;
       if (!object.Equals(Misc, other.Misc)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1070,7 +1072,7 @@ namespace Proto {
       if (Sn != 0UL) hash ^= Sn.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (base_ != null) hash ^= Base.GetHashCode();
-      if (pack_ != null) hash ^= Pack.GetHashCode();
+      if (knap_ != null) hash ^= Knap.GetHashCode();
       if (misc_ != null) hash ^= Misc.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1097,9 +1099,9 @@ namespace Proto {
         output.WriteRawTag(26);
         output.WriteMessage(Base);
       }
-      if (pack_ != null) {
+      if (knap_ != null) {
         output.WriteRawTag(34);
-        output.WriteMessage(Pack);
+        output.WriteMessage(Knap);
       }
       if (misc_ != null) {
         output.WriteRawTag(42);
@@ -1122,8 +1124,8 @@ namespace Proto {
       if (base_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Base);
       }
-      if (pack_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Pack);
+      if (knap_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Knap);
       }
       if (misc_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Misc);
@@ -1151,11 +1153,11 @@ namespace Proto {
         }
         Base.MergeFrom(other.Base);
       }
-      if (other.pack_ != null) {
-        if (pack_ == null) {
-          Pack = new global::Proto.PlayerPack();
+      if (other.knap_ != null) {
+        if (knap_ == null) {
+          Knap = new global::Proto.PlayerKnap();
         }
-        Pack.MergeFrom(other.Pack);
+        Knap.MergeFrom(other.Knap);
       }
       if (other.misc_ != null) {
         if (misc_ == null) {
@@ -1190,10 +1192,10 @@ namespace Proto {
             break;
           }
           case 34: {
-            if (pack_ == null) {
-              Pack = new global::Proto.PlayerPack();
+            if (knap_ == null) {
+              Knap = new global::Proto.PlayerKnap();
             }
-            input.ReadMessage(Pack);
+            input.ReadMessage(Knap);
             break;
           }
           case 42: {
@@ -1407,11 +1409,11 @@ namespace Proto {
 
   }
 
-  public sealed partial class PlayerPack : pb::IMessage<PlayerPack> {
-    private static readonly pb::MessageParser<PlayerPack> _parser = new pb::MessageParser<PlayerPack>(() => new PlayerPack());
+  public sealed partial class PlayerKnap : pb::IMessage<PlayerKnap> {
+    private static readonly pb::MessageParser<PlayerKnap> _parser = new pb::MessageParser<PlayerKnap>(() => new PlayerKnap());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<PlayerPack> Parser { get { return _parser; } }
+    public static pb::MessageParser<PlayerKnap> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -1424,22 +1426,22 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public PlayerPack() {
+    public PlayerKnap() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public PlayerPack(PlayerPack other) : this() {
+    public PlayerKnap(PlayerKnap other) : this() {
       gold_ = other.gold_;
       items_ = other.items_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public PlayerPack Clone() {
-      return new PlayerPack(this);
+    public PlayerKnap Clone() {
+      return new PlayerKnap(this);
     }
 
     /// <summary>Field number for the "gold" field.</summary>
@@ -1465,11 +1467,11 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as PlayerPack);
+      return Equals(other as PlayerKnap);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(PlayerPack other) {
+    public bool Equals(PlayerKnap other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1523,7 +1525,7 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(PlayerPack other) {
+    public void MergeFrom(PlayerKnap other) {
       if (other == null) {
         return;
       }
@@ -1548,6 +1550,141 @@ namespace Proto {
           }
           case 18: {
             items_.AddEntriesFrom(input, _repeated_items_codec);
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class AddItemToKnap : pb::IMessage<AddItemToKnap> {
+    private static readonly pb::MessageParser<AddItemToKnap> _parser = new pb::MessageParser<AddItemToKnap>(() => new AddItemToKnap());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<AddItemToKnap> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[7]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public AddItemToKnap() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public AddItemToKnap(AddItemToKnap other) : this() {
+      item_ = other.item_ != null ? other.item_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public AddItemToKnap Clone() {
+      return new AddItemToKnap(this);
+    }
+
+    /// <summary>Field number for the "item" field.</summary>
+    public const int ItemFieldNumber = 1;
+    private global::Proto.ItemData item_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Proto.ItemData Item {
+      get { return item_; }
+      set {
+        item_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as AddItemToKnap);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(AddItemToKnap other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(Item, other.Item)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (item_ != null) hash ^= Item.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (item_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Item);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (item_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Item);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(AddItemToKnap other) {
+      if (other == null) {
+        return;
+      }
+      if (other.item_ != null) {
+        if (item_ == null) {
+          Item = new global::Proto.ItemData();
+        }
+        Item.MergeFrom(other.Item);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (item_ == null) {
+              Item = new global::Proto.ItemData();
+            }
+            input.ReadMessage(Item);
             break;
           }
         }

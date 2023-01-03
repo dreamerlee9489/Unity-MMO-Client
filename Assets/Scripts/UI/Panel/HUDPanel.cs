@@ -18,12 +18,14 @@ public class HUDPanel : BasePanel
 
     public void UpdateHp(int currHp, int maxHp)
     {
-        hpBar.localScale = new Vector3(currHp * 1.0f / maxHp, 1, 1);
+        if(currHp <= maxHp)
+            hpBar.localScale = new Vector3(currHp * 1.0f / maxHp, 1, 1);
     }
 
     public void UpdateXp(int currXp, int maxXp)
     {
-        xpBar.localScale = new Vector3(currXp * 1.0f / maxXp, 1, 1);
+        if(currXp <= maxXp)
+            xpBar.localScale = new Vector3(currXp * 1.0f / maxXp, 1, 1);
     }
 
     public void UpdateGold(int currGold)

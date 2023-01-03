@@ -18,7 +18,7 @@ namespace Control
         protected float _viewRadius = 6f;
         protected Animator _anim;
         protected NavMeshAgent _agent;
-        protected NameBar _nameBar;
+        protected EntityNameBar _nameBar;
 
         public float WalkSpeed => _walkSpeed;
         public float RunSpeed => _runSpeed;
@@ -27,7 +27,6 @@ namespace Control
         public float ViewRadius => _viewRadius;
         public Animator Anim => _anim;
         public NavMeshAgent Agent => _agent;
-        public NameBar NameBar => _nameBar;
 
         public GameEntity target;
 
@@ -37,12 +36,17 @@ namespace Control
         {
             _agent = GetComponent<NavMeshAgent>();
             _anim = GetComponent<Animator>();
-            _nameBar = transform.Find("NameBar").GetComponent<NameBar>();
+            _nameBar = transform.Find("EntityNameBar").GetComponent<EntityNameBar>();
         }
 
         protected virtual void Update()
         {
             _anim.SetFloat(moveSpeed, transform.InverseTransformVector(_agent.velocity).z);
+        }
+
+        public void SetNameBar(string name)
+        {
+            _nameBar.Name.text = name;
         }
 
         public bool CanSee(GameEntity target)

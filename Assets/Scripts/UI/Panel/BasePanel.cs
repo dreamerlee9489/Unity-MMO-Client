@@ -22,5 +22,13 @@ namespace UI
         public virtual void Open() => gameObject.SetActive(true);
 
         public virtual void Close() => gameObject.SetActive(false);
+
+        public void SwitchToggle()
+        {
+            if(gameObject.activeSelf)
+                gameObject.SetActive(false);
+            else
+                gameObject.SetActive(true);
+        }
     }
 }

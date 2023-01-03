@@ -1,5 +1,5 @@
-Id,ResName
-1,BroadSword
-2,LargeAxe
-3,LargeSword
-4,MusketPistol
+Id,ResPath,ItemName
+1,BroadSword,新手剑
+2,LargeAxe,新手斧
+3,LargeSword,暴风大剑
+4,MusketPistol,沙漠之鹰

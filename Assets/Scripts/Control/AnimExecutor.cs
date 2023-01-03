@@ -25,16 +25,19 @@ namespace Control
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
             }
-            else if(CompareTag("Enemy") && _owner.target.GetComponent<PlayerController>().sn == GameManager.Instance.MainPlayer.Sn)
+            else if(CompareTag("Enemy"))
             {
-                Proto.AtkAnimEvent proto = new()
-                { 
-                    EnemyId = _owner.GetComponent<FsmController>().id,
-                    PlayerSn = GameManager.Instance.MainPlayer.Sn,
-                    CurrHp = _owner.hp,
-                    AtkEnemy = false
-                };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
+                if(_owner.target && _owner.target.GetComponent<PlayerController>().sn == GameManager.Instance.MainPlayer.Sn)
+                {
+                    Proto.AtkAnimEvent proto = new()
+                    {
+                        EnemyId = _owner.GetComponent<FsmController>().id,
+                        PlayerSn = GameManager.Instance.MainPlayer.Sn,
+                        CurrHp = _owner.hp,
+                        AtkEnemy = false
+                    };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
+                }
             }
         }
     }

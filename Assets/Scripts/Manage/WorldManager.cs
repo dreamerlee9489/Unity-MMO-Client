@@ -21,12 +21,13 @@ namespace Manage
         {
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnemySyncPos, EnemySyncPosHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnemyPushPos, EnemyPushPosHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CPlayerSyncCmd, PlayerSyncCmdHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CItemList, ItemListHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CDropItemList, DropItemListHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
 
             fileName = $"{Application.streamingAssetsPath}/CSV/{fileName}.csv";
             using StreamReader reader = File.OpenText(fileName);
@@ -46,7 +47,7 @@ namespace Manage
                     enemyObj.hp = int.Parse(strs[3]);
                     enemyObj.atk = int.Parse(strs[4]);
                     enemyObj.transform.position = pos.Parse(strs[5]);
-                    enemyObj.NameBar.Name.text = "Enemy_" + enemyObj.id;
+                    enemyObj.SetNameBar("Enemy_" + enemyObj.id);
                     enemyObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
                     enemyObj.patrolPath.transform.position = enemyObj.transform.position;
                     enemyObj.gameObject.SetActive(true);
@@ -64,12 +65,13 @@ namespace Manage
         {
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnemySyncPos, EnemySyncPosHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnemyPushPos, EnemyPushPosHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CPlayerSyncCmd, PlayerSyncCmdHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CItemList, ItemListHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CDropItemList, DropItemListHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
         }
 
         private void AllRoleAppearHandler(Google.Protobuf.IMessage msg)
@@ -103,9 +105,9 @@ namespace Manage
             }
         }
 
-        private void EnemySyncPosHandler(Google.Protobuf.IMessage msg)
+        private void EnemyPushPosHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is EnemySyncPos proto)
+            if (msg is EnemyPushPos proto)
             {
                 int id = proto.Id;
                 if (_enemies.Count >= id)
@@ -175,10 +177,16 @@ namespace Manage
             }
         }
 
-        private void ItemListHandler(Google.Protobuf.IMessage msg)
+        private void DropItemListHandler(Google.Protobuf.IMessage msg)
         {
-            if(msg is ItemList itemList)
+            if(msg is DropItemList itemList)
                 _enemies[itemList.EnemyId].DropItems(itemList);
+        }
+
+        private void PlayerKnapHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is PlayerKnap playerKnap)
+                GameManager.Instance.MainPlayer.Obj.ParsePlayerKnap(playerKnap);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Control
         {
             while (true)
             {
-                Proto.EnemySyncPos proto = new()
+                Proto.EnemyPushPos proto = new()
                 {
                     Id = id,
                     Pos = new()
@@ -47,7 +47,7 @@ namespace Control
                         Z = transform.position.z
                     }
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SEnemySyncPos, proto);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SEnemyPushPos, proto);
                 yield return _sleep;
             }
         }
@@ -68,7 +68,7 @@ namespace Control
             }
         }
 
-        public void ParseSyncPos(Proto.EnemySyncPos proto)
+        public void ParseSyncPos(Proto.EnemyPushPos proto)
         {
             gameObject.SetActive(false);
             transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
@@ -90,10 +90,12 @@ namespace Control
             currState.Enter();
         }
 
-        public void DropItems(Proto.ItemList itemList)
+        public void DropItems(Proto.DropItemList itemList)
         {
             var player = GameManager.Instance.MainPlayer.Obj;
-            foreach(Proto.ItemData data in itemList.Items)
+            var potionDict = GameManager.Instance.DropPotionDict;
+            var weaponDict = GameManager.Instance.DropWeaponDict;
+            foreach (Proto.ItemData data in itemList.Items)
             {
                 switch (data.Type)
                 {
@@ -110,21 +112,34 @@ namespace Control
                         }
                         break;
                     case Proto.ItemData.Types.ItemType.Potion:
-                        for(int i = 0; i < data.Num; ++i)
+                        for (int i = 0; i < data.Num; ++i)
                         {
-                            ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{GameManager.Instance.DropPotionDict[data.Id]}", (obj) =>
+                            string key = (int)ItemType.Potion + "@" + data.Id; 
+                            ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key][0]}", (obj) =>
                             {
                                 Potion potion = Instantiate(obj).GetComponent<Potion>();
+                                potion.itemId = data.Id;
+                                potion.itemType = ItemType.Potion;
+                                potion.objName = potionDict[key][0];
+                                potion.SetNameBar(potionDict[key][1]);
                                 potion.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
                             });
                         }
                         break;
                     case Proto.ItemData.Types.ItemType.Weapon:
-                        ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{GameManager.Instance.DropWeaponDict[data.Id]}", (obj) =>
+                        for (int i = 0; i < data.Num; i++)
                         {
-                            Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
-                            weapon.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
-                        });
+                            string key = (int)ItemType.Weapon + "@" + data.Id;
+                            ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key][0]}", (obj) =>
+                            {
+                                Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
+                                weapon.itemId = data.Id;
+                                weapon.itemType = ItemType.Weapon;
+                                weapon.objName = weaponDict[key][0];
+                                weapon.SetNameBar(weaponDict[key][1]);
+                                weapon.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
+                            });
+                        }
                         break;
                     default:
                         break;
