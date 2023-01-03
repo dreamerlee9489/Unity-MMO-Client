@@ -20,11 +20,17 @@ namespace Manage
 
         private void Update()
         {
-            if(Input.GetKeyDown(KeyCode.P))
-                FindPanel<PropPanel>().SwitchToggle();
+            if(GameManager.Instance.ActiveWorld)
+            {
+                if (Input.GetKeyDown(KeyCode.P))
+                    FindPanel<PropPanel>().SwitchToggle();
 
-            if (Input.GetKeyDown(KeyCode.K))
-                FindPanel<KnapPanel>().SwitchToggle();
+                if (Input.GetKeyDown(KeyCode.K))
+                    FindPanel<KnapPanel>().SwitchToggle();
+
+                if (Input.GetKeyDown(KeyCode.E))
+                    FindPanel<EquipPanel>().SwitchToggle();
+            }
         }
 
         private void OnApplicationQuit()

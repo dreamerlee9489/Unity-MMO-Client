@@ -18,11 +18,11 @@ namespace UI
         public void AddToKnap()
         {
             ItemSlot itemSlot;
-            if (!_knapPanel.uiDict.ContainsKey(Item.objName))
+            if (!_knapPanel.UiDict.ContainsKey(Item.objName))
             {
                 itemSlot = _knapPanel.GetFirstEmptySlot();
-                PoolManager.Instance.Pop(Item.objName, itemSlot.icons);
-                _knapPanel.uiDict.Add(Item.objName, itemSlot.index);
+                PoolManager.Instance.Pop(Item.objName, itemSlot.Icons);
+                _knapPanel.UiDict.Add(Item.objName, itemSlot.Index);
             }
             else
             {
@@ -31,15 +31,15 @@ namespace UI
                     case ItemType.None:
                         break;
                     case ItemType.Potion:
-                        itemSlot = _knapPanel.itemSlots[_knapPanel.uiDict[Item.objName]]; 
-                        PoolManager.Instance.Pop(Item.objName, itemSlot.icons);
-                        itemSlot.count.text = itemSlot.icons.childCount.ToString();
+                        itemSlot = _knapPanel.ItemSlots[_knapPanel.UiDict[Item.objName]]; 
+                        PoolManager.Instance.Pop(Item.objName, itemSlot.Icons);
+                        itemSlot.Count.text = itemSlot.Icons.childCount.ToString();
                         break;
                     case ItemType.Weapon:
                         itemSlot = _knapPanel.GetFirstEmptySlot();
-                        transform.SetParent(itemSlot.icons, false);
+                        transform.SetParent(itemSlot.Icons, false);
                         gameObject.SetActive(true);
-                        _knapPanel.uiDict[Item.objName] = itemSlot.index;
+                        _knapPanel.UiDict[Item.objName] = itemSlot.Index;
                         break;
                     default:
                         break;

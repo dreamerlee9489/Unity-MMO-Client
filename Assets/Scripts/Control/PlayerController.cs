@@ -2,9 +2,9 @@
 using Item;
 using Manage;
 using System.Collections;
-using System.Collections.Generic;
 using UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Control
 {
@@ -37,7 +37,10 @@ namespace Control
         protected override void Update()
         {
             base.Update();
-            if (Input.GetMouseButtonDown(0) && sn == GameManager.Instance.MainPlayer.Sn)
+            if (sn != GameManager.Instance.MainPlayer.Sn)
+                return;
+
+            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonDown(0))
             {
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out _hit))
                 {
@@ -56,7 +59,7 @@ namespace Control
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.UpArrow) && sn == GameManager.Instance.MainPlayer.Sn)
+            if (Input.GetKeyDown(KeyCode.UpArrow))
             {
                 Proto.AtkAnimEvent proto = new()
                 {
@@ -230,7 +233,7 @@ namespace Control
         public void ParsePlayerKnap(Proto.PlayerKnap playerKnap)
         {
             gold = playerKnap.Gold;
-            UIManager.Instance.FindPanel<HUDPanel>().UpdateGold(gold);
+            UIManager.Instance.FindPanel<KnapPanel>().UpdateGold(gold);
             var potionDict = GameManager.Instance.DropPotionDict;
             var weaponDict = GameManager.Instance.DropWeaponDict;
             foreach(Proto.ItemData data in playerKnap.Items)

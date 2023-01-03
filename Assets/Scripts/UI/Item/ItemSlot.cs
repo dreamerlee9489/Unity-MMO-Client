@@ -5,14 +5,14 @@ namespace UI
 {
 	public class ItemSlot : MonoBehaviour
 	{
-        public int index;
-        public Transform icons;
-        public Text count;
+        public int Index { get; set; }
+        public Transform Icons { get; set; }
+        public Text Count { get; set; }
 
         private void Awake()
         {
-            icons = transform.Find("Icons");
-            count = transform.Find("Count").GetComponent<Text>();
+            Icons = transform.Find("Icons");
+            Count = transform.Find("Count").GetComponent<Text>();
         }
     }
 }

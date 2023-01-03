@@ -2,6 +2,7 @@
 using Item;
 using Manage;
 using System.Collections;
+using UI;
 using UnityEngine;
 
 namespace Control
@@ -108,7 +109,7 @@ namespace Control
                         else
                         {
                             player.gold += data.Num;
-                            UIManager.Instance.FindPanel<HUDPanel>().UpdateGold(player.gold);
+                            UIManager.Instance.FindPanel<KnapPanel>().UpdateGold(player.gold);
                         }
                         break;
                     case Proto.ItemData.Types.ItemType.Potion:
