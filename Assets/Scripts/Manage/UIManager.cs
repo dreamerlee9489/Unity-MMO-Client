@@ -1,5 +1,4 @@
-﻿using Proto;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UI;
 using UnityEngine;
@@ -11,10 +10,13 @@ namespace Manage
         private CanvasGroup _cutImage;
         private readonly Dictionary<string, BasePanel> _panelDict = new();
 
+        public Transform tempSlot;
+
         protected override void Awake()
         {
             base.Awake();
             _cutImage = transform.Find("CutImage").GetComponent<CanvasGroup>();
+            tempSlot = transform.Find("TempSlot");
             EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
         }
 
@@ -61,8 +63,8 @@ namespace Manage
             yield return new WaitForSeconds(1f);
             foreach (var enemy in GameManager.Instance.ActiveWorld.Enemies)
             {
-                RequestSyncEnemy proto = new() { EnemyId = enemy.id };
-                NetManager.Instance.SendPacket(MsgId.C2SRequestSyncEnemy, proto);
+                Proto.RequestSyncEnemy proto = new() { EnemyId = enemy.id };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemy, proto);
             }
             WaitForSeconds sleep = new(0.02f);
             while (_cutImage.alpha > 0)

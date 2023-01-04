@@ -1,7 +1,7 @@
 using Manage;
 using UnityEngine;
 
-namespace Item
+namespace Items
 {
     public class Potion : GameItem
     {

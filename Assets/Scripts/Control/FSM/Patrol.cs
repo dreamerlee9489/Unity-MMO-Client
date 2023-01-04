@@ -1,13 +1,13 @@
 ﻿namespace Control.FSM
 {
-    public class Patrol : FsmState
+    public class Patrol : State
     {
         private readonly int _index;
         private PatrolPath _patrolPath;
 
         public Patrol(FsmController owner, PlayerController target = null, int code = 0) : base(owner, target)
         {
-            _type = FsmStateType.Patrol;
+            _type = StateType.Patrol;
             _index = code;
         }
 

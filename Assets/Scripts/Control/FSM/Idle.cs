@@ -1,10 +1,10 @@
 ﻿namespace Control.FSM
 {
-    public class Idle : FsmState
+    public class Idle : State
     {
         public Idle(FsmController owner, PlayerController target = null) : base(owner, target)
         {
-            _type = FsmStateType.Idle;
+            _type = StateType.Idle;
         }
 
         public override void Enter()

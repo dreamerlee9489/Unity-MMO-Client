@@ -1,5 +1,5 @@
 ﻿using Control.FSM;
-using Item;
+using Items;
 using Manage;
 using System.Collections;
 using UI;
@@ -12,7 +12,7 @@ namespace Control
         private readonly WaitForSeconds _sleep = new(0.1f);
 
         public int id = 0;
-        public FsmState currState;
+        public State currState;
         public PatrolPath patrolPath;       
 
         protected override void Awake()
@@ -53,18 +53,18 @@ namespace Control
             }
         }
 
-        public void ParseSyncState(FsmStateType type, int code, PlayerController target)
+        public void ParseSyncState(StateType type, int code, PlayerController target)
         {
             this.target = target;
             if (currState == null)
             {
-                currState = FsmState.GenState(type, code, this, target);
+                currState = State.GenState(type, code, this, target);
                 currState.Enter();
             }
             else
             {
                 currState.Exit();
-                currState = FsmState.GenState(type, code, this, target);
+                currState = State.GenState(type, code, this, target);
                 currState.Enter();
             }
         }
@@ -121,6 +121,7 @@ namespace Control
                                 Potion potion = Instantiate(obj).GetComponent<Potion>();
                                 potion.itemId = data.Id;
                                 potion.itemType = ItemType.Potion;
+                                potion.hashCode = potion.GenHash();
                                 potion.objName = potionDict[key][0];
                                 potion.SetNameBar(potionDict[key][1]);
                                 potion.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
@@ -136,6 +137,7 @@ namespace Control
                                 Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
                                 weapon.itemId = data.Id;
                                 weapon.itemType = ItemType.Weapon;
+                                weapon.hashCode = weapon.GenHash();
                                 weapon.objName = weaponDict[key][0];
                                 weapon.SetNameBar(weaponDict[key][1]);
                                 weapon.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));

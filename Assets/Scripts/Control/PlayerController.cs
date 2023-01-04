@@ -1,5 +1,5 @@
 ﻿using Control.CMD;
-using Item;
+using Items;
 using Manage;
 using System.Collections;
 using UI;
@@ -72,7 +72,10 @@ namespace Control
             }
         }
 
-        private void OnApplicationQuit() => MonoManager.Instance.StopAllCoroutines();
+        private void OnApplicationQuit()
+        {
+            MonoManager.Instance.StopAllCoroutines();
+        }
 
         private IEnumerator SyncStateCoroutine()
         {
@@ -81,10 +84,10 @@ namespace Control
             while (true)
             {
                 yield return _sleep;
-                Proto.PlayerPushPos syncPos = new() 
-                { 
+                Proto.PlayerPushPos syncPos = new()
+                {
                     Pos = new()
-                    { 
+                    {
                         X = transform.position.x,
                         Y = transform.position.y,
                         Z = transform.position.z
@@ -164,7 +167,7 @@ namespace Control
                 default:
                     break;
             }
-            if(_prevCmd != null && _currCmd != null && _prevCmd.GetCommandType() != _currCmd.GetCommandType())
+            if (_prevCmd != null && _currCmd != null && _prevCmd.GetCommandType() != _currCmd.GetCommandType())
                 _prevCmd.Undo();
             _currCmd?.Execute();
         }
@@ -215,19 +218,16 @@ namespace Control
             _currCmd = null;
         }
 
-        public void AddItemToKnap(GameItem item)
+        public int AddItemToKnap(GameItem item, int index = 0)
         {
-            string key = item.GetKey();
             item.gameObject.SetActive(false);
             item.transform.SetParent(_knapsack);
-            ResourceManager.Instance.LoadAsync<GameObject>($"UI/ItemUI/{item.itemType}/{item.objName}", (obj) =>
-            {
-                ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();
-                itemUI.Item = item;
-                item.ItemUI = itemUI;
-                PoolManager.Instance.Push(item.objName, itemUI.gameObject);
-                itemUI.AddToKnap();
-            });
+            GameObject obj = ResourceManager.Instance.Load<GameObject>($"UI/ItemUI/{item.itemType}/{item.objName}");
+            ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();
+            itemUI.Item = item;
+            item.ItemUI = itemUI;
+            PoolManager.Instance.Push(item.objName, itemUI.gameObject);
+            return itemUI.AddToKnap(index);
         }
 
         public void ParsePlayerKnap(Proto.PlayerKnap playerKnap)
@@ -236,7 +236,7 @@ namespace Control
             UIManager.Instance.FindPanel<KnapPanel>().UpdateGold(gold);
             var potionDict = GameManager.Instance.DropPotionDict;
             var weaponDict = GameManager.Instance.DropWeaponDict;
-            foreach(Proto.ItemData data in playerKnap.Items)
+            foreach (Proto.ItemData data in playerKnap.ItemsInBag)
             {
                 switch (data.Type)
                 {
@@ -251,10 +251,11 @@ namespace Control
                                 Potion potion = Instantiate(obj).GetComponent<Potion>();
                                 potion.itemId = data.Id;
                                 potion.itemType = ItemType.Potion;
+                                potion.hashCode = data.Hash;
                                 potion.objName = potionDict[key][0];
                                 potion.SetNameBar(potionDict[key][1]);
                                 potion.transform.position = transform.position;
-                                AddItemToKnap(potion);
+                                AddItemToKnap(potion, data.Index);
                             });
                         }
                         break;
@@ -267,10 +268,11 @@ namespace Control
                                 Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
                                 weapon.itemId = data.Id;
                                 weapon.itemType = ItemType.Weapon;
+                                weapon.hashCode = data.Hash;
                                 weapon.objName = weaponDict[key][0];
                                 weapon.SetNameBar(weaponDict[key][1]);
                                 weapon.transform.position = transform.position;
-                                AddItemToKnap(weapon);
+                                AddItemToKnap(weapon, data.Index);
                             });
                         }
                         break;

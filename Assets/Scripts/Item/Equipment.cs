@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Item
+namespace Items
 {
     public class Equipment : GameItem
     {

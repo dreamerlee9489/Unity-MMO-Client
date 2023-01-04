@@ -119,7 +119,7 @@ namespace Manage
         {
             if (msg is FsmSyncState proto && _enemies.Count > 0)
             {
-                FsmStateType type = (FsmStateType)proto.State;
+                StateType type = (StateType)proto.State;
                 int code = proto.Code;
                 int enemyId = proto.EnemyId;
                 ulong playerSn = proto.PlayerSn;

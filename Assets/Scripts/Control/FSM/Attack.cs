@@ -1,10 +1,10 @@
 ﻿namespace Control.FSM
 {
-    public class Attack : FsmState
+    public class Attack : State
     {
         public Attack(FsmController owner, PlayerController target = null) : base(owner, target)
         {
-            _type = FsmStateType.Attack;
+            _type = StateType.Attack;
         }
 
         public override void Enter()

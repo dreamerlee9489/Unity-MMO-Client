@@ -3,11 +3,11 @@ using UnityEngine.AI;
 
 namespace Control.FSM
 {
-    public class Death : FsmState
+    public class Death : State
     {
         public Death(FsmController owner, PlayerController target = null) : base(owner, target)
         {
-            _type = FsmStateType.Death;
+            _type = StateType.Death;
         }
 
         public override void Enter()

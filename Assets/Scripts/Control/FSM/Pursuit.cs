@@ -1,10 +1,10 @@
 ﻿namespace Control.FSM
 {
-    public class Pursuit : FsmState
+    public class Pursuit : State
     {
         public Pursuit(FsmController owner, PlayerController target) : base(owner, target)
         {
-            _type = FsmStateType.Pursuit;
+            _type = StateType.Pursuit;
         }
 
         public override void Enter()

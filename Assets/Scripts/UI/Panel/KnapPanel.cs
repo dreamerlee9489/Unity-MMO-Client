@@ -1,3 +1,5 @@
+using Items;
+using Manage;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +12,7 @@ namespace UI
 
         public RectTransform Content { get; set; }
         public List<ItemSlot> ItemSlots { get; set; } = new();
-        public Dictionary<string, int> UiDict { get; set; } = new();
+        public Dictionary<int, int> UiIndexDict { get; set; } = new();
 
         protected override void Awake()
         {
@@ -21,10 +23,9 @@ namespace UI
             for (int i = 0; i < 30; i++)
             {
                 itemSlot = Content.GetChild(i).GetComponent<ItemSlot>();
-                itemSlot.Index = i;
+                itemSlot.index = i;
                 ItemSlots.Add(itemSlot);
             }
-            Debug.Log(ItemSlots.Count);
             Close();
         }
 
@@ -36,9 +37,33 @@ namespace UI
             return null;
         }
 
+        public ItemSlot GetSlotByIndex(int index) => ItemSlots[index];
+
         public void UpdateGold(int currGold)
         {
             _goldTxt.text = currGold.ToString();
+        }
+
+        public void UpdateUiIndex(GameItem item, ItemSlot newSlot)
+        {
+            UiIndexDict[item.GetHashCode()] = newSlot.index;
+            Proto.AddItemToKnap proto = new() { Item = new() };
+            proto.Item.Id = item.itemId;
+            proto.Item.Num = 0;
+            proto.Item.Index = newSlot.index;
+            proto.Item.Hash = item.GetHashCode();
+            switch (item.itemType)
+            {
+                case ItemType.Potion:
+                    proto.Item.Type = Proto.ItemData.Types.ItemType.Potion;
+                    break;
+                case ItemType.Weapon:
+                    proto.Item.Type = Proto.ItemData.Types.ItemType.Weapon;                    
+                    break;
+                default:
+                    break;
+            }
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SAddItemToKnap, proto);
         }
     }
 }
