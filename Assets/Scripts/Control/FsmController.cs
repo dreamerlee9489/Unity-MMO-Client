@@ -1,7 +1,8 @@
 ﻿using Control.FSM;
 using Items;
 using Manage;
-using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using UI;
 using UnityEngine;
 
@@ -9,11 +10,12 @@ namespace Control
 {
     public class FsmController : GameEntity
     {
-        private readonly WaitForSeconds _sleep = new(0.1f);
+        private readonly Proto.Vector3D _pos = new();
+        private readonly CancellationTokenSource _tokenSource = new();
 
         public int id = 0;
         public State currState;
-        public PatrolPath patrolPath;       
+        public PatrolPath patrolPath;
 
         protected override void Awake()
         {
@@ -25,31 +27,30 @@ namespace Control
         {
             base.Update();
             currState?.Execute();
+
+            _pos.X = transform.position.x;
+            _pos.Y = transform.position.y;
+            _pos.Z = transform.position.z;
         }
 
         private void OnApplicationQuit()
         {
+            _tokenSource.Cancel();
             ResetState();
             PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
-            patrolPath = null;
         }
 
-        private IEnumerator UploadData()
+        private void UploadDataTask()
         {
-            while (true)
+            while (!_tokenSource.IsCancellationRequested)
             {
                 Proto.EnemyPushPos proto = new()
                 {
                     Id = id,
-                    Pos = new()
-                    {
-                        X = transform.position.x,
-                        Y = transform.position.y,
-                        Z = transform.position.z
-                    }
+                    Pos = _pos
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SEnemyPushPos, proto);
-                yield return _sleep;
+                Thread.Sleep(100);
             }
         }
 
@@ -76,17 +77,17 @@ namespace Control
             gameObject.SetActive(true);
         }
 
-        public void LinkPlayer(bool isLinker)
+        public void LinkPlayer(bool linker)
         {
-            if (isLinker)
-                MonoManager.Instance.StartCoroutine(UploadData());
+            if (linker)
+                Task.Run(UploadDataTask);
             else
-                MonoManager.Instance.StopCoroutine(UploadData());
+                _tokenSource.Cancel();
         }
 
         public void ResetState()
         {
-            currState.Exit();
+            currState?.Exit();
             currState = new Idle(this);
             currState.Enter();
         }

@@ -2,6 +2,8 @@
 using Items;
 using Manage;
 using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -10,11 +12,15 @@ namespace Control
 {
     public class PlayerController : GameEntity, IMoveExecutor, IAttackExecutor, IPickupExecutor
     {
+        private int _targetId = 0;
+        private readonly Proto.Vector3D _curPos = new();
+        private readonly Proto.Vector3D _hitPos = new();
+        private readonly CancellationTokenSource _tokenSource = new();
+
         private RaycastHit _hit;
         private ICommand _currCmd, _prevCmd;
         private CommandType _cmdType = CommandType.None;
         private Transform _knapsack, _handPos;
-        private readonly WaitForSeconds _sleep = new(0.02f);
 
         public Transform Knapsack => _knapsack;
 
@@ -30,7 +36,7 @@ namespace Control
             {
                 _knapsack = transform.Find("Knapsack");
                 _handPos = transform.Find("HandPos");
-                MonoManager.Instance.StartCoroutine(SyncStateCoroutine());
+                Task.Run(SyncStateTask);
             }
         }
 
@@ -51,6 +57,7 @@ namespace Control
                             break;
                         case "Enemy":
                             _cmdType = CommandType.Attack;
+                            _targetId = _hit.transform.GetComponent<FsmController>().id;
                             break;
                         case "Item":
                             _cmdType = CommandType.Pickup;
@@ -70,30 +77,29 @@ namespace Control
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
             }
+
+            _curPos.X = transform.position.x;
+            _curPos.Y = transform.position.y; 
+            _curPos.Z = transform.position.z;
+            _hitPos.X = _hit.point.x;
+            _hitPos.Y = _hit.point.y;
+            _hitPos.Z = _hit.point.z;
         }
 
         private void OnApplicationQuit()
         {
+            _tokenSource.Cancel();
             MonoManager.Instance.StopAllCoroutines();
         }
 
-        private IEnumerator SyncStateCoroutine()
+        private IEnumerator SyncStateTask()
         {
-            yield return new WaitForSeconds(0.5f);
+            Thread.Sleep(500);
             NetManager.Instance.SendPacket(Proto.MsgId.C2SGetPlayerKnap, null);
             while (true)
             {
-                yield return _sleep;
-                Proto.PlayerPushPos syncPos = new()
-                {
-                    Pos = new()
-                    {
-                        X = transform.position.x,
-                        Y = transform.position.y,
-                        Z = transform.position.z
-                    }
-                };
-
+                Thread.Sleep(100);
+                Proto.PlayerPushPos syncPos = new() { Pos = _curPos };
                 Proto.PlayerSyncCmd syncCmd = new();
                 switch (_cmdType)
                 {
@@ -105,34 +111,19 @@ namespace Control
                         syncCmd.Type = 1;
                         syncCmd.PlayerSn = sn;
                         syncCmd.TargetId = -1;
-                        syncCmd.Point = new()
-                        {
-                            X = _hit.point.x,
-                            Y = _hit.point.y,
-                            Z = _hit.point.z
-                        };
+                        syncCmd.Point = _hitPos;
                         break;
                     case CommandType.Attack:
                         syncCmd.Type = 2;
                         syncCmd.PlayerSn = sn;
-                        syncCmd.TargetId = _hit.transform.GetComponent<FsmController>().id;
-                        syncCmd.Point = new()
-                        {
-                            X = _hit.transform.position.x,
-                            Y = _hit.transform.position.y,
-                            Z = _hit.transform.position.z
-                        };
+                        syncCmd.TargetId = _targetId;
+                        syncCmd.Point = _hitPos;
                         break;
                     case CommandType.Pickup:
                         syncCmd.Type = 3;
                         syncCmd.PlayerSn = sn;
                         syncCmd.TargetId = -1;
-                        syncCmd.Point = new()
-                        {
-                            X = _hit.point.x,
-                            Y = _hit.point.y,
-                            Z = _hit.point.z
-                        };
+                        syncCmd.Point = _hitPos;
                         break;
                     default:
                         break;
