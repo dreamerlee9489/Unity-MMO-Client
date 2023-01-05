@@ -15,7 +15,8 @@ namespace Manage
 
         public string fileName = "";
         public List<FsmController> Enemies => _enemies;
-        public Dictionary<ulong, AppearRole> Players => _players;
+
+        public Dictionary<int, Transform> inWorldObjDict = new();
 
         private void Awake()
         {
@@ -28,7 +29,11 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CDropItemList, DropItemListHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
+        }
 
+        private void Start()
+        {
+            _propPanel = UIManager.Instance.FindPanel<PropPanel>();
             fileName = $"{Application.streamingAssetsPath}/CSV/{fileName}.csv";
             using StreamReader reader = File.OpenText(fileName);
             reader.ReadLine();
@@ -56,11 +61,6 @@ namespace Manage
             }
         }
 
-        private void Start()
-        {
-            _propPanel = UIManager.Instance.FindPanel<PropPanel>();
-        }
-
         private void OnApplicationQuit()
         {
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
@@ -81,9 +81,15 @@ namespace Manage
                 foreach (Role role in proto.Roles)
                 {
                     ulong sn = role.Sn;
-                    AppearRole appearRole = new();
-                    appearRole.LoadRole(role);
-                    _players.Add(sn, appearRole);
+                    if (_players.ContainsKey(sn))
+                        _players[sn].Parse(role);
+                    else
+                    {
+                        AppearRole appearRole = new();
+                        appearRole.Parse(role);
+                        appearRole.LoadRole(role);
+                        _players.Add(sn, appearRole);
+                    }
                 }
             }
         }
@@ -110,7 +116,7 @@ namespace Manage
             if (msg is EnemyPushPos proto)
             {
                 int id = proto.Id;
-                if (_enemies.Count >= id)
+                if (_enemies.Count > 0)
                     _enemies[id].ParseSyncPos(proto);
             }
         }
@@ -126,7 +132,7 @@ namespace Manage
                 PlayerController player = null;
                 if (_players.ContainsKey(playerSn))
                     player = _players[playerSn].Obj.GetComponent<PlayerController>();
-                if (_enemies.Count >= enemyId)
+                if (_enemies.Count > 0)
                     _enemies[enemyId].ParseSyncState(type, code, player);
             }
         }

@@ -15,6 +15,7 @@
         {
             _owner = owner;
             _target = target;
+            owner.target = target ? target.transform : null;
         }
 
         public static State GenState(StateType type, int code, FsmController owner, PlayerController target)

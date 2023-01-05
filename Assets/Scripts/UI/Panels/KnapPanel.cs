@@ -46,12 +46,12 @@ namespace UI
 
         public void UpdateUiIndex(GameItem item, ItemSlot newSlot)
         {
-            UiIndexDict[item.GetHashCode()] = newSlot.index;
+            UiIndexDict[item.GetKeyCode()] = newSlot.index;
             Proto.AddItemToKnap proto = new() { Item = new() };
-            proto.Item.Id = item.itemId;
+            proto.Item.Id = item.ItemId;
             proto.Item.Num = 0;
             proto.Item.Index = newSlot.index;
-            proto.Item.Hash = item.GetHashCode();
+            proto.Item.Key = item.GetKeyCode();
             switch (item.itemType)
             {
                 case ItemType.Potion:

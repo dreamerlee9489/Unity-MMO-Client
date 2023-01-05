@@ -10,16 +10,14 @@ using UnityEngine.EventSystems;
 
 namespace Control
 {
-    public class PlayerController : GameEntity, IMoveExecutor, IAttackExecutor, IPickupExecutor
+    public partial class PlayerController : GameEntity
     {
-        private int _targetId = 0;
         private readonly Proto.Vector3D _curPos = new();
         private readonly Proto.Vector3D _hitPos = new();
         private readonly CancellationTokenSource _tokenSource = new();
 
         private RaycastHit _hit;
-        private ICommand _currCmd, _prevCmd;
-        private CommandType _cmdType = CommandType.None;
+        private ICommand _cmd;
         private Transform _knapsack, _handPos;
 
         public Transform Knapsack => _knapsack;
@@ -27,7 +25,10 @@ namespace Control
         public ulong sn = 0;
         public int xp = 0, gold = 0;
 
-        protected override void Awake() => base.Awake();
+        protected override void Awake()
+        {
+            base.Awake();
+        }
 
         private void Start()
         {
@@ -43,27 +44,49 @@ namespace Control
         protected override void Update()
         {
             base.Update();
-            if (sn != GameManager.Instance.MainPlayer.Sn)
+            if (sn != GameManager.Instance.MainPlayer.Sn || EventSystem.current.IsPointerOverGameObject())
                 return;
 
-            if (!EventSystem.current.IsPointerOverGameObject() && Input.GetMouseButtonDown(0))
+            _cmd?.Execute();
+            _curPos.X = transform.position.x;
+            _curPos.Y = transform.position.y;
+            _curPos.Z = transform.position.z;
+
+            if (Input.GetMouseButtonDown(0) && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out _hit))
             {
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out _hit))
+                _hitPos.X = _hit.point.x;
+                _hitPos.Y = _hit.point.y;
+                _hitPos.Z = _hit.point.z;
+                
+                Proto.PlayerSyncCmd pushCmd = new();
+                switch (_hit.collider.tag)
                 {
-                    switch (_hit.collider.tag)
-                    {
-                        case "Terrain":
-                            _cmdType = CommandType.Move;
-                            break;
-                        case "Enemy":
-                            _cmdType = CommandType.Attack;
-                            _targetId = _hit.transform.GetComponent<FsmController>().id;
-                            break;
-                        case "Item":
-                            _cmdType = CommandType.Pickup;
-                            break;
-                    }
+                    case "Terrain":
+                        pushCmd.Type = 1;
+                        pushCmd.PlayerSn = sn;
+                        pushCmd.TargetId = 0;
+                        pushCmd.Point = _hitPos;
+                        break;
+                    case "Enemy":
+                        pushCmd.Type = 2;
+                        pushCmd.PlayerSn = sn;
+                        pushCmd.TargetId = _hit.transform.GetComponent<GameEntity>().GetHashCode();
+                        pushCmd.Point = null;
+                        break;
+                    case "Item":
+                        pushCmd.Type = 3;
+                        pushCmd.PlayerSn = sn;
+                        pushCmd.TargetId = _hit.transform.GetComponent<GameItem>().GetHashCode();
+                        pushCmd.Point = _hitPos;
+                        break;
+                    case "Portal":
+                        pushCmd.Type = 4;
+                        pushCmd.PlayerSn = sn;
+                        pushCmd.TargetId = _hit.transform.GetComponent<GameItem>().GetHashCode();
+                        pushCmd.Point = null;
+                        break;
                 }
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncCmd, pushCmd);
             }
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -77,147 +100,73 @@ namespace Control
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
             }
-
-            _curPos.X = transform.position.x;
-            _curPos.Y = transform.position.y; 
-            _curPos.Z = transform.position.z;
-            _hitPos.X = _hit.point.x;
-            _hitPos.Y = _hit.point.y;
-            _hitPos.Z = _hit.point.z;
         }
 
-        private void OnApplicationQuit()
+        protected override void OnApplicationQuit()
         {
+            base.OnApplicationQuit();
             _tokenSource.Cancel();
             MonoManager.Instance.StopAllCoroutines();
         }
 
-        private IEnumerator SyncStateTask()
+        private void SyncStateTask()
         {
             Thread.Sleep(500);
             NetManager.Instance.SendPacket(Proto.MsgId.C2SGetPlayerKnap, null);
-            while (true)
+            while (!_tokenSource.IsCancellationRequested)
             {
-                Thread.Sleep(100);
                 Proto.PlayerPushPos syncPos = new() { Pos = _curPos };
-                Proto.PlayerSyncCmd syncCmd = new();
-                switch (_cmdType)
-                {
-                    case CommandType.None:
-                        syncCmd.Type = 0;
-                        syncCmd.PlayerSn = sn;
-                        break;
-                    case CommandType.Move:
-                        syncCmd.Type = 1;
-                        syncCmd.PlayerSn = sn;
-                        syncCmd.TargetId = -1;
-                        syncCmd.Point = _hitPos;
-                        break;
-                    case CommandType.Attack:
-                        syncCmd.Type = 2;
-                        syncCmd.PlayerSn = sn;
-                        syncCmd.TargetId = _targetId;
-                        syncCmd.Point = _hitPos;
-                        break;
-                    case CommandType.Pickup:
-                        syncCmd.Type = 3;
-                        syncCmd.PlayerSn = sn;
-                        syncCmd.TargetId = -1;
-                        syncCmd.Point = _hitPos;
-                        break;
-                    default:
-                        break;
-                }
-
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerPushPos, syncPos);
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncCmd, syncCmd);
+                Thread.Sleep(100);
             }
         }
 
         public void ParseSyncCmd(Proto.PlayerSyncCmd proto)
         {
-            Vector3 point;
-            _prevCmd = _currCmd;
-            switch (proto.Type)
+            CommandType newType = (CommandType)proto.Type;
+            if(_cmd != null && _cmd.GetCommandType() != newType)
+                _cmd.Undo();
+            switch (newType)
             {
-                case 0:
-                    _currCmd?.Undo();
+                case CommandType.None:
+                    _cmd?.Undo();
                     break;
-                case 1:
-                    point = new Vector3(proto.Point.X, proto.Point.Y, proto.Point.Z);
-                    _currCmd = new MoveCommand(this, point);
+                case CommandType.Move:
+                    target = null;
+                    _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
                     break;
-                case 2:
-                    target = GameManager.Instance.ActiveWorld.Enemies[proto.TargetId];
-                    _currCmd = new AttackCommand(this, target);
+                case CommandType.Attack:
+                    target = _currWorld.inWorldObjDict[proto.TargetId];
+                    _cmd = new AttackCommand(this, target);
                     break;
-                case 3:
-                    point = new Vector3(proto.Point.X, proto.Point.Y, proto.Point.Z);
-                    _currCmd = new PickupCommand(this, point);
+                case CommandType.Pickup:
+                    target = _currWorld.inWorldObjDict[proto.TargetId];
+                    _cmd = new PickupCommand(this, target);
+                    break;
+                case CommandType.Teleport:
+                    target = _currWorld.inWorldObjDict[proto.TargetId];
+                    _cmd = new TeleportCommand(this, target);
                     break;
                 default:
                     break;
             }
-            if (_prevCmd != null && _currCmd != null && _prevCmd.GetCommandType() != _currCmd.GetCommandType())
-                _prevCmd.Undo();
-            _currCmd?.Execute();
         }
 
-        public void ResetCmd() => _cmdType = CommandType.None;
-
-        public void Move(Vector3 point)
+        public void ResetCmd()
         {
-            _agent.isStopped = false;
-            _agent.destination = point;
-        }
-
-        public void Attack(GameEntity target)
-        {
-            _agent.isStopped = false;
-            _agent.destination = target.transform.position;
-            transform.LookAt(target.transform);
-            if (Vector3.Distance(transform.position, target.transform.position) <= AttackRadius)
-                _anim.SetBool(attack, true);
-            else
-                _anim.SetBool(attack, false);
-        }
-
-        public void Pickup(Vector3 point)
-        {
-            _agent.isStopped = false;
-            _agent.destination = point;
-            if (Vector3.Distance(transform.position, point) < _agent.stoppingDistance)
-                _cmdType = CommandType.None;
-        }
-
-        public void UnMove()
-        {
-            _agent.isStopped = true;
-            _currCmd = null;
-        }
-
-        public void UnAttack()
-        {
-            _agent.isStopped = true;
-            _anim.SetBool(attack, false);
-            _currCmd = null;
-        }
-
-        public void UnPickup()
-        {
-            _agent.isStopped = true;
-            _currCmd = null;
+            Proto.PlayerSyncCmd proto = new() { Type = 0, PlayerSn = sn, TargetId = 0, Point = null };
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncCmd, proto);
         }
 
         public int AddItemToKnap(GameItem item, int index = 0)
         {
             item.gameObject.SetActive(false);
             item.transform.SetParent(_knapsack);
-            GameObject obj = ResourceManager.Instance.Load<GameObject>($"UI/ItemUI/{item.itemType}/{item.objName}");
+            GameObject obj = ResourceManager.Instance.Load<GameObject>($"UI/ItemUI/{item.itemType}/{item.ObjName}");
             ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();
             itemUI.Item = item;
             item.ItemUI = itemUI;
-            PoolManager.Instance.Push(item.objName, itemUI.gameObject);
+            PoolManager.Instance.Push(item.ObjName, itemUI.gameObject);
             return itemUI.AddToKnap(index);
         }
 
@@ -240,11 +189,11 @@ namespace Control
                             ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key][0]}", (obj) =>
                             {
                                 Potion potion = Instantiate(obj).GetComponent<Potion>();
-                                potion.itemId = data.Id;
+                                potion.ItemId = data.Id;
                                 potion.itemType = ItemType.Potion;
-                                potion.hashCode = data.Hash;
-                                potion.objName = potionDict[key][0];
+                                potion.ObjName = potionDict[key][0];
                                 potion.SetNameBar(potionDict[key][1]);
+                                potion.SetKeyCode(data.Key);
                                 potion.transform.position = transform.position;
                                 AddItemToKnap(potion, data.Index);
                             });
@@ -257,11 +206,11 @@ namespace Control
                             ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key][0]}", (obj) =>
                             {
                                 Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
-                                weapon.itemId = data.Id;
+                                weapon.ItemId = data.Id;
                                 weapon.itemType = ItemType.Weapon;
-                                weapon.hashCode = data.Hash;
-                                weapon.objName = weaponDict[key][0];
+                                weapon.ObjName = weaponDict[key][0];
                                 weapon.SetNameBar(weaponDict[key][1]);
+                                weapon.SetKeyCode(data.Key);
                                 weapon.transform.position = transform.position;
                                 AddItemToKnap(weapon, data.Index);
                             });

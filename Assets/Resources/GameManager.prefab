@@ -352,5 +352,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36fdf9ebbc7c92746aa7c937d9de2e6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ip: 127.0.0.1
-  port: 7071

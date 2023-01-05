@@ -1,9 +1,10 @@
+using UnityEngine;
+
 namespace Control.CMD
 {
     public interface IAttackExecutor : IExecutor
     {
-        void Attack(GameEntity target);
-
+        void Attack(Transform target);
         void UnAttack();
     }
 }

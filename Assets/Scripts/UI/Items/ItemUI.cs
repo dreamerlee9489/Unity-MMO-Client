@@ -22,16 +22,16 @@ namespace UI
 
         public int AddToKnap(int index = 0)
         {
-            if (!_knapPanel.UiIndexDict.ContainsKey(Item.GetHashCode()))
+            if (!_knapPanel.UiIndexDict.ContainsKey(Item.GetKeyCode()))
             {
                 CurrSlot = index > 0 ? _knapPanel.GetSlotByIndex(index) : _knapPanel.GetFirstEmptySlot();
-                PoolManager.Instance.Pop(Item.objName, CurrSlot.Icons);
-                _knapPanel.UiIndexDict.Add(Item.GetHashCode(), CurrSlot.index);
+                PoolManager.Instance.Pop(Item.ObjName, CurrSlot.Icons);
+                _knapPanel.UiIndexDict.Add(Item.GetKeyCode(), CurrSlot.index);
             }
             else
             {
-                CurrSlot = _knapPanel.ItemSlots[_knapPanel.UiIndexDict[Item.GetHashCode()]];
-                PoolManager.Instance.Pop(Item.objName, CurrSlot.Icons);
+                CurrSlot = _knapPanel.ItemSlots[_knapPanel.UiIndexDict[Item.GetKeyCode()]];
+                PoolManager.Instance.Pop(Item.ObjName, CurrSlot.Icons);
                 CurrSlot.Count.text = CurrSlot.Icons.childCount.ToString();
             }
             return CurrSlot.index;
@@ -39,7 +39,7 @@ namespace UI
 
         public void RemoveFromKnap()
         {
-            PoolManager.Instance.Push(Item.objName, gameObject);
+            PoolManager.Instance.Push(Item.ObjName, gameObject);
         }
 
         private bool CanSwapUI(Transform parent, out ItemSlot newSlot)

@@ -35,16 +35,16 @@ namespace Proto {
             "EhYKDm9ubGluZV92ZXJzaW9uGAMgASgFIoUBCgZQbGF5ZXISCgoCc24YASAB",
             "KAQSDAoEbmFtZRgCIAEoCRIfCgRiYXNlGAMgASgLMhEuUHJvdG8uUGxheWVy",
             "QmFzZRIfCgRrbmFwGAQgASgLMhEuUHJvdG8uUGxheWVyS25hcBIfCgRtaXNj",
-            "GAUgASgLMhEuUHJvdG8uUGxheWVyTWlzYyKWAQoISXRlbURhdGESJgoEdHlw",
+            "GAUgASgLMhEuUHJvdG8uUGxheWVyTWlzYyKVAQoISXRlbURhdGESJgoEdHlw",
             "ZRgBIAEoDjIYLlByb3RvLkl0ZW1EYXRhLkl0ZW1UeXBlEgoKAmlkGAIgASgF",
-            "EgsKA251bRgDIAEoBRINCgVpbmRleBgEIAEoBRIMCgRoYXNoGAUgASgFIiwK",
-            "CEl0ZW1UeXBlEggKBE5vbmUQABIKCgZQb3Rpb24QARIKCgZXZWFwb24QAiKJ",
-            "AQoKUGxheWVyS25hcBIMCgRnb2xkGAEgASgFEiMKCml0ZW1zSW5CYWcYAiAD",
-            "KAsyDy5Qcm90by5JdGVtRGF0YRIjCgppdGVtc0luQWN0GAMgAygLMg8uUHJv",
-            "dG8uSXRlbURhdGESIwoKaXRlbXNJbkVxdRgEIAMoCzIPLlByb3RvLkl0ZW1E",
-            "YXRhIi4KDUFkZEl0ZW1Ub0tuYXASHQoEaXRlbRgBIAEoCzIPLlByb3RvLkl0",
-            "ZW1EYXRhKigKBkdlbmRlchIICgRub25lEAASCAoEbWFsZRABEgoKBmZlbWFs",
-            "ZRACYgZwcm90bzM="));
+            "EgsKA251bRgDIAEoBRINCgVpbmRleBgEIAEoBRILCgNrZXkYBSABKAUiLAoI",
+            "SXRlbVR5cGUSCAoETm9uZRAAEgoKBlBvdGlvbhABEgoKBldlYXBvbhACIokB",
+            "CgpQbGF5ZXJLbmFwEgwKBGdvbGQYASABKAUSIwoKaXRlbXNJbkJhZxgCIAMo",
+            "CzIPLlByb3RvLkl0ZW1EYXRhEiMKCml0ZW1zSW5BY3QYAyADKAsyDy5Qcm90",
+            "by5JdGVtRGF0YRIjCgppdGVtc0luRXF1GAQgAygLMg8uUHJvdG8uSXRlbURh",
+            "dGEiLgoNQWRkSXRlbVRvS25hcBIdCgRpdGVtGAEgASgLMg8uUHJvdG8uSXRl",
+            "bURhdGEqKAoGR2VuZGVyEggKBG5vbmUQABIICgRtYWxlEAESCgoGZmVtYWxl",
+            "EAJiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.Gender), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -53,7 +53,7 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.LastWorld), global::Proto.LastWorld.Parser, new[]{ "WorldId", "WorldSn", "Position" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerMisc), global::Proto.PlayerMisc.Parser, new[]{ "LastWorld", "LastDungeon", "OnlineVersion" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Knap", "Misc" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Type", "Id", "Num", "Index", "Hash" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType) }, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Type", "Id", "Num", "Index", "Key" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType) }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerKnap), global::Proto.PlayerKnap.Parser, new[]{ "Gold", "ItemsInBag", "ItemsInAct", "ItemsInEqu" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.AddItemToKnap), global::Proto.AddItemToKnap.Parser, new[]{ "Item" }, null, null, null, null)
           }));
@@ -1243,7 +1243,7 @@ namespace Proto {
       id_ = other.id_;
       num_ = other.num_;
       index_ = other.index_;
-      hash_ = other.hash_;
+      key_ = other.key_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1296,14 +1296,14 @@ namespace Proto {
       }
     }
 
-    /// <summary>Field number for the "hash" field.</summary>
-    public const int HashFieldNumber = 5;
-    private int hash_;
+    /// <summary>Field number for the "key" field.</summary>
+    public const int KeyFieldNumber = 5;
+    private int key_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Hash {
-      get { return hash_; }
+    public int Key {
+      get { return key_; }
       set {
-        hash_ = value;
+        key_ = value;
       }
     }
 
@@ -1324,7 +1324,7 @@ namespace Proto {
       if (Id != other.Id) return false;
       if (Num != other.Num) return false;
       if (Index != other.Index) return false;
-      if (Hash != other.Hash) return false;
+      if (Key != other.Key) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1335,7 +1335,7 @@ namespace Proto {
       if (Id != 0) hash ^= Id.GetHashCode();
       if (Num != 0) hash ^= Num.GetHashCode();
       if (Index != 0) hash ^= Index.GetHashCode();
-      if (Hash != 0) hash ^= Hash.GetHashCode();
+      if (Key != 0) hash ^= Key.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1365,9 +1365,9 @@ namespace Proto {
         output.WriteRawTag(32);
         output.WriteInt32(Index);
       }
-      if (Hash != 0) {
+      if (Key != 0) {
         output.WriteRawTag(40);
-        output.WriteInt32(Hash);
+        output.WriteInt32(Key);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1389,8 +1389,8 @@ namespace Proto {
       if (Index != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Index);
       }
-      if (Hash != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Hash);
+      if (Key != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Key);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1415,8 +1415,8 @@ namespace Proto {
       if (other.Index != 0) {
         Index = other.Index;
       }
-      if (other.Hash != 0) {
-        Hash = other.Hash;
+      if (other.Key != 0) {
+        Key = other.Key;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1446,7 +1446,7 @@ namespace Proto {
             break;
           }
           case 40: {
-            Hash = input.ReadInt32();
+            Key = input.ReadInt32();
             break;
           }
         }

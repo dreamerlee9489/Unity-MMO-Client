@@ -33,14 +33,20 @@ namespace Control
             _pos.Z = transform.position.z;
         }
 
-        private void OnApplicationQuit()
+        protected override void OnApplicationQuit()
         {
             _tokenSource.Cancel();
-            ResetState();
+            base.OnApplicationQuit();
             PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
         }
 
-        private void UploadDataTask()
+        public void StopWork()
+        {
+            _tokenSource.Cancel();
+            PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
+        }
+
+        private void PushPosTask()
         {
             while (!_tokenSource.IsCancellationRequested)
             {
@@ -56,7 +62,6 @@ namespace Control
 
         public void ParseSyncState(StateType type, int code, PlayerController target)
         {
-            this.target = target;
             if (currState == null)
             {
                 currState = State.GenState(type, code, this, target);
@@ -80,7 +85,7 @@ namespace Control
         public void LinkPlayer(bool linker)
         {
             if (linker)
-                Task.Run(UploadDataTask);
+                Task.Run(PushPosTask);
             else
                 _tokenSource.Cancel();
         }
@@ -120,11 +125,11 @@ namespace Control
                             ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key][0]}", (obj) =>
                             {
                                 Potion potion = Instantiate(obj).GetComponent<Potion>();
-                                potion.itemId = data.Id;
+                                potion.ItemId = data.Id;
                                 potion.itemType = ItemType.Potion;
-                                potion.hashCode = potion.GenHash();
-                                potion.objName = potionDict[key][0];
+                                potion.ObjName = potionDict[key][0];
                                 potion.SetNameBar(potionDict[key][1]);
+                                potion.SetKeyCode(potion.GenKeyCode());
                                 potion.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
                             });
                         }
@@ -136,11 +141,11 @@ namespace Control
                             ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key][0]}", (obj) =>
                             {
                                 Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
-                                weapon.itemId = data.Id;
+                                weapon.ItemId = data.Id;
                                 weapon.itemType = ItemType.Weapon;
-                                weapon.hashCode = weapon.GenHash();
-                                weapon.objName = weaponDict[key][0];
+                                weapon.ObjName = weaponDict[key][0];
                                 weapon.SetNameBar(weaponDict[key][1]);
+                                weapon.SetKeyCode(weapon.GenKeyCode());
                                 weapon.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
                             });
                         }

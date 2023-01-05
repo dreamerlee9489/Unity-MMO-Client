@@ -1,6 +1,6 @@
 ﻿namespace Control.CMD
 {
-    public enum CommandType { None, Move, Attack, Pickup }
+    public enum CommandType { None, Move, Attack, Pickup, Teleport }
 
     public abstract class ICommand
     {
@@ -16,5 +16,9 @@
         public abstract void Execute();
 
         public abstract void Undo();
+    }
+
+    public interface IExecutor
+    {
     }
 }

@@ -1,10 +1,12 @@
+using UnityEngine;
+
 namespace Control.CMD
 {
     public class AttackCommand : ICommand
     {
-        private GameEntity _target;
+        private Transform _target;
 
-        public AttackCommand(IAttackExecutor executor, GameEntity target) : base(executor)
+        public AttackCommand(IAttackExecutor executor, Transform target) : base(executor)
         {
             _target = target;
         }

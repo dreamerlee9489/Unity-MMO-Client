@@ -10,7 +10,7 @@ namespace Manage
         Disconnect,
 
         HotUpdated,
-        SceneLoading,
+        SceneUnload,
         SceneLoaded,
 
         PlayerLoaded,

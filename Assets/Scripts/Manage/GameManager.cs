@@ -114,8 +114,9 @@ namespace Manage
         {
             if (msg is EnterWorld proto && proto.WorldId > 2)
             {
-                SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
                 _canvas.FindPanel<StartPanel>().Close();
+                SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
+                MainPlayer.Obj.transform.position = new(proto.Position.X, proto.Position.Y, proto.Position.Z);
             }
         }
 

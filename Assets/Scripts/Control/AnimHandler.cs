@@ -1,9 +1,10 @@
-﻿using Manage;
+﻿using Items;
+using Manage;
 using UnityEngine;
 
 namespace Control
 {
-    public class AnimExecutor : MonoBehaviour
+    public class AnimHandler : MonoBehaviour
     {
         private GameEntity _owner;
 
@@ -14,7 +15,7 @@ namespace Control
 
         public void AtkAnimEvent()
         {
-            if(CompareTag("Player") && _owner.GetComponent<PlayerController>().sn == GameManager.Instance.MainPlayer.Sn)
+            if(CompareTag("Player") && _owner.target && _owner.GetComponent<PlayerController>().sn == GameManager.Instance.MainPlayer.Sn)
             {
                 Proto.AtkAnimEvent proto = new()
                 {
@@ -39,6 +40,12 @@ namespace Control
                     NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
                 }
             }
+        }
+
+        public void PickupEvent()
+        {
+            if(_owner.target)
+                _owner.target.GetComponent<GameItem>().RequestPickup(_owner.GetComponent<PlayerController>());
         }
     }
 }

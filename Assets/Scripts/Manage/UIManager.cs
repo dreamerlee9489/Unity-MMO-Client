@@ -59,8 +59,10 @@ namespace Manage
 
         public IEnumerator FadeAlpha()
         {
+            EventManager.Instance.Invoke(EEventType.SceneUnload);
             _cutImage.alpha = 1.0f;
             yield return new WaitForSeconds(1f);
+            EventManager.Instance.Invoke(EEventType.SceneLoaded);
             foreach (var enemy in GameManager.Instance.ActiveWorld.Enemies)
             {
                 Proto.RequestSyncEnemy proto = new() { EnemyId = enemy.id };

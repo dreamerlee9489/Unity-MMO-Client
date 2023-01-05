@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 90a8124a76c76fa4f952d6c63a21f618
 ModelImporter:
-  serializedVersion: 21202
+  serializedVersion: 21300
   internalIDToNameTable:
   - first:
       1: 100000
@@ -409,7 +409,7 @@ ModelImporter:
       curves: []
       events:
       - time: 0.48556697
-        functionName: Pickup
+        functionName: PickupEvent
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -1177,6 +1177,7 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
