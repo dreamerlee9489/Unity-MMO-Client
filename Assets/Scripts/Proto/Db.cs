@@ -37,14 +37,14 @@ namespace Proto {
             "QmFzZRIfCgRrbmFwGAQgASgLMhEuUHJvdG8uUGxheWVyS25hcBIfCgRtaXNj",
             "GAUgASgLMhEuUHJvdG8uUGxheWVyTWlzYyKVAQoISXRlbURhdGESJgoEdHlw",
             "ZRgBIAEoDjIYLlByb3RvLkl0ZW1EYXRhLkl0ZW1UeXBlEgoKAmlkGAIgASgF",
-            "EgsKA251bRgDIAEoBRINCgVpbmRleBgEIAEoBRILCgNrZXkYBSABKAUiLAoI",
+            "EgsKA251bRgDIAEoBRINCgVpbmRleBgEIAEoBRILCgNrZXkYBSABKAkiLAoI",
             "SXRlbVR5cGUSCAoETm9uZRAAEgoKBlBvdGlvbhABEgoKBldlYXBvbhACIokB",
             "CgpQbGF5ZXJLbmFwEgwKBGdvbGQYASABKAUSIwoKaXRlbXNJbkJhZxgCIAMo",
             "CzIPLlByb3RvLkl0ZW1EYXRhEiMKCml0ZW1zSW5BY3QYAyADKAsyDy5Qcm90",
             "by5JdGVtRGF0YRIjCgppdGVtc0luRXF1GAQgAygLMg8uUHJvdG8uSXRlbURh",
-            "dGEiLgoNQWRkSXRlbVRvS25hcBIdCgRpdGVtGAEgASgLMg8uUHJvdG8uSXRl",
-            "bURhdGEqKAoGR2VuZGVyEggKBG5vbmUQABIICgRtYWxlEAESCgoGZmVtYWxl",
-            "EAJiBnByb3RvMw=="));
+            "dGEiLwoOVXBkYXRlS25hcEl0ZW0SHQoEaXRlbRgBIAEoCzIPLlByb3RvLkl0",
+            "ZW1EYXRhKigKBkdlbmRlchIICgRub25lEAASCAoEbWFsZRABEgoKBmZlbWFs",
+            "ZRACYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.Gender), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -55,7 +55,7 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Knap", "Misc" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Type", "Id", "Num", "Index", "Key" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType) }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerKnap), global::Proto.PlayerKnap.Parser, new[]{ "Gold", "ItemsInBag", "ItemsInAct", "ItemsInEqu" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.AddItemToKnap), global::Proto.AddItemToKnap.Parser, new[]{ "Item" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.UpdateKnapItem), global::Proto.UpdateKnapItem.Parser, new[]{ "Item" }, null, null, null, null)
           }));
     }
     #endregion
@@ -1298,12 +1298,12 @@ namespace Proto {
 
     /// <summary>Field number for the "key" field.</summary>
     public const int KeyFieldNumber = 5;
-    private int key_;
+    private string key_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Key {
+    public string Key {
       get { return key_; }
       set {
-        key_ = value;
+        key_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1335,7 +1335,7 @@ namespace Proto {
       if (Id != 0) hash ^= Id.GetHashCode();
       if (Num != 0) hash ^= Num.GetHashCode();
       if (Index != 0) hash ^= Index.GetHashCode();
-      if (Key != 0) hash ^= Key.GetHashCode();
+      if (Key.Length != 0) hash ^= Key.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1365,9 +1365,9 @@ namespace Proto {
         output.WriteRawTag(32);
         output.WriteInt32(Index);
       }
-      if (Key != 0) {
-        output.WriteRawTag(40);
-        output.WriteInt32(Key);
+      if (Key.Length != 0) {
+        output.WriteRawTag(42);
+        output.WriteString(Key);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1389,8 +1389,8 @@ namespace Proto {
       if (Index != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Index);
       }
-      if (Key != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Key);
+      if (Key.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Key);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1415,7 +1415,7 @@ namespace Proto {
       if (other.Index != 0) {
         Index = other.Index;
       }
-      if (other.Key != 0) {
+      if (other.Key.Length != 0) {
         Key = other.Key;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -1445,8 +1445,8 @@ namespace Proto {
             Index = input.ReadInt32();
             break;
           }
-          case 40: {
-            Key = input.ReadInt32();
+          case 42: {
+            Key = input.ReadString();
             break;
           }
         }
@@ -1657,11 +1657,11 @@ namespace Proto {
 
   }
 
-  public sealed partial class AddItemToKnap : pb::IMessage<AddItemToKnap> {
-    private static readonly pb::MessageParser<AddItemToKnap> _parser = new pb::MessageParser<AddItemToKnap>(() => new AddItemToKnap());
+  public sealed partial class UpdateKnapItem : pb::IMessage<UpdateKnapItem> {
+    private static readonly pb::MessageParser<UpdateKnapItem> _parser = new pb::MessageParser<UpdateKnapItem>(() => new UpdateKnapItem());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<AddItemToKnap> Parser { get { return _parser; } }
+    public static pb::MessageParser<UpdateKnapItem> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -1674,21 +1674,21 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public AddItemToKnap() {
+    public UpdateKnapItem() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public AddItemToKnap(AddItemToKnap other) : this() {
+    public UpdateKnapItem(UpdateKnapItem other) : this() {
       item_ = other.item_ != null ? other.item_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public AddItemToKnap Clone() {
-      return new AddItemToKnap(this);
+    public UpdateKnapItem Clone() {
+      return new UpdateKnapItem(this);
     }
 
     /// <summary>Field number for the "item" field.</summary>
@@ -1704,11 +1704,11 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as AddItemToKnap);
+      return Equals(other as UpdateKnapItem);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(AddItemToKnap other) {
+    public bool Equals(UpdateKnapItem other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1758,7 +1758,7 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(AddItemToKnap other) {
+    public void MergeFrom(UpdateKnapItem other) {
       if (other == null) {
         return;
       }

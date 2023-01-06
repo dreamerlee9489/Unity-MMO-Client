@@ -25,6 +25,7 @@ namespace Control.FSM
 
         public override void Exit()
         {
+            _owner.currState = null;
             _owner.Agent.radius = 0.3f;
             _owner.Agent.isStopped = false;
             _owner.Agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;

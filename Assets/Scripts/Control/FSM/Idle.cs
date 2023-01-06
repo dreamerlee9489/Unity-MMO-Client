@@ -19,6 +19,7 @@
 
         public override void Exit()
         {
+            _owner.currState = null;
             _owner.Agent.isStopped = false;
         }
     }

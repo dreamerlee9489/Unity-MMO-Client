@@ -1,18 +1,16 @@
 using Control;
 using Manage;
-using System;
 using UI;
-using UnityEngine;
 
 namespace Items
 {
     public enum ItemType { None, Potion, Weapon, Shield, Helmet, Chest, Boots, Neck, Gloves, Pants, Portal }
     public enum ItemState { World, Knap, Equip }
 
-    public abstract class GameItem : MonoBehaviour
+    public abstract class GameItem : GuidObject
     {
-        protected int _hashCode, _keyCode;
-        protected static WorldManager _currWorld;
+        protected string _knapId;
+        
         protected ItemState _itemState = ItemState.World;
         protected ItemNameBar _nameBar;
 
@@ -22,24 +20,10 @@ namespace Items
 
         public ItemType itemType = ItemType.None;
 
-        public int GenKeyCode() => $"{itemType}@{ItemId}".GetHashCode();
-
-        public int GetKeyCode() => _keyCode;
-
-        public void SetKeyCode(int keyCode) => _keyCode = keyCode;
-
-        public override int GetHashCode() => _hashCode;
-
-        public override bool Equals(object other) => _hashCode == other.GetHashCode();
-
-        protected virtual void Awake()
+        protected override void Awake()
         {
-            _hashCode = Guid.NewGuid().GetHashCode();
+            base.Awake();
             _nameBar = transform.Find("ItemNameBar").GetComponent<ItemNameBar>();
-            if (_currWorld)
-                _currWorld.inWorldObjDict.TryAdd(_hashCode, transform);
-            EventManager.Instance.AddListener(EEventType.SceneUnload, SceneUnloadCallback);
-            EventManager.Instance.AddListener(EEventType.SceneLoaded, SceneLoadedCallback);
         }
 
         private void Update()
@@ -50,30 +34,10 @@ namespace Items
                 gameObject.SetActive(true);
         }
 
-        protected virtual void OnApplicationQuit()
-        {
-            EventManager.Instance.RemoveListener(EEventType.SceneUnload, SceneUnloadCallback);
-            EventManager.Instance.RemoveListener(EEventType.SceneLoaded, SceneLoadedCallback);
-        }
-
-        protected void SceneUnloadCallback()
-        {
-            if (_currWorld)
-                _currWorld.inWorldObjDict.Clear();
-            _currWorld = null;
-        }
-
-        protected void SceneLoadedCallback()
-        {
-            if (!_currWorld)
-                _currWorld = FindObjectOfType<WorldManager>();
-            _currWorld.inWorldObjDict.TryAdd(_hashCode, transform);
-        }
-
         public virtual void RequestPickup(PlayerController player)
         {
             _itemState = ItemState.Knap;
-            Proto.AddItemToKnap proto = new() { Item = new() };
+            Proto.UpdateKnapItem proto = new() { Item = new() };
             switch (itemType)
             {
                 case ItemType.Potion:
@@ -87,11 +51,25 @@ namespace Items
             }
             proto.Item.Id = ItemId;
             proto.Item.Num = 1;
-            proto.Item.Key = _keyCode;
-            proto.Item.Index = player.AddItemToKnap(this);
-            NetManager.Instance.SendPacket(Proto.MsgId.C2SAddItemToKnap, proto);
+            proto.Item.Key = GenKnapId();
+            proto.Item.Index = player.UpdateKnapItem(this);
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
         }
-        
+
         public void SetNameBar(string name) => _nameBar.Name.text = name;
+
+        public void SetKnapId(string key) => _knapId = key;
+
+        public string GetKnapId() => _knapId;
+
+        public string GenKnapId()
+        {
+            return itemType switch
+            {
+                ItemType.None or ItemType.Potion => _knapId = $"{itemType}@{ItemId}",
+                ItemType.Weapon or ItemType.Shield or ItemType.Helmet or ItemType.Chest or ItemType.Boots or ItemType.Neck or ItemType.Gloves or ItemType.Pants or ItemType.Portal => _knapId = _guid,
+                _ => "",
+            };
+        }
     }
 }

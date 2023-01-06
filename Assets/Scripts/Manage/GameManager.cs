@@ -56,7 +56,7 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
-            PoolManager.Instance.Inject(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"), 15);
+            PoolManager.Instance.Inject(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"), 20);
             PoolManager.Instance.Inject(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
         }
 

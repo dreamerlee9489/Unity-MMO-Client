@@ -24,7 +24,7 @@ namespace Proto {
     static ProtoIdReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg5wcm90b19pZC5wcm90bxIFUHJvdG8q1hIKBU1zZ0lkEggKBE5vbmUQABIV",
+            "Cg5wcm90b19pZC5wcm90bxIFUHJvdG8q1xIKBU1zZ0lkEggKBE5vbmUQABIV",
             "ChFNSV9OZXR3b3JrQ29ubmVjdBABEhcKE01JX05ldHdvcmtDb25uZWN0ZWQQ",
             "AhIUChBNSV9OZXR3b3JrTGlzdGVuEAMSFwoTTUlfTmV0d29ya0xpc3Rlbktl",
             "eRAEEhgKFE1JX05ldHdvcmtEaXNjb25uZWN0EAoSGgoWTUlfTmV0d29ya0Rp",
@@ -68,16 +68,16 @@ namespace Proto {
             "CgxNSV9DbWRUaHJlYWQQoZwBEg8KCU1JX0NtZEFwcBCinAESFgoQTUlfQ21k",
             "V29ybGRQcm94eRCjnAESEQoLTUlfQ21kV29ybGQQpJwBEhIKDE1JX0NtZENy",
             "ZWF0ZRClnAESFgoQTUlfQ21kRWZmaWNpZW5jeRCmnAESEwoNTUlfRWZmaWNp",
-            "ZW5jeRCnnAESFwoRQzJTX1BsYXllclB1c2hQb3MQseoBEhcKEVMyQ19QbGF5",
-            "ZXJQdXNoUG9zELLqARIXChFDMlNfUGxheWVyU3luY0NtZBCz6gESFwoRUzJD",
-            "X1BsYXllclN5bmNDbWQQtOoBEhYKEEMyU19FbmVteVB1c2hQb3MQteoBEhYK",
-            "EFMyQ19FbmVteVB1c2hQb3MQtuoBEhYKEFMyQ19Gc21TeW5jU3RhdGUQt+oB",
-            "EhYKEEMyU19Gc21TeW5jU3RhdGUQuOoBEhoKFEMyU19SZXF1ZXN0U3luY0Vu",
+            "ZW5jeRCnnAESFwoRQzJTX1B1c2hQbGF5ZXJQb3MQseoBEhcKEVMyQ19QdXNo",
+            "UGxheWVyUG9zELLqARIXChFDMlNfU3luY1BsYXllckNtZBCz6gESFwoRUzJD",
+            "X1N5bmNQbGF5ZXJDbWQQtOoBEhYKEEMyU19QdXNoRW5lbXlQb3MQteoBEhYK",
+            "EFMyQ19QdXNoRW5lbXlQb3MQtuoBEhYKEFMyQ19TeW5jRnNtU3RhdGUQt+oB",
+            "EhYKEEMyU19TeW5jRnNtU3RhdGUQuOoBEhoKFEMyU19SZXF1ZXN0U3luY0Vu",
             "ZW15ELnqARIaChRTMkNfUmVxdWVzdFN5bmNFbmVteRC66gESGwoVUzJDX1Jl",
             "cXVlc3RMaW5rUGxheWVyELvqARIWChBDMlNfQXRrQW5pbUV2ZW50ELzqARIW",
             "ChBTMkNfQXRrQW5pbUV2ZW50EL3qARIWChBTMkNfRHJvcEl0ZW1MaXN0EL7q",
-            "ARIXChFDMlNfQWRkSXRlbVRvS25hcBDBuAISFwoRQzJTX0dldFBsYXllcktu",
-            "YXAQwrgCEhcKEVMyQ19HZXRQbGF5ZXJLbmFwEMO4AmIGcHJvdG8z"));
+            "ARIYChJDMlNfVXBkYXRlS25hcEl0ZW0QwbgCEhcKEUMyU19HZXRQbGF5ZXJL",
+            "bmFwEMK4AhIXChFTMkNfR2V0UGxheWVyS25hcBDDuAJiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.MsgId), }, null, null));
@@ -366,21 +366,21 @@ namespace Proto {
     /// <summary>
     /// AI
     /// </summary>
-    [pbr::OriginalName("C2S_PlayerPushPos")] C2SPlayerPushPos = 30001,
-    [pbr::OriginalName("S2C_PlayerPushPos")] S2CPlayerPushPos = 30002,
-    [pbr::OriginalName("C2S_PlayerSyncCmd")] C2SPlayerSyncCmd = 30003,
-    [pbr::OriginalName("S2C_PlayerSyncCmd")] S2CPlayerSyncCmd = 30004,
-    [pbr::OriginalName("C2S_EnemyPushPos")] C2SEnemyPushPos = 30005,
-    [pbr::OriginalName("S2C_EnemyPushPos")] S2CEnemyPushPos = 30006,
-    [pbr::OriginalName("S2C_FsmSyncState")] S2CFsmSyncState = 30007,
-    [pbr::OriginalName("C2S_FsmSyncState")] C2SFsmSyncState = 30008,
+    [pbr::OriginalName("C2S_PushPlayerPos")] C2SPushPlayerPos = 30001,
+    [pbr::OriginalName("S2C_PushPlayerPos")] S2CPushPlayerPos = 30002,
+    [pbr::OriginalName("C2S_SyncPlayerCmd")] C2SSyncPlayerCmd = 30003,
+    [pbr::OriginalName("S2C_SyncPlayerCmd")] S2CSyncPlayerCmd = 30004,
+    [pbr::OriginalName("C2S_PushEnemyPos")] C2SPushEnemyPos = 30005,
+    [pbr::OriginalName("S2C_PushEnemyPos")] S2CPushEnemyPos = 30006,
+    [pbr::OriginalName("S2C_SyncFsmState")] S2CSyncFsmState = 30007,
+    [pbr::OriginalName("C2S_SyncFsmState")] C2SSyncFsmState = 30008,
     [pbr::OriginalName("C2S_RequestSyncEnemy")] C2SRequestSyncEnemy = 30009,
     [pbr::OriginalName("S2C_RequestSyncEnemy")] S2CRequestSyncEnemy = 30010,
     [pbr::OriginalName("S2C_RequestLinkPlayer")] S2CRequestLinkPlayer = 30011,
     [pbr::OriginalName("C2S_AtkAnimEvent")] C2SAtkAnimEvent = 30012,
     [pbr::OriginalName("S2C_AtkAnimEvent")] S2CAtkAnimEvent = 30013,
     [pbr::OriginalName("S2C_DropItemList")] S2CDropItemList = 30014,
-    [pbr::OriginalName("C2S_AddItemToKnap")] C2SAddItemToKnap = 40001,
+    [pbr::OriginalName("C2S_UpdateKnapItem")] C2SUpdateKnapItem = 40001,
     [pbr::OriginalName("C2S_GetPlayerKnap")] C2SGetPlayerKnap = 40002,
     [pbr::OriginalName("S2C_GetPlayerKnap")] S2CGetPlayerKnap = 40003,
   }

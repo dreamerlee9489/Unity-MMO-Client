@@ -25,6 +25,7 @@
 
         public override void Exit()
         {
+            _owner.currState = null;
         }
     }
 }

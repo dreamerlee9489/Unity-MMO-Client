@@ -22,15 +22,15 @@ namespace UI
 
         public int AddToKnap(int index = 0)
         {
-            if (!_knapPanel.UiIndexDict.ContainsKey(Item.GetKeyCode()))
+            if (!_knapPanel.UiIndexDict.ContainsKey(Item.GetKnapId()))
             {
                 CurrSlot = index > 0 ? _knapPanel.GetSlotByIndex(index) : _knapPanel.GetFirstEmptySlot();
                 PoolManager.Instance.Pop(Item.ObjName, CurrSlot.Icons);
-                _knapPanel.UiIndexDict.Add(Item.GetKeyCode(), CurrSlot.index);
+                _knapPanel.UiIndexDict.Add(Item.GetKnapId(), CurrSlot.index);
             }
             else
             {
-                CurrSlot = _knapPanel.ItemSlots[_knapPanel.UiIndexDict[Item.GetKeyCode()]];
+                CurrSlot = _knapPanel.ItemSlots[_knapPanel.UiIndexDict[Item.GetKnapId()]];
                 PoolManager.Instance.Pop(Item.ObjName, CurrSlot.Icons);
                 CurrSlot.Count.text = CurrSlot.Icons.childCount.ToString();
             }

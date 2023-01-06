@@ -33,49 +33,40 @@ namespace Control
             _pos.Z = transform.position.z;
         }
 
-        protected override void OnApplicationQuit()
+        private void OnDisable()
         {
-            _tokenSource.Cancel();
-            base.OnApplicationQuit();
-            PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
+            if(patrolPath != null)
+                PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
         }
 
-        public void StopWork()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             _tokenSource.Cancel();
-            PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
         }
 
         private void PushPosTask()
         {
             while (!_tokenSource.IsCancellationRequested)
             {
-                Proto.EnemyPushPos proto = new()
+                Proto.PushEnemyPos proto = new()
                 {
                     Id = id,
                     Pos = _pos
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SEnemyPushPos, proto);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SPushEnemyPos, proto);
                 Thread.Sleep(100);
             }
         }
 
         public void ParseSyncState(StateType type, int code, PlayerController target)
         {
-            if (currState == null)
-            {
-                currState = State.GenState(type, code, this, target);
-                currState.Enter();
-            }
-            else
-            {
-                currState.Exit();
-                currState = State.GenState(type, code, this, target);
-                currState.Enter();
-            }
+            currState?.Exit();
+            currState = State.GenState(type, code, this, target);
+            currState.Enter();
         }
 
-        public void ParseSyncPos(Proto.EnemyPushPos proto)
+        public void ParseSyncPos(Proto.PushEnemyPos proto)
         {
             gameObject.SetActive(false);
             transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
@@ -92,7 +83,7 @@ namespace Control
 
         public void ResetState()
         {
-            currState?.Exit();
+            currState.Exit();
             currState = new Idle(this);
             currState.Enter();
         }
@@ -125,11 +116,10 @@ namespace Control
                             ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key][0]}", (obj) =>
                             {
                                 Potion potion = Instantiate(obj).GetComponent<Potion>();
-                                potion.ItemId = data.Id;
                                 potion.itemType = ItemType.Potion;
+                                potion.ItemId = data.Id;
                                 potion.ObjName = potionDict[key][0];
                                 potion.SetNameBar(potionDict[key][1]);
-                                potion.SetKeyCode(potion.GenKeyCode());
                                 potion.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
                             });
                         }
@@ -141,11 +131,10 @@ namespace Control
                             ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key][0]}", (obj) =>
                             {
                                 Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
-                                weapon.ItemId = data.Id;
                                 weapon.itemType = ItemType.Weapon;
+                                weapon.ItemId = data.Id;
                                 weapon.ObjName = weaponDict[key][0];
                                 weapon.SetNameBar(weaponDict[key][1]);
-                                weapon.SetKeyCode(weapon.GenKeyCode());
                                 weapon.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
                             });
                         }

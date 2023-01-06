@@ -1,7 +1,6 @@
 ﻿using Control.CMD;
 using Items;
 using Manage;
-using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 using UI;
@@ -57,36 +56,36 @@ namespace Control
                 _hitPos.X = _hit.point.x;
                 _hitPos.Y = _hit.point.y;
                 _hitPos.Z = _hit.point.z;
-                
-                Proto.PlayerSyncCmd pushCmd = new();
+
+                Proto.SyncPlayerCmd syncCmd = new();
                 switch (_hit.collider.tag)
                 {
                     case "Terrain":
-                        pushCmd.Type = 1;
-                        pushCmd.PlayerSn = sn;
-                        pushCmd.TargetId = 0;
-                        pushCmd.Point = _hitPos;
+                        syncCmd.Type = 1;
+                        syncCmd.PlayerSn = sn;
+                        syncCmd.TargetId = "";
+                        syncCmd.Point = _hitPos;
                         break;
                     case "Enemy":
-                        pushCmd.Type = 2;
-                        pushCmd.PlayerSn = sn;
-                        pushCmd.TargetId = _hit.transform.GetComponent<GameEntity>().GetHashCode();
-                        pushCmd.Point = null;
+                        syncCmd.Type = 2;
+                        syncCmd.PlayerSn = sn;
+                        syncCmd.TargetId = _hit.transform.GetComponent<GuidObject>().GetGuid();
+                        syncCmd.Point = null;
                         break;
                     case "Item":
-                        pushCmd.Type = 3;
-                        pushCmd.PlayerSn = sn;
-                        pushCmd.TargetId = _hit.transform.GetComponent<GameItem>().GetHashCode();
-                        pushCmd.Point = _hitPos;
+                        syncCmd.Type = 3;
+                        syncCmd.PlayerSn = sn;
+                        syncCmd.TargetId = _hit.transform.GetComponent<GuidObject>().GetGuid();
+                        syncCmd.Point = _hitPos;
                         break;
                     case "Portal":
-                        pushCmd.Type = 4;
-                        pushCmd.PlayerSn = sn;
-                        pushCmd.TargetId = _hit.transform.GetComponent<GameItem>().GetHashCode();
-                        pushCmd.Point = null;
+                        syncCmd.Type = 4;
+                        syncCmd.PlayerSn = sn;
+                        syncCmd.TargetId = _hit.transform.GetComponent<GuidObject>().GetGuid();
+                        syncCmd.Point = null;
                         break;
                 }
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncCmd, pushCmd);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerCmd, syncCmd);
             }
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -102,11 +101,15 @@ namespace Control
             }
         }
 
-        protected override void OnApplicationQuit()
+        protected override void OnDestroy()
         {
-            base.OnApplicationQuit();
+            base.OnDestroy();
             _tokenSource.Cancel();
-            MonoManager.Instance.StopAllCoroutines();
+        }
+
+        private void OnApplicationQuit()
+        {
+            _tokenSource.Cancel();
         }
 
         private void SyncStateTask()
@@ -115,16 +118,16 @@ namespace Control
             NetManager.Instance.SendPacket(Proto.MsgId.C2SGetPlayerKnap, null);
             while (!_tokenSource.IsCancellationRequested)
             {
-                Proto.PlayerPushPos syncPos = new() { Pos = _curPos };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerPushPos, syncPos);
+                Proto.PushPlayerPos syncPos = new() { Pos = _curPos };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SPushPlayerPos, syncPos);
                 Thread.Sleep(100);
             }
         }
 
-        public void ParseSyncCmd(Proto.PlayerSyncCmd proto)
+        public void ParseSyncCmd(Proto.SyncPlayerCmd proto)
         {
             CommandType newType = (CommandType)proto.Type;
-            if(_cmd != null && _cmd.GetCommandType() != newType)
+            if (_cmd != null && _cmd.GetCommandType() != newType)
                 _cmd.Undo();
             switch (newType)
             {
@@ -154,11 +157,11 @@ namespace Control
 
         public void ResetCmd()
         {
-            Proto.PlayerSyncCmd proto = new() { Type = 0, PlayerSn = sn, TargetId = 0, Point = null };
-            NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerSyncCmd, proto);
+            Proto.SyncPlayerCmd proto = new() { Type = 0, PlayerSn = sn, TargetId = "", Point = null };
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerCmd, proto);
         }
 
-        public int AddItemToKnap(GameItem item, int index = 0)
+        public int UpdateKnapItem(GameItem item, int index = 0)
         {
             item.gameObject.SetActive(false);
             item.transform.SetParent(_knapsack);
@@ -189,13 +192,13 @@ namespace Control
                             ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key][0]}", (obj) =>
                             {
                                 Potion potion = Instantiate(obj).GetComponent<Potion>();
-                                potion.ItemId = data.Id;
                                 potion.itemType = ItemType.Potion;
+                                potion.ItemId = data.Id;
                                 potion.ObjName = potionDict[key][0];
                                 potion.SetNameBar(potionDict[key][1]);
-                                potion.SetKeyCode(data.Key);
+                                potion.SetKnapId(data.Key);
                                 potion.transform.position = transform.position;
-                                AddItemToKnap(potion, data.Index);
+                                UpdateKnapItem(potion, data.Index);
                             });
                         }
                         break;
@@ -206,13 +209,13 @@ namespace Control
                             ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key][0]}", (obj) =>
                             {
                                 Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
-                                weapon.ItemId = data.Id;
                                 weapon.itemType = ItemType.Weapon;
+                                weapon.ItemId = data.Id;
                                 weapon.ObjName = weaponDict[key][0];
                                 weapon.SetNameBar(weaponDict[key][1]);
-                                weapon.SetKeyCode(data.Key);
+                                weapon.SetKnapId(data.Key);
                                 weapon.transform.position = transform.position;
-                                AddItemToKnap(weapon, data.Index);
+                                UpdateKnapItem(weapon, data.Index);
                             });
                         }
                         break;

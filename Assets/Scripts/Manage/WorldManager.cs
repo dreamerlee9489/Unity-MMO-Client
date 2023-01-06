@@ -16,15 +16,15 @@ namespace Manage
         public string fileName = "";
         public List<FsmController> Enemies => _enemies;
 
-        public Dictionary<int, Transform> inWorldObjDict = new();
+        public Dictionary<string, Transform> inWorldObjDict = new();
 
         private void Awake()
         {
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnemyPushPos, EnemyPushPosHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CPlayerSyncCmd, PlayerSyncCmdHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CPushEnemyPos, PushEnemyPosHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CSyncFsmState, SyncFsmStateHandler);
+            MsgManager.Instance.RegistMsgHandler(MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CDropItemList, DropItemListHandler);
@@ -61,13 +61,14 @@ namespace Manage
             }
         }
 
-        private void OnApplicationQuit()
+        private void OnDestroy()
         {
+            _enemies.Clear();
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnemyPushPos, EnemyPushPosHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CFsmSyncState, FsmSyncStateHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CPlayerSyncCmd, PlayerSyncCmdHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CPushEnemyPos, PushEnemyPosHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CSyncFsmState, SyncFsmStateHandler);
+            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.S2CDropItemList, DropItemListHandler);
@@ -94,9 +95,9 @@ namespace Manage
             }
         }
 
-        private void PlayerSyncCmdHandler(Google.Protobuf.IMessage msg)
+        private void SyncPlayerCmdHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is PlayerSyncCmd proto)
+            if (msg is SyncPlayerCmd proto)
             {
                 ulong playSn = proto.PlayerSn;
                 if (_players.ContainsKey(playSn))
@@ -111,9 +112,9 @@ namespace Manage
             }
         }
 
-        private void EnemyPushPosHandler(Google.Protobuf.IMessage msg)
+        private void PushEnemyPosHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is EnemyPushPos proto)
+            if (msg is PushEnemyPos proto)
             {
                 int id = proto.Id;
                 if (_enemies.Count > 0)
@@ -121,9 +122,9 @@ namespace Manage
             }
         }
 
-        private void FsmSyncStateHandler(Google.Protobuf.IMessage msg)
+        private void SyncFsmStateHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is FsmSyncState proto && _enemies.Count > 0)
+            if (msg is SyncFsmState proto && _enemies.Count > 0)
             {
                 StateType type = (StateType)proto.State;
                 int code = proto.Code;

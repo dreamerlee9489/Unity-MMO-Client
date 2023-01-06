@@ -21,6 +21,7 @@
 
         public override void Exit()
         {
+            _owner.currState = null;
             _owner.Anim.SetBool(GameEntity.attack, false);
         }
     }

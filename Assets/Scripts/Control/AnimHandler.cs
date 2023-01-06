@@ -44,8 +44,11 @@ namespace Control
 
         public void PickupEvent()
         {
-            if(_owner.target)
+            if (_owner.target)
+            {
                 _owner.target.GetComponent<GameItem>().RequestPickup(_owner.GetComponent<PlayerController>());
+                _owner.target = null;
+            }
         }
     }
 }
