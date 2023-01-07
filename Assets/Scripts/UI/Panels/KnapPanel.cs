@@ -12,7 +12,7 @@ namespace UI
 
         public RectTransform Content { get; set; }
         public List<ItemSlot> ItemSlots { get; set; } = new();
-        public Dictionary<string, int> UiIndexDict { get; set; } = new();
+        public Dictionary<int, int> UiIndexDict { get; set; } = new();
 
         protected override void Awake()
         {
@@ -46,12 +46,8 @@ namespace UI
 
         public void UpdateUiIndex(GameItem item, ItemSlot newSlot)
         {
-            UiIndexDict[item.GetKnapId()] = newSlot.index;
+            UiIndexDict[item.GetHashCode()] = newSlot.index;
             Proto.UpdateKnapItem proto = new() { Item = new() };
-            proto.Item.Id = item.ItemId;
-            proto.Item.Num = 0;
-            proto.Item.Index = newSlot.index;
-            proto.Item.Key = item.GetKnapId();
             switch (item.itemType)
             {
                 case ItemType.Potion:
@@ -63,6 +59,9 @@ namespace UI
                 default:
                     break;
             }
+            proto.Item.Sn = item.Sn;
+            proto.Item.Id = item.id;
+            proto.Item.Index = newSlot.index;
             NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
         }
     }

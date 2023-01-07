@@ -22,7 +22,7 @@ namespace Manage
 
         private void Update()
         {
-            if(GameManager.Instance.ActiveWorld)
+            if(GameManager.Instance.CurrWorld)
             {
                 if (Input.GetKeyDown(KeyCode.P))
                     FindPanel<PropPanel>().SwitchToggle();
@@ -63,11 +63,6 @@ namespace Manage
             _cutImage.alpha = 1.0f;
             yield return new WaitForSeconds(1f);
             EventManager.Instance.Invoke(EEventType.SceneLoaded);
-            foreach (var enemy in GameManager.Instance.ActiveWorld.Enemies)
-            {
-                Proto.RequestSyncEnemy proto = new() { EnemyId = enemy.id };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SRequestSyncEnemy, proto);
-            }
             WaitForSeconds sleep = new(0.02f);
             while (_cutImage.alpha > 0)
             {

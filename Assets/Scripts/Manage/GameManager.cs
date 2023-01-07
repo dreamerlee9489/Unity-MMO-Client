@@ -39,7 +39,7 @@ namespace Manage
         public AccountInfo AccountInfo => _accountInfo;
         public PlayerInfo MainPlayer => _player;
         public CinemachineVirtualCamera VirtualCam => _virtualCam;
-        public WorldManager ActiveWorld => _activeWorld;
+        public WorldManager CurrWorld => _activeWorld;
 
         public List<PlayerBaseData> PlayerBaseDatas => _playerBaseDatas;
         public Dictionary<string, List<string>> DropPotionDict => _dropPotionDict;
@@ -56,8 +56,8 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
-            PoolManager.Instance.Inject(PoolType.RoleToggle, ResourceManager.Instance.Load<GameObject>("UI/RoleToggle"), 20);
-            PoolManager.Instance.Inject(PoolType.PatrolPath, ResourceManager.Instance.Load<GameObject>("Entity/Enemy/PatrolPath"));
+            PoolManager.Instance.Inject(PoolType.RoleToggle, "UI/RoleToggle", 20);
+            PoolManager.Instance.Inject(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
         }
 
         private void Start()

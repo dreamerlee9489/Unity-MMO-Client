@@ -1,12 +1,11 @@
-﻿using Manage;
-using UI;
+﻿using UI;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Control
 {
-    [RequireComponent(typeof(CapsuleCollider), typeof(NavMeshAgent), typeof(AnimHandler))]
-    public abstract class GameEntity : GuidObject
+    [RequireComponent(typeof(AnimHandler))]
+    public abstract class GameEntity : MonoBehaviour
     {
         public static readonly int moveSpeed = Animator.StringToHash("moveSpeed");
         public static readonly int attack = Animator.StringToHash("attack");
@@ -30,12 +29,13 @@ namespace Control
         public Animator Anim => _anim;
         public NavMeshAgent Agent => _agent;
 
+        public ulong Sn { get; set; }
+
         public int lv = 1, hp = 1000, mp = 1000, atk = 10, def = 0;
         public Transform target;
 
-        protected override void Awake()
+        protected virtual void Awake()
         {
-            base.Awake();
             _agent = GetComponent<NavMeshAgent>();
             _anim = GetComponent<Animator>();
             _nameBar = transform.Find("EntityNameBar").GetComponent<EntityNameBar>();
@@ -67,23 +67,9 @@ namespace Control
             return false;
         }
 
-        public void SetHp(GameEntity attacker, int currHp)
+        public void ParseStatus(Proto.SyncEntityStatus proto)
         {
-            if ((hp = currHp) == 0)
-            {
-                attacker.target = null;
-                switch (attacker)
-                {
-                    case PlayerController:
-                        (attacker as PlayerController).ResetCmd();
-                        break;
-                    case FsmController:
-                        (attacker as FsmController).ResetState();
-                        break;
-                    default:
-                        break;
-                }
-            }
+            hp = proto.Hp;
         }
     }
 }

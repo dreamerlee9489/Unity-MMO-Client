@@ -27,7 +27,6 @@ namespace Control
         {
             base.Update();
             currState?.Execute();
-
             _pos.X = transform.position.x;
             _pos.Y = transform.position.y;
             _pos.Z = transform.position.z;
@@ -39,37 +38,31 @@ namespace Control
                 PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
         }
 
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            _tokenSource.Cancel();
-        }
-
         private void PushPosTask()
         {
             while (!_tokenSource.IsCancellationRequested)
             {
-                Proto.PushEnemyPos proto = new()
+                Proto.SyncNpcPos proto = new()
                 {
-                    Id = id,
+                    NpcSn = Sn,
                     Pos = _pos
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SPushEnemyPos, proto);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncNpcPos, proto);
                 Thread.Sleep(100);
             }
         }
 
-        public void ParseSyncState(StateType type, int code, PlayerController target)
+        public void ParseFsmState(StateType type, int code, PlayerController target)
         {
             currState?.Exit();
             currState = State.GenState(type, code, this, target);
             currState.Enter();
         }
 
-        public void ParseSyncPos(Proto.PushEnemyPos proto)
+        public void ParsePos(Proto.Vector3D pos)
         {
             gameObject.SetActive(false);
-            transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
+            transform.position = new Vector3(pos.X, pos.Y, pos.Z);
             gameObject.SetActive(true);
         }
 
@@ -93,51 +86,43 @@ namespace Control
             var player = GameManager.Instance.MainPlayer.Obj;
             var potionDict = GameManager.Instance.DropPotionDict;
             var weaponDict = GameManager.Instance.DropWeaponDict;
+            player.xp += itemList.Exp;
+            player.gold += itemList.Gold;
+            UIManager.Instance.FindPanel<PropPanel>().UpdateXp(player.xp);
+            UIManager.Instance.FindPanel<KnapPanel>().UpdateGold(player.gold);
             foreach (Proto.ItemData data in itemList.Items)
             {
                 switch (data.Type)
                 {
                     case Proto.ItemData.Types.ItemType.None:
-                        if(data.Id == -1)
-                        {
-                            player.xp += data.Num;
-                            UIManager.Instance.FindPanel<PropPanel>().UpdateXp(player.xp);
-                        }
-                        else
-                        {
-                            player.gold += data.Num;
-                            UIManager.Instance.FindPanel<KnapPanel>().UpdateGold(player.gold);
-                        }
                         break;
                     case Proto.ItemData.Types.ItemType.Potion:
-                        for (int i = 0; i < data.Num; ++i)
+                        string key1 = (int)ItemType.Potion + "@" + data.Id;
+                        ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key1][0]}", (obj) =>
                         {
-                            string key = (int)ItemType.Potion + "@" + data.Id; 
-                            ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key][0]}", (obj) =>
-                            {
-                                Potion potion = Instantiate(obj).GetComponent<Potion>();
-                                potion.itemType = ItemType.Potion;
-                                potion.ItemId = data.Id;
-                                potion.ObjName = potionDict[key][0];
-                                potion.SetNameBar(potionDict[key][1]);
-                                potion.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
-                            });
-                        }
+                            Potion potion = Instantiate(obj).GetComponent<Potion>();
+                            potion.itemType = ItemType.Potion;
+                            potion.id = data.Id;
+                            potion.Sn = data.Sn;
+                            potion.ObjName = potionDict[key1][0];
+                            potion.SetNameBar(potionDict[key1][1]);
+                            potion.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
+                            GameManager.Instance.CurrWorld.itemDict.Add(data.Sn, potion);
+                        });
                         break;
                     case Proto.ItemData.Types.ItemType.Weapon:
-                        for (int i = 0; i < data.Num; i++)
+                        string key2 = (int)ItemType.Weapon + "@" + data.Id;
+                        ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key2][0]}", (obj) =>
                         {
-                            string key = (int)ItemType.Weapon + "@" + data.Id;
-                            ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key][0]}", (obj) =>
-                            {
-                                Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
-                                weapon.itemType = ItemType.Weapon;
-                                weapon.ItemId = data.Id;
-                                weapon.ObjName = weaponDict[key][0];
-                                weapon.SetNameBar(weaponDict[key][1]);
-                                weapon.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
-                            });
-                        }
+                            Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
+                            weapon.itemType = ItemType.Weapon;
+                            weapon.id = data.Id;
+                            weapon.Sn = data.Sn;
+                            weapon.ObjName = weaponDict[key2][0];
+                            weapon.SetNameBar(weaponDict[key2][1]);
+                            weapon.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
+                            GameManager.Instance.CurrWorld.itemDict.Add(data.Sn, weapon);
+                        });
                         break;
                     default:
                         break;

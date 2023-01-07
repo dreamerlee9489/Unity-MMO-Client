@@ -1,11 +1,24 @@
 using Control;
 using Manage;
+using UnityEngine;
 
 namespace Items
 {
     public class Portal : GameItem
 	{
-        public int targetId = 0;
+        public int worldId = 0;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            itemType = ItemType.Portal;
+        }
+
+        private void Start()
+        {
+            Sn = (ulong)$"{itemType}@{id}".GetHashCode();
+            GameManager.Instance.CurrWorld.itemDict.Add(Sn, this);
+        }
 
         public override void RequestPickup(PlayerController player)
         {
@@ -18,7 +31,7 @@ namespace Items
             player.gameObject.SetActive(false);
             Proto.EnterWorld proto = new()
             {
-                WorldId = targetId,
+                WorldId = worldId,
                 Position = null
             };
             NetManager.Instance.SendPacket(Proto.MsgId.C2GEnterWorld, proto);

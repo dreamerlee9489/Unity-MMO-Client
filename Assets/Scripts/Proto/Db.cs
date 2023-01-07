@@ -35,16 +35,15 @@ namespace Proto {
             "EhYKDm9ubGluZV92ZXJzaW9uGAMgASgFIoUBCgZQbGF5ZXISCgoCc24YASAB",
             "KAQSDAoEbmFtZRgCIAEoCRIfCgRiYXNlGAMgASgLMhEuUHJvdG8uUGxheWVy",
             "QmFzZRIfCgRrbmFwGAQgASgLMhEuUHJvdG8uUGxheWVyS25hcBIfCgRtaXNj",
-            "GAUgASgLMhEuUHJvdG8uUGxheWVyTWlzYyKVAQoISXRlbURhdGESJgoEdHlw",
-            "ZRgBIAEoDjIYLlByb3RvLkl0ZW1EYXRhLkl0ZW1UeXBlEgoKAmlkGAIgASgF",
-            "EgsKA251bRgDIAEoBRINCgVpbmRleBgEIAEoBRILCgNrZXkYBSABKAkiLAoI",
-            "SXRlbVR5cGUSCAoETm9uZRAAEgoKBlBvdGlvbhABEgoKBldlYXBvbhACIokB",
-            "CgpQbGF5ZXJLbmFwEgwKBGdvbGQYASABKAUSIwoKaXRlbXNJbkJhZxgCIAMo",
-            "CzIPLlByb3RvLkl0ZW1EYXRhEiMKCml0ZW1zSW5BY3QYAyADKAsyDy5Qcm90",
-            "by5JdGVtRGF0YRIjCgppdGVtc0luRXF1GAQgAygLMg8uUHJvdG8uSXRlbURh",
-            "dGEiLwoOVXBkYXRlS25hcEl0ZW0SHQoEaXRlbRgBIAEoCzIPLlByb3RvLkl0",
-            "ZW1EYXRhKigKBkdlbmRlchIICgRub25lEAASCAoEbWFsZRABEgoKBmZlbWFs",
-            "ZRACYgZwcm90bzM="));
+            "GAUgASgLMhEuUHJvdG8uUGxheWVyTWlzYyKHAQoISXRlbURhdGESCgoCc24Y",
+            "ASABKAQSJgoEdHlwZRgCIAEoDjIYLlByb3RvLkl0ZW1EYXRhLkl0ZW1UeXBl",
+            "EgoKAmlkGAMgASgFEg0KBWluZGV4GAQgASgFIiwKCEl0ZW1UeXBlEggKBE5v",
+            "bmUQABIKCgZQb3Rpb24QARIKCgZXZWFwb24QAiKGAQoKUGxheWVyS25hcBIM",
+            "CgRnb2xkGAEgASgFEiIKCWJhZ19pdGVtcxgCIAMoCzIPLlByb3RvLkl0ZW1E",
+            "YXRhEiIKCWFjdF9pdGVtcxgDIAMoCzIPLlByb3RvLkl0ZW1EYXRhEiIKCWVx",
+            "dV9pdGVtcxgEIAMoCzIPLlByb3RvLkl0ZW1EYXRhIi8KDlVwZGF0ZUtuYXBJ",
+            "dGVtEh0KBGl0ZW0YASABKAsyDy5Qcm90by5JdGVtRGF0YSooCgZHZW5kZXIS",
+            "CAoEbm9uZRAAEggKBG1hbGUQARIKCgZmZW1hbGUQAmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.Gender), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -53,8 +52,8 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.LastWorld), global::Proto.LastWorld.Parser, new[]{ "WorldId", "WorldSn", "Position" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerMisc), global::Proto.PlayerMisc.Parser, new[]{ "LastWorld", "LastDungeon", "OnlineVersion" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Knap", "Misc" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Type", "Id", "Num", "Index", "Key" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType) }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerKnap), global::Proto.PlayerKnap.Parser, new[]{ "Gold", "ItemsInBag", "ItemsInAct", "ItemsInEqu" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Sn", "Type", "Id", "Index" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType) }, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerKnap), global::Proto.PlayerKnap.Parser, new[]{ "Gold", "BagItems", "ActItems", "EquItems" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.UpdateKnapItem), global::Proto.UpdateKnapItem.Parser, new[]{ "Item" }, null, null, null, null)
           }));
     }
@@ -1239,11 +1238,10 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public ItemData(ItemData other) : this() {
+      sn_ = other.sn_;
       type_ = other.type_;
       id_ = other.id_;
-      num_ = other.num_;
       index_ = other.index_;
-      key_ = other.key_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1252,8 +1250,19 @@ namespace Proto {
       return new ItemData(this);
     }
 
+    /// <summary>Field number for the "sn" field.</summary>
+    public const int SnFieldNumber = 1;
+    private ulong sn_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong Sn {
+      get { return sn_; }
+      set {
+        sn_ = value;
+      }
+    }
+
     /// <summary>Field number for the "type" field.</summary>
-    public const int TypeFieldNumber = 1;
+    public const int TypeFieldNumber = 2;
     private global::Proto.ItemData.Types.ItemType type_ = global::Proto.ItemData.Types.ItemType.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Proto.ItemData.Types.ItemType Type {
@@ -1264,24 +1273,13 @@ namespace Proto {
     }
 
     /// <summary>Field number for the "id" field.</summary>
-    public const int IdFieldNumber = 2;
+    public const int IdFieldNumber = 3;
     private int id_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int Id {
       get { return id_; }
       set {
         id_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "num" field.</summary>
-    public const int NumFieldNumber = 3;
-    private int num_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Num {
-      get { return num_; }
-      set {
-        num_ = value;
       }
     }
 
@@ -1293,17 +1291,6 @@ namespace Proto {
       get { return index_; }
       set {
         index_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "key" field.</summary>
-    public const int KeyFieldNumber = 5;
-    private string key_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Key {
-      get { return key_; }
-      set {
-        key_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1320,22 +1307,20 @@ namespace Proto {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Sn != other.Sn) return false;
       if (Type != other.Type) return false;
       if (Id != other.Id) return false;
-      if (Num != other.Num) return false;
       if (Index != other.Index) return false;
-      if (Key != other.Key) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
+      if (Sn != 0UL) hash ^= Sn.GetHashCode();
       if (Type != global::Proto.ItemData.Types.ItemType.None) hash ^= Type.GetHashCode();
       if (Id != 0) hash ^= Id.GetHashCode();
-      if (Num != 0) hash ^= Num.GetHashCode();
       if (Index != 0) hash ^= Index.GetHashCode();
-      if (Key.Length != 0) hash ^= Key.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1349,25 +1334,21 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (Type != global::Proto.ItemData.Types.ItemType.None) {
+      if (Sn != 0UL) {
         output.WriteRawTag(8);
+        output.WriteUInt64(Sn);
+      }
+      if (Type != global::Proto.ItemData.Types.ItemType.None) {
+        output.WriteRawTag(16);
         output.WriteEnum((int) Type);
       }
       if (Id != 0) {
-        output.WriteRawTag(16);
-        output.WriteInt32(Id);
-      }
-      if (Num != 0) {
         output.WriteRawTag(24);
-        output.WriteInt32(Num);
+        output.WriteInt32(Id);
       }
       if (Index != 0) {
         output.WriteRawTag(32);
         output.WriteInt32(Index);
-      }
-      if (Key.Length != 0) {
-        output.WriteRawTag(42);
-        output.WriteString(Key);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1377,20 +1358,17 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
+      if (Sn != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Sn);
+      }
       if (Type != global::Proto.ItemData.Types.ItemType.None) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
       }
       if (Id != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
       }
-      if (Num != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Num);
-      }
       if (Index != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Index);
-      }
-      if (Key.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Key);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1403,20 +1381,17 @@ namespace Proto {
       if (other == null) {
         return;
       }
+      if (other.Sn != 0UL) {
+        Sn = other.Sn;
+      }
       if (other.Type != global::Proto.ItemData.Types.ItemType.None) {
         Type = other.Type;
       }
       if (other.Id != 0) {
         Id = other.Id;
       }
-      if (other.Num != 0) {
-        Num = other.Num;
-      }
       if (other.Index != 0) {
         Index = other.Index;
-      }
-      if (other.Key.Length != 0) {
-        Key = other.Key;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1430,23 +1405,19 @@ namespace Proto {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            Type = (global::Proto.ItemData.Types.ItemType) input.ReadEnum();
+            Sn = input.ReadUInt64();
             break;
           }
           case 16: {
-            Id = input.ReadInt32();
+            Type = (global::Proto.ItemData.Types.ItemType) input.ReadEnum();
             break;
           }
           case 24: {
-            Num = input.ReadInt32();
+            Id = input.ReadInt32();
             break;
           }
           case 32: {
             Index = input.ReadInt32();
-            break;
-          }
-          case 42: {
-            Key = input.ReadString();
             break;
           }
         }
@@ -1494,9 +1465,9 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public PlayerKnap(PlayerKnap other) : this() {
       gold_ = other.gold_;
-      itemsInBag_ = other.itemsInBag_.Clone();
-      itemsInAct_ = other.itemsInAct_.Clone();
-      itemsInEqu_ = other.itemsInEqu_.Clone();
+      bagItems_ = other.bagItems_.Clone();
+      actItems_ = other.actItems_.Clone();
+      equItems_ = other.equItems_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1516,34 +1487,34 @@ namespace Proto {
       }
     }
 
-    /// <summary>Field number for the "itemsInBag" field.</summary>
-    public const int ItemsInBagFieldNumber = 2;
-    private static readonly pb::FieldCodec<global::Proto.ItemData> _repeated_itemsInBag_codec
+    /// <summary>Field number for the "bag_items" field.</summary>
+    public const int BagItemsFieldNumber = 2;
+    private static readonly pb::FieldCodec<global::Proto.ItemData> _repeated_bagItems_codec
         = pb::FieldCodec.ForMessage(18, global::Proto.ItemData.Parser);
-    private readonly pbc::RepeatedField<global::Proto.ItemData> itemsInBag_ = new pbc::RepeatedField<global::Proto.ItemData>();
+    private readonly pbc::RepeatedField<global::Proto.ItemData> bagItems_ = new pbc::RepeatedField<global::Proto.ItemData>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Proto.ItemData> ItemsInBag {
-      get { return itemsInBag_; }
+    public pbc::RepeatedField<global::Proto.ItemData> BagItems {
+      get { return bagItems_; }
     }
 
-    /// <summary>Field number for the "itemsInAct" field.</summary>
-    public const int ItemsInActFieldNumber = 3;
-    private static readonly pb::FieldCodec<global::Proto.ItemData> _repeated_itemsInAct_codec
+    /// <summary>Field number for the "act_items" field.</summary>
+    public const int ActItemsFieldNumber = 3;
+    private static readonly pb::FieldCodec<global::Proto.ItemData> _repeated_actItems_codec
         = pb::FieldCodec.ForMessage(26, global::Proto.ItemData.Parser);
-    private readonly pbc::RepeatedField<global::Proto.ItemData> itemsInAct_ = new pbc::RepeatedField<global::Proto.ItemData>();
+    private readonly pbc::RepeatedField<global::Proto.ItemData> actItems_ = new pbc::RepeatedField<global::Proto.ItemData>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Proto.ItemData> ItemsInAct {
-      get { return itemsInAct_; }
+    public pbc::RepeatedField<global::Proto.ItemData> ActItems {
+      get { return actItems_; }
     }
 
-    /// <summary>Field number for the "itemsInEqu" field.</summary>
-    public const int ItemsInEquFieldNumber = 4;
-    private static readonly pb::FieldCodec<global::Proto.ItemData> _repeated_itemsInEqu_codec
+    /// <summary>Field number for the "equ_items" field.</summary>
+    public const int EquItemsFieldNumber = 4;
+    private static readonly pb::FieldCodec<global::Proto.ItemData> _repeated_equItems_codec
         = pb::FieldCodec.ForMessage(34, global::Proto.ItemData.Parser);
-    private readonly pbc::RepeatedField<global::Proto.ItemData> itemsInEqu_ = new pbc::RepeatedField<global::Proto.ItemData>();
+    private readonly pbc::RepeatedField<global::Proto.ItemData> equItems_ = new pbc::RepeatedField<global::Proto.ItemData>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Proto.ItemData> ItemsInEqu {
-      get { return itemsInEqu_; }
+    public pbc::RepeatedField<global::Proto.ItemData> EquItems {
+      get { return equItems_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1560,9 +1531,9 @@ namespace Proto {
         return true;
       }
       if (Gold != other.Gold) return false;
-      if(!itemsInBag_.Equals(other.itemsInBag_)) return false;
-      if(!itemsInAct_.Equals(other.itemsInAct_)) return false;
-      if(!itemsInEqu_.Equals(other.itemsInEqu_)) return false;
+      if(!bagItems_.Equals(other.bagItems_)) return false;
+      if(!actItems_.Equals(other.actItems_)) return false;
+      if(!equItems_.Equals(other.equItems_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1570,9 +1541,9 @@ namespace Proto {
     public override int GetHashCode() {
       int hash = 1;
       if (Gold != 0) hash ^= Gold.GetHashCode();
-      hash ^= itemsInBag_.GetHashCode();
-      hash ^= itemsInAct_.GetHashCode();
-      hash ^= itemsInEqu_.GetHashCode();
+      hash ^= bagItems_.GetHashCode();
+      hash ^= actItems_.GetHashCode();
+      hash ^= equItems_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1590,9 +1561,9 @@ namespace Proto {
         output.WriteRawTag(8);
         output.WriteInt32(Gold);
       }
-      itemsInBag_.WriteTo(output, _repeated_itemsInBag_codec);
-      itemsInAct_.WriteTo(output, _repeated_itemsInAct_codec);
-      itemsInEqu_.WriteTo(output, _repeated_itemsInEqu_codec);
+      bagItems_.WriteTo(output, _repeated_bagItems_codec);
+      actItems_.WriteTo(output, _repeated_actItems_codec);
+      equItems_.WriteTo(output, _repeated_equItems_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1604,9 +1575,9 @@ namespace Proto {
       if (Gold != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Gold);
       }
-      size += itemsInBag_.CalculateSize(_repeated_itemsInBag_codec);
-      size += itemsInAct_.CalculateSize(_repeated_itemsInAct_codec);
-      size += itemsInEqu_.CalculateSize(_repeated_itemsInEqu_codec);
+      size += bagItems_.CalculateSize(_repeated_bagItems_codec);
+      size += actItems_.CalculateSize(_repeated_actItems_codec);
+      size += equItems_.CalculateSize(_repeated_equItems_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1621,9 +1592,9 @@ namespace Proto {
       if (other.Gold != 0) {
         Gold = other.Gold;
       }
-      itemsInBag_.Add(other.itemsInBag_);
-      itemsInAct_.Add(other.itemsInAct_);
-      itemsInEqu_.Add(other.itemsInEqu_);
+      bagItems_.Add(other.bagItems_);
+      actItems_.Add(other.actItems_);
+      equItems_.Add(other.equItems_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1640,15 +1611,15 @@ namespace Proto {
             break;
           }
           case 18: {
-            itemsInBag_.AddEntriesFrom(input, _repeated_itemsInBag_codec);
+            bagItems_.AddEntriesFrom(input, _repeated_bagItems_codec);
             break;
           }
           case 26: {
-            itemsInAct_.AddEntriesFrom(input, _repeated_itemsInAct_codec);
+            actItems_.AddEntriesFrom(input, _repeated_actItems_codec);
             break;
           }
           case 34: {
-            itemsInEqu_.AddEntriesFrom(input, _repeated_itemsInEqu_codec);
+            equItems_.AddEntriesFrom(input, _repeated_equItems_codec);
             break;
           }
         }

@@ -1,6 +1,7 @@
 ﻿using Control.CMD;
 using Items;
 using Manage;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UI;
@@ -19,9 +20,6 @@ namespace Control
         private ICommand _cmd;
         private Transform _knapsack, _handPos;
 
-        public Transform Knapsack => _knapsack;
-
-        public ulong sn = 0;
         public int xp = 0, gold = 0;
 
         protected override void Awake()
@@ -32,7 +30,7 @@ namespace Control
         private void Start()
         {
             _agent.speed = RunSpeed * 1.5f;
-            if (sn == GameManager.Instance.MainPlayer.Sn)
+            if (Sn == GameManager.Instance.MainPlayer.Sn)
             {
                 _knapsack = transform.Find("Knapsack");
                 _handPos = transform.Find("HandPos");
@@ -43,7 +41,7 @@ namespace Control
         protected override void Update()
         {
             base.Update();
-            if (sn != GameManager.Instance.MainPlayer.Sn || EventSystem.current.IsPointerOverGameObject())
+            if (Sn != GameManager.Instance.MainPlayer.Sn || EventSystem.current.IsPointerOverGameObject())
                 return;
 
             _cmd?.Execute();
@@ -62,27 +60,28 @@ namespace Control
                 {
                     case "Terrain":
                         syncCmd.Type = 1;
-                        syncCmd.PlayerSn = sn;
-                        syncCmd.TargetId = "";
+                        syncCmd.PlayerSn = Sn;
+                        syncCmd.TargetSn = 0;
                         syncCmd.Point = _hitPos;
                         break;
                     case "Enemy":
                         syncCmd.Type = 2;
-                        syncCmd.PlayerSn = sn;
-                        syncCmd.TargetId = _hit.transform.GetComponent<GuidObject>().GetGuid();
+                        syncCmd.PlayerSn = Sn;
+                        syncCmd.TargetSn = _hit.transform.GetComponent<FsmController>().Sn;
                         syncCmd.Point = null;
                         break;
                     case "Item":
                         syncCmd.Type = 3;
-                        syncCmd.PlayerSn = sn;
-                        syncCmd.TargetId = _hit.transform.GetComponent<GuidObject>().GetGuid();
+                        syncCmd.PlayerSn = Sn;
+                        syncCmd.TargetSn = _hit.transform.GetComponent<GameItem>().Sn;
                         syncCmd.Point = _hitPos;
                         break;
                     case "Portal":
                         syncCmd.Type = 4;
-                        syncCmd.PlayerSn = sn;
-                        syncCmd.TargetId = _hit.transform.GetComponent<GuidObject>().GetGuid();
+                        syncCmd.PlayerSn = Sn;
+                        syncCmd.TargetSn = _hit.transform.GetComponent<GameItem>().Sn;
                         syncCmd.Point = null;
+                        Debug.Log(syncCmd.TargetSn);
                         break;
                 }
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerCmd, syncCmd);
@@ -90,21 +89,13 @@ namespace Control
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                Proto.AtkAnimEvent proto = new()
+                Proto.PlayerAtkEvent proto = new()
                 {
                     PlayerSn = GameManager.Instance.MainPlayer.Sn,
-                    EnemyId = -1,
-                    CurrHp = hp,
-                    AtkEnemy = true
+                    TargetSn = 0,
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);
             }
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            _tokenSource.Cancel();
         }
 
         private void OnApplicationQuit()
@@ -118,8 +109,8 @@ namespace Control
             NetManager.Instance.SendPacket(Proto.MsgId.C2SGetPlayerKnap, null);
             while (!_tokenSource.IsCancellationRequested)
             {
-                Proto.PushPlayerPos syncPos = new() { Pos = _curPos };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SPushPlayerPos, syncPos);
+                Proto.SyncPlayerPos syncPos = new() { Pos = _curPos };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerPos, syncPos);
                 Thread.Sleep(100);
             }
         }
@@ -139,15 +130,15 @@ namespace Control
                     _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
                     break;
                 case CommandType.Attack:
-                    target = _currWorld.inWorldObjDict[proto.TargetId];
+                    target = GameManager.Instance.CurrWorld.npcDict[proto.TargetSn].transform;
                     _cmd = new AttackCommand(this, target);
                     break;
                 case CommandType.Pickup:
-                    target = _currWorld.inWorldObjDict[proto.TargetId];
+                    target = GameManager.Instance.CurrWorld.itemDict[proto.TargetSn].transform;
                     _cmd = new PickupCommand(this, target);
                     break;
                 case CommandType.Teleport:
-                    target = _currWorld.inWorldObjDict[proto.TargetId];
+                    target = GameManager.Instance.CurrWorld.itemDict[proto.TargetSn].transform;
                     _cmd = new TeleportCommand(this, target);
                     break;
                 default:
@@ -157,11 +148,11 @@ namespace Control
 
         public void ResetCmd()
         {
-            Proto.SyncPlayerCmd proto = new() { Type = 0, PlayerSn = sn, TargetId = "", Point = null };
+            Proto.SyncPlayerCmd proto = new() { Type = 0, PlayerSn = Sn, TargetSn = 0, Point = null };
             NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerCmd, proto);
         }
 
-        public int UpdateKnapItem(GameItem item, int index = 0)
+        public int AddItemToBag(GameItem item, int index = 0)
         {
             item.gameObject.SetActive(false);
             item.transform.SetParent(_knapsack);
@@ -170,7 +161,7 @@ namespace Control
             itemUI.Item = item;
             item.ItemUI = itemUI;
             PoolManager.Instance.Push(item.ObjName, itemUI.gameObject);
-            return itemUI.AddToKnap(index);
+            return itemUI.AddToBagUI(index);
         }
 
         public void ParsePlayerKnap(Proto.PlayerKnap playerKnap)
@@ -179,45 +170,39 @@ namespace Control
             UIManager.Instance.FindPanel<KnapPanel>().UpdateGold(gold);
             var potionDict = GameManager.Instance.DropPotionDict;
             var weaponDict = GameManager.Instance.DropWeaponDict;
-            foreach (Proto.ItemData data in playerKnap.ItemsInBag)
+            foreach (Proto.ItemData data in playerKnap.BagItems)
             {
                 switch (data.Type)
                 {
                     case Proto.ItemData.Types.ItemType.None:
                         break;
                     case Proto.ItemData.Types.ItemType.Potion:
-                        for (int i = 0; i < data.Num; i++)
+                        string key1 = new((int)ItemType.Potion + "@" + data.Id);
+                        ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key1][0]}", (obj) =>
                         {
-                            string key = (int)ItemType.Potion + "@" + data.Id;
-                            ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key][0]}", (obj) =>
-                            {
-                                Potion potion = Instantiate(obj).GetComponent<Potion>();
-                                potion.itemType = ItemType.Potion;
-                                potion.ItemId = data.Id;
-                                potion.ObjName = potionDict[key][0];
-                                potion.SetNameBar(potionDict[key][1]);
-                                potion.SetKnapId(data.Key);
-                                potion.transform.position = transform.position;
-                                UpdateKnapItem(potion, data.Index);
-                            });
-                        }
+                            Potion potion = Instantiate(obj).GetComponent<Potion>();
+                            potion.itemType = ItemType.Potion;
+                            potion.id = data.Id;
+                            potion.Sn = data.Sn;
+                            potion.ObjName = potionDict[key1][0];
+                            potion.SetNameBar(potionDict[key1][1]);
+                            potion.transform.position = transform.position;
+                            AddItemToBag(potion, data.Index);
+                        });
                         break;
                     case Proto.ItemData.Types.ItemType.Weapon:
-                        for (int i = 0; i < data.Num; i++)
+                        string key2 = new((int)ItemType.Weapon + "@" + data.Id);
+                        ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key2][0]}", (obj) =>
                         {
-                            string key = (int)ItemType.Weapon + "@" + data.Id;
-                            ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key][0]}", (obj) =>
-                            {
-                                Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
-                                weapon.itemType = ItemType.Weapon;
-                                weapon.ItemId = data.Id;
-                                weapon.ObjName = weaponDict[key][0];
-                                weapon.SetNameBar(weaponDict[key][1]);
-                                weapon.SetKnapId(data.Key);
-                                weapon.transform.position = transform.position;
-                                UpdateKnapItem(weapon, data.Index);
-                            });
-                        }
+                            Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
+                            weapon.itemType = ItemType.Weapon;
+                            weapon.id = data.Id;
+                            weapon.Sn = data.Sn;
+                            weapon.ObjName = weaponDict[key2][0];
+                            weapon.SetNameBar(weaponDict[key2][1]);
+                            weapon.transform.position = transform.position;
+                            AddItemToBag(weapon, data.Index);
+                        });
                         break;
                     default:
                         break;

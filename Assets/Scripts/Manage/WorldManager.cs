@@ -1,6 +1,6 @@
 ﻿using Control;
 using Control.FSM;
-using Proto;
+using Items;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -9,26 +9,26 @@ namespace Manage
 {
     public class WorldManager : MonoBehaviour
     {
-        private readonly List<FsmController> _enemies = new();
-        private readonly Dictionary<ulong, AppearRole> _players = new();
         private PropPanel _propPanel;
+        private readonly List<FsmController> _npcs = new();
 
         public string fileName = "";
-        public List<FsmController> Enemies => _enemies;
-
-        public Dictionary<string, Transform> inWorldObjDict = new();
+        public Dictionary<ulong, GameItem> itemDict = new();
+        public Dictionary<ulong, FsmController> npcDict = new();
+        public Dictionary<ulong, Proto.AppearRole> playerDict = new();
 
         private void Awake()
         {
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CPushEnemyPos, PushEnemyPosHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CSyncFsmState, SyncFsmStateHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CDropItemList, DropItemListHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqSyncNpc, ReqSyncNpcHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncNpcPos, SyncNpcPosHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
         }
 
         private void Start()
@@ -43,156 +43,152 @@ namespace Manage
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
-                ResourceManager.Instance.LoadAsync<GameObject>("Entity/Enemy/" + strs[1], (obj) =>
+                ResourceManager.Instance.LoadAsync<GameObject>("Entity/NPC/" + strs[1], (obj) =>
                 {
-                    FsmController enemyObj = Instantiate(obj).GetComponent<FsmController>();
-                    enemyObj.gameObject.SetActive(false);
-                    enemyObj.id = id++;
-                    enemyObj.lv = int.Parse(strs[2]);
-                    enemyObj.hp = int.Parse(strs[3]);
-                    enemyObj.atk = int.Parse(strs[4]);
-                    enemyObj.transform.position = pos.Parse(strs[5]);
-                    enemyObj.SetNameBar("Enemy_" + enemyObj.id);
-                    enemyObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
-                    enemyObj.patrolPath.transform.position = enemyObj.transform.position;
-                    enemyObj.gameObject.SetActive(true);
-                    _enemies.Add(enemyObj);
+                    FsmController npcObj = Instantiate(obj).GetComponent<FsmController>();
+                    npcObj.gameObject.SetActive(false);
+                    npcObj.id = id++;
+                    npcObj.lv = int.Parse(strs[2]);
+                    npcObj.hp = int.Parse(strs[3]);
+                    npcObj.atk = int.Parse(strs[4]);
+                    npcObj.transform.position = pos.Parse(strs[5]);
+                    npcObj.SetNameBar("Enemy_" + id);
+                    npcObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
+                    npcObj.patrolPath.transform.position = npcObj.transform.position;
+                    npcObj.gameObject.SetActive(true);
+                    _npcs.Add(npcObj);
+                    Proto.ReqSyncNpc proto = new()
+                    {
+                        NpcId = npcObj.id,
+                        NpcSn = 0
+                    };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SReqSyncNpc, proto);
                 });
             }
         }
 
         private void OnDestroy()
         {
-            _enemies.Clear();
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CPushEnemyPos, PushEnemyPosHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CSyncFsmState, SyncFsmStateHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CRequestLinkPlayer, RequestLinkPlayerHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CAtkAnimEvent, AtkAnimEventHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CDropItemList, DropItemListHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
+            _npcs.Clear();
+            npcDict.Clear();
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqSyncNpc, ReqSyncNpcHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncNpcPos, SyncNpcPosHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
         }
 
         private void AllRoleAppearHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is AllRoleAppear proto)
+            if (msg is Proto.AllRoleAppear proto)
             {
-                foreach (Role role in proto.Roles)
+                foreach (Proto.Role role in proto.Roles)
                 {
                     ulong sn = role.Sn;
-                    if (_players.ContainsKey(sn))
-                        _players[sn].Parse(role);
+                    if (playerDict.ContainsKey(sn))
+                        playerDict[sn].Parse(role);
                     else
                     {
-                        AppearRole appearRole = new();
+                        Proto.AppearRole appearRole = new();
                         appearRole.Parse(role);
                         appearRole.LoadRole(role);
-                        _players.Add(sn, appearRole);
+                        playerDict.Add(sn, appearRole);
                     }
                 }
-            }
-        }
-
-        private void SyncPlayerCmdHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is SyncPlayerCmd proto)
-            {
-                ulong playSn = proto.PlayerSn;
-                if (_players.ContainsKey(playSn))
-                {
-                    AppearRole player = _players[playSn];
-                    if (player.Obj != null)
-                    {
-                        PlayerController entity = player.Obj.GetComponent<PlayerController>();
-                        entity.ParseSyncCmd(proto);
-                    }
-                }
-            }
-        }
-
-        private void PushEnemyPosHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is PushEnemyPos proto)
-            {
-                int id = proto.Id;
-                if (_enemies.Count > 0)
-                    _enemies[id].ParseSyncPos(proto);
-            }
-        }
-
-        private void SyncFsmStateHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is SyncFsmState proto && _enemies.Count > 0)
-            {
-                StateType type = (StateType)proto.State;
-                int code = proto.Code;
-                int enemyId = proto.EnemyId;
-                ulong playerSn = proto.PlayerSn;
-                PlayerController player = null;
-                if (_players.ContainsKey(playerSn))
-                    player = _players[playerSn].Obj.GetComponent<PlayerController>();
-                if (_enemies.Count > 0)
-                    _enemies[enemyId].ParseSyncState(type, code, player);
             }
         }
 
         private void RoleDisappearHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is RoleDisappear proto)
+            if (msg is Proto.RoleDisappear proto)
             {
                 ulong playSn = proto.Sn;
-                if (_players.ContainsKey(playSn))
+                if (playerDict.ContainsKey(playSn))
                 {
-                    foreach (var enemy in _enemies)
-                        if (enemy.currState.Target == _players[playSn].Obj.GetComponent<PlayerController>())
+                    foreach (var enemy in _npcs)
+                        if (enemy.currState.Target == playerDict[playSn].Obj)
                             enemy.ResetState();
-                    Destroy(_players[playSn].Obj);
-                    _players.Remove(playSn);
+                    Destroy(playerDict[playSn].Obj);
+                    playerDict.Remove(playSn);
                 }
             }
         }
 
-        private void RequestLinkPlayerHandler(Google.Protobuf.IMessage msg)
+        private void SyncEntityStatusHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is RequestLinkPlayer proto && _enemies.Count > 0)
-                _enemies[proto.EnemyId].LinkPlayer(proto.Linker);
+            if (msg is Proto.SyncEntityStatus proto)
+            {
+                if (npcDict.ContainsKey(proto.Sn))
+                    npcDict[proto.Sn].ParseStatus(proto);
+                else
+                    playerDict[proto.Sn].Obj.ParseStatus(proto);
+            }
         }
 
-        private void AtkAnimEventHandler(Google.Protobuf.IMessage msg)
+        private void SyncPlayerCmdHandler(Google.Protobuf.IMessage msg)
         {
-            if(msg is AtkAnimEvent proto)
+            if (msg is Proto.SyncPlayerCmd proto)
             {
-                PlayerController player = _players[proto.PlayerSn].Obj.GetComponent<PlayerController>();
-                if (proto.EnemyId == -1)
+                if (playerDict.ContainsKey(proto.PlayerSn))
                 {
-                    player.SetHp(player, proto.CurrHp);
-                    _propPanel.UpdateHp(proto.CurrHp);
-                    return;
+                    Proto.AppearRole player = playerDict[proto.PlayerSn];
+                    if (player.Obj != null)
+                        player.Obj.ParseSyncCmd(proto);
                 }
-                FsmController enemy = _enemies[proto.EnemyId];
-                if (proto.AtkEnemy)
-                {
-                    enemy.SetHp(player, proto.CurrHp);
-                }
-                else
-                {
-                    player.SetHp(enemy, proto.CurrHp);
-                    _propPanel.UpdateHp(proto.CurrHp);
-                }
+            }
+        }
+
+        private void ReqSyncNpcHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.ReqSyncNpc proto)
+            {
+                _npcs[proto.NpcId].Sn = proto.NpcSn;
+                npcDict.TryAdd(proto.NpcSn, _npcs[proto.NpcId]);
+            }
+        }
+
+        private void SyncNpcPosHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncNpcPos proto)
+                npcDict[proto.NpcSn].ParsePos(proto.Pos);
+        }
+
+        private void SyncFsmStateHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncFsmState proto)
+            {
+                PlayerController target = null;
+                if (playerDict.ContainsKey(proto.PlayerSn))
+                    target = playerDict[proto.PlayerSn].Obj;
+                npcDict[proto.NpcSn].ParseFsmState((StateType)proto.State, proto.Code, target);
+            }
+        }
+
+        private void ReqLinkPlayerHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.ReqLinkPlayer proto)
+            {
+                if (!npcDict.ContainsKey(proto.NpcSn) && _npcs.Count > 0)
+                    npcDict.TryAdd(proto.NpcSn, _npcs[proto.NpcId]);
+                if (npcDict.ContainsKey(proto.NpcSn))
+                    npcDict[proto.NpcSn].LinkPlayer(proto.Linker);
             }
         }
 
         private void DropItemListHandler(Google.Protobuf.IMessage msg)
         {
-            if(msg is DropItemList itemList)
-                _enemies[itemList.EnemyId].DropItems(itemList);
+            if (msg is Proto.DropItemList proto)
+                npcDict[proto.NpcSn].DropItems(proto);
         }
 
         private void PlayerKnapHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is PlayerKnap playerKnap)
+            if (msg is Proto.PlayerKnap playerKnap)
                 GameManager.Instance.MainPlayer.Obj.ParsePlayerKnap(playerKnap);
         }
     }

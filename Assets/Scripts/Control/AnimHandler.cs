@@ -15,29 +15,25 @@ namespace Control
 
         public void AtkAnimEvent()
         {
-            if(CompareTag("Player") && _owner.target && _owner.GetComponent<PlayerController>().sn == GameManager.Instance.MainPlayer.Sn)
+            if(CompareTag("Player") && _owner.target && _owner.GetComponent<PlayerController>().Sn == GameManager.Instance.MainPlayer.Sn)
             {
-                Proto.AtkAnimEvent proto = new()
+                Proto.PlayerAtkEvent proto = new()
                 {
                     PlayerSn = GameManager.Instance.MainPlayer.Sn,
-                    EnemyId = _owner.target.GetComponent<FsmController>().id,
-                    CurrHp = _owner.hp,
-                    AtkEnemy = true
+                    TargetSn = _owner.target.GetComponent<FsmController>().Sn
                 };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);
             }
             else if(CompareTag("Enemy"))
             {
-                if(_owner.target && _owner.target.GetComponent<PlayerController>().sn == GameManager.Instance.MainPlayer.Sn)
+                if (_owner.target && _owner.target.GetComponent<PlayerController>().Sn == GameManager.Instance.MainPlayer.Sn)
                 {
-                    Proto.AtkAnimEvent proto = new()
+                    Proto.NpcAtkEvent proto = new()
                     {
-                        EnemyId = _owner.GetComponent<FsmController>().id,
-                        PlayerSn = GameManager.Instance.MainPlayer.Sn,
-                        CurrHp = _owner.hp,
-                        AtkEnemy = false
+                        NpcSn = _owner.Sn,
+                        TargetSn = GameManager.Instance.MainPlayer.Sn
                     };
-                    NetManager.Instance.SendPacket(Proto.MsgId.C2SAtkAnimEvent, proto);
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SNpcAtkEvent, proto);
                 }
             }
         }

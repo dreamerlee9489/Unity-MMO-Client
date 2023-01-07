@@ -30,22 +30,25 @@ namespace Manage
         /// <summary>
         /// 实例化count个GameObject并压入池中
         /// </summary>
-        public void Inject(string poolType, GameObject obj, int count = 10)
+        public void Inject(string poolType, string path, int count = 10)
         {
-            if (!_roots.ContainsKey(poolType))
+            ResourceManager.Instance.LoadAsync<GameObject>(path, (obj) =>
             {
-                GameObject root = new(poolType + "Root");
-                root.transform.parent = transform;
-                _roots.Add(poolType, root);
-                _pool.Add(poolType, new List<GameObject>());
-            }
-            for (int i = 0; i < count; i++)
-            {
-                GameObject instObj = Instantiate(obj);
-                instObj.transform.SetParent(_roots[poolType].transform, false);
-                instObj.SetActive(false);
-                _pool[poolType].Add(instObj);
-            }
+                if (!_roots.ContainsKey(poolType))
+                {
+                    GameObject root = new(poolType + "Root");
+                    root.transform.parent = transform;
+                    _roots.Add(poolType, root);
+                    _pool.Add(poolType, new List<GameObject>());
+                }
+                for (int i = 0; i < count; i++)
+                {
+                    GameObject instObj = Instantiate(obj);
+                    instObj.transform.SetParent(_roots[poolType].transform, false);
+                    instObj.SetActive(false);
+                    _pool[poolType].Add(instObj);
+                }
+            });
         }
 
         /// <summary>

@@ -13,7 +13,6 @@ namespace Proto
         protected Gender _gender;
         protected PlayerController _obj;
 
-        public ulong Sn => _sn;
         public string Name => _name;
         public PlayerController Obj => _obj;
 
@@ -41,7 +40,7 @@ namespace Proto
                 ResourceManager.Instance.LoadAsync<GameObject>(path, (obj) =>
                 {
                     _obj = Object.Instantiate(obj).GetComponent<PlayerController>();
-                    _obj.sn = _sn;
+                    _obj.Sn = _sn;
                     _obj.lv = _lv;
                     _obj.xp = _xp;
                     _obj.hp = _hp;
@@ -58,7 +57,7 @@ namespace Proto
             else
             {
                 _obj = GameManager.Instance.MainPlayer.Obj;
-                _obj.sn = _sn;
+                _obj.Sn = _sn;
                 _obj.lv = _lv;
                 _obj.xp = _xp;
                 _obj.hp = _hp;
@@ -66,8 +65,6 @@ namespace Proto
                 _obj.atk = _atk;
                 _obj.def = _def;
                 _obj.name = "MainPlayer";
-                //_obj.gameObject.SetActive(false);
-                //_obj.transform.SetPositionAndRotation(_position, Quaternion.identity);
                 _obj.Agent.enabled = true;
                 _obj.gameObject.SetActive(true);
                 UIManager.Instance.FindPanel<PropPanel>().InitPanel();
