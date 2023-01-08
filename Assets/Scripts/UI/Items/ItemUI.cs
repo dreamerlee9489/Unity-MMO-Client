@@ -100,9 +100,8 @@ namespace UI
                         _currUI.GetComponent<ItemUI>().CurrSlot = CurrSlot;
                         _currUI.SetParent(CurrSlot.Icons, true);
                         _currUI.anchoredPosition = new Vector2(0, 0);
+                        knapPanle.UpdateUiIndex(_currUI.GetComponent<ItemUI>().Item, CurrSlot.index);
                     }
-                    if(count > 0)
-                        knapPanle.UpdateUiIndex(_currUI.GetComponent<ItemUI>().Item, CurrSlot);
                     CurrSlot.Count.text = count > 1 ? count.ToString() : "";
                     count = UIManager.Instance.tempSlot.childCount;
                     for (int i = 0; i < count; i++)
@@ -112,9 +111,8 @@ namespace UI
                         _currUI.GetComponent<ItemUI>().CurrSlot = newSlot;
                         _currUI.SetParent(newSlot.Icons, true);
                         _currUI.anchoredPosition = new Vector2(0, 0);
+                        knapPanle.UpdateUiIndex(_currUI.GetComponent<ItemUI>().Item, newSlot.index);
                     }
-                    if (count > 0)
-                        knapPanle.UpdateUiIndex(_currUI.GetComponent<ItemUI>().Item, CurrSlot);
                     newSlot.Count.text = count > 1 ? count.ToString() : "";
                 }
             }

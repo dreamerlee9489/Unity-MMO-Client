@@ -52,6 +52,7 @@ namespace Manage
                     npcObj.hp = int.Parse(strs[3]);
                     npcObj.atk = int.Parse(strs[4]);
                     npcObj.transform.position = pos.Parse(strs[5]);
+                    npcObj.initHp = npcObj.hp;
                     npcObj.SetNameBar("Enemy_" + id);
                     npcObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
                     npcObj.patrolPath.transform.position = npcObj.transform.position;

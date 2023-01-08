@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Control
 {
@@ -12,15 +13,19 @@ namespace Control
     {
         private readonly Proto.Vector3D _pos = new();
         private readonly CancellationTokenSource _tokenSource = new();
+        private NpcHpBar _hpBar;
 
         public int id = 0;
+        public int initHp = 0;
         public State currState;
         public PatrolPath patrolPath;
+        
 
         protected override void Awake()
         {
             base.Awake();
             _agent.speed = RunSpeed;
+            _hpBar = _nameBar.transform.GetChild(1).GetComponent<NpcHpBar>();
         }
 
         protected override void Update()
@@ -128,6 +133,12 @@ namespace Control
                         break;
                 }
             }
+        }
+
+        public void ParseStatus(Proto.SyncEntityStatus proto)
+        {
+            hp = proto.Hp;
+            _hpBar.UpdateHp(hp, initHp);
         }
     }
 }

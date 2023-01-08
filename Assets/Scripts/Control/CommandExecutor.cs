@@ -14,7 +14,6 @@ namespace Control
 
         public void UnMove()
         {
-            _cmd = null;
         }
 
         public void Attack(Transform target)
@@ -47,8 +46,6 @@ namespace Control
 
         public void UnPickup()
         {
-            _agent.isStopped = true;
-            _cmd = null;
         }
 
         public void Teleport(Transform portal)
@@ -63,7 +60,6 @@ namespace Control
 
         public void UnTeleport()
         {
-            _cmd = null;
         }
     }
 }

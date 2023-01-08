@@ -44,9 +44,9 @@ namespace UI
             _goldTxt.text = currGold.ToString();
         }
 
-        public void UpdateUiIndex(GameItem item, ItemSlot newSlot)
+        public void UpdateUiIndex(GameItem item, int index)
         {
-            UiIndexDict[item.GetHashCode()] = newSlot.index;
+            UiIndexDict[item.GetHashCode()] = index;
             Proto.UpdateKnapItem proto = new() { Item = new() };
             switch (item.itemType)
             {
@@ -61,7 +61,7 @@ namespace UI
             }
             proto.Item.Sn = item.Sn;
             proto.Item.Id = item.id;
-            proto.Item.Index = newSlot.index;
+            proto.Item.Index = index;
             NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
         }
     }

@@ -1,7 +1,6 @@
 ﻿using Control.CMD;
 using Items;
 using Manage;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UI;
@@ -22,10 +21,7 @@ namespace Control
 
         public int xp = 0, gold = 0;
 
-        protected override void Awake()
-        {
-            base.Awake();
-        }
+        protected override void Awake() => base.Awake();
 
         private void Start()
         {
@@ -118,7 +114,7 @@ namespace Control
         public void ParseSyncCmd(Proto.SyncPlayerCmd proto)
         {
             CommandType newType = (CommandType)proto.Type;
-            if (_cmd != null && _cmd.GetCommandType() != newType)
+            if(_cmd != null && _cmd.GetCommandType() != newType)
                 _cmd.Undo();
             switch (newType)
             {
@@ -208,6 +204,12 @@ namespace Control
                         break;
                 }
             }
+        }
+
+        public void ParseStatus(Proto.SyncEntityStatus proto)
+        {
+            hp = proto.Hp;
+            UIManager.Instance.FindPanel<PropPanel>().UpdateHp(hp);
         }
     }
 }

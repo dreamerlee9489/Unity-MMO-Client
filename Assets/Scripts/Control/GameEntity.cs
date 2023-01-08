@@ -65,11 +65,6 @@ namespace Control
             if (direction.magnitude <= AttackRadius)
                 return true;
             return false;
-        }
-
-        public void ParseStatus(Proto.SyncEntityStatus proto)
-        {
-            hp = proto.Hp;
-        }
+        }      
     }
 }
