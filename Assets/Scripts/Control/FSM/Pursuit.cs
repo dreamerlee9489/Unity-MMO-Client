@@ -9,13 +9,13 @@
 
         public override void Enter()
         {
-            _owner.Anim.SetBool(GameEntity.attack, false);
-            _owner.Agent.speed = _owner.RunSpeed;
+            _owner.anim.SetBool(GameEntity.attack, false);
+            _owner.agent.speed = _owner.runSpeed;
         }
 
         public override void Execute()
         {
-            _owner.Agent.destination = _target.transform.position;
+            _owner.agent.destination = _target.transform.position;
         }
 
         public override void Exit()

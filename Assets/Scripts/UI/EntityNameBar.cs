@@ -6,10 +6,12 @@ namespace UI
     public class EntityNameBar : MonoBehaviour
     {
         public Text Name { get; set; }
+        public HpBar HpBar { get; set; }
 
         private void Awake()
         {
-            Name = transform.GetChild(0).GetComponent<Text>();
+            Name = transform.Find("Name").GetComponent<Text>();
+            HpBar = transform.Find("HpBar").GetComponent<HpBar>();
         }
 
         private void Start()

@@ -1,6 +1,7 @@
 ﻿using Control.CMD;
 using Items;
 using Manage;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UI;
@@ -9,7 +10,7 @@ using UnityEngine.EventSystems;
 
 namespace Control
 {
-    public partial class PlayerController : GameEntity
+    public partial class PlayerController : GameEntity, IMover, IAttacker, IPicker, ITeleporter, IObserver
     {
         private readonly Proto.Vector3D _curPos = new();
         private readonly Proto.Vector3D _hitPos = new();
@@ -18,18 +19,30 @@ namespace Control
         private RaycastHit _hit;
         private ICommand _cmd;
         private Transform _knapsack, _handPos;
-
+        private HUDPanel hudPanel;
+        
         public int xp = 0, gold = 0;
+        public PlayerBaseData baseData;
+        public WorldManager currWorld;
+        public List<ulong> team = new();
 
         protected override void Awake() => base.Awake();
 
         private void Start()
         {
-            _agent.speed = RunSpeed * 1.5f;
+            agent.speed = runSpeed * 1.5f;
+            currWorld = GameManager.Instance.CurrWorld;
+            baseData = GameManager.Instance.PlayerBaseDatas[lv];
             if (Sn == GameManager.Instance.MainPlayer.Sn)
             {
+                gameObject.layer = 2;
+                team.Add(Sn);
                 _knapsack = transform.Find("Knapsack");
                 _handPos = transform.Find("HandPos");
+                nameBar.HpBar.gameObject.SetActive(false);
+                PoolManager.Instance.LoadPush(PoolType.HUDPanel, "UI/Panel/HUDPanel", 4);
+                hudPanel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.hudGroup).GetComponent<HUDPanel>();
+                hudPanel.InitPanel(currWorld.roleDict[Sn]);
                 Task.Run(SyncStateTask);
             }
         }
@@ -37,10 +50,11 @@ namespace Control
         protected override void Update()
         {
             base.Update();
+            _cmd?.Execute();
+
             if (Sn != GameManager.Instance.MainPlayer.Sn || EventSystem.current.IsPointerOverGameObject())
                 return;
 
-            _cmd?.Execute();
             _curPos.X = transform.position.x;
             _curPos.Y = transform.position.y;
             _curPos.Z = transform.position.z;
@@ -76,8 +90,13 @@ namespace Control
                         syncCmd.Type = 4;
                         syncCmd.PlayerSn = Sn;
                         syncCmd.TargetSn = _hit.transform.GetComponent<GameItem>().Sn;
+                        syncCmd.Point = _hitPos;
+                        break;
+                    case "Player":
+                        syncCmd.Type = 5;
+                        syncCmd.PlayerSn = Sn;
+                        syncCmd.TargetSn = _hit.transform.GetComponent<PlayerController>().Sn;
                         syncCmd.Point = null;
-                        Debug.Log(syncCmd.TargetSn);
                         break;
                 }
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerCmd, syncCmd);
@@ -97,6 +116,7 @@ namespace Control
         private void OnApplicationQuit()
         {
             _tokenSource.Cancel();
+            MonoManager.Instance.StopAllCoroutines();
         }
 
         private void SyncStateTask()
@@ -111,10 +131,10 @@ namespace Control
             }
         }
 
-        public void ParseSyncCmd(Proto.SyncPlayerCmd proto)
+        public void ParseCmd(Proto.SyncPlayerCmd proto)
         {
             CommandType newType = (CommandType)proto.Type;
-            if(_cmd != null && _cmd.GetCommandType() != newType)
+            if (_cmd != null && _cmd.GetCommandType() != newType)
                 _cmd.Undo();
             switch (newType)
             {
@@ -126,16 +146,25 @@ namespace Control
                     _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
                     break;
                 case CommandType.Attack:
-                    target = GameManager.Instance.CurrWorld.npcDict[proto.TargetSn].transform;
+                    target = currWorld.npcDict[proto.TargetSn].transform;
                     _cmd = new AttackCommand(this, target);
                     break;
                 case CommandType.Pickup:
-                    target = GameManager.Instance.CurrWorld.itemDict[proto.TargetSn].transform;
-                    _cmd = new PickupCommand(this, target);
+                    if (!currWorld.itemDict.ContainsKey(proto.TargetSn))
+                        _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
+                    else
+                    {
+                        target = currWorld.itemDict[proto.TargetSn].transform;
+                        _cmd = new PickupCommand(this, target);
+                    }
                     break;
                 case CommandType.Teleport:
-                    target = GameManager.Instance.CurrWorld.itemDict[proto.TargetSn].transform;
+                    target = currWorld.itemDict[proto.TargetSn].transform;
                     _cmd = new TeleportCommand(this, target);
+                    break;
+                case CommandType.Dialog:
+                    target = currWorld.roleDict[proto.TargetSn].obj.transform;
+                    _cmd = new ObserveCommand(this, target);
                     break;
                 default:
                     break;
@@ -163,7 +192,7 @@ namespace Control
         public void ParsePlayerKnap(Proto.PlayerKnap playerKnap)
         {
             gold = playerKnap.Gold;
-            UIManager.Instance.FindPanel<KnapPanel>().UpdateGold(gold);
+            UIManager.Instance.GetPanel<KnapPanel>().UpdateGold(gold);
             var potionDict = GameManager.Instance.DropPotionDict;
             var weaponDict = GameManager.Instance.DropWeaponDict;
             foreach (Proto.ItemData data in playerKnap.BagItems)
@@ -209,7 +238,147 @@ namespace Control
         public void ParseStatus(Proto.SyncEntityStatus proto)
         {
             hp = proto.Hp;
-            UIManager.Instance.FindPanel<PropPanel>().UpdateHp(hp);
+            if (GameManager.Instance.MainPlayer.Sn == proto.Sn)
+                UIManager.Instance.GetPanel<PropPanel>().UpdateHp(hp);
+            for (int i = 0; i < UIManager.Instance.hudGroup.childCount; i++)
+            {
+                HUDPanel panel = UIManager.Instance.hudGroup.GetChild(i).GetComponent<HUDPanel>();
+                if(panel.player == this)
+                    panel.UpdateHp(hp);
+            }
+        }
+
+        public void Move(Vector3 point)
+        {
+            agent.destination = point;
+            _cmd = null;
+        }
+
+        public void UnMove()
+        {
+        }
+
+        public void Attack(Transform target)
+        {
+            transform.LookAt(target);
+            if (Vector3.Distance(transform.position, target.position) <= attackRadius)
+                anim.SetBool(attack, true);
+            else
+            {
+                anim.SetBool(attack, false);
+                agent.destination = target.position;
+            }
+        }
+
+        public void UnAttack()
+        {
+            anim.SetBool(attack, false);
+            _cmd = null;
+        }
+
+        public void Pickup(Transform item)
+        {
+            agent.destination = item.position;
+            if (Vector3.Distance(transform.position, item.position) <= agent.stoppingDistance)
+            {
+                anim.SetTrigger(pickup);
+                _cmd = null;
+            }
+        }
+
+        public void UnPickup()
+        {
+        }
+
+        public void Teleport(Transform portal)
+        {
+            agent.destination = portal.position;
+            if (Vector3.Distance(transform.position, portal.position) <= agent.stoppingDistance)
+            {
+                portal.GetComponent<Portal>().OpenDoor(this);
+                _cmd = null;
+            }
+        }
+
+        public void UnTeleport()
+        {
+        }
+
+        public void Observe(Transform target)
+        {
+            agent.destination = target.position;
+            if (Vector3.Distance(transform.position, target.position) <= agent.stoppingDistance)
+            {
+                _cmd = null;
+                agent.destination = transform.position;
+                if (Sn == GameManager.Instance.MainPlayer.Sn)
+                {
+                    ObservePanel panel = UIManager.Instance.GetPanel<ObservePanel>();
+                    panel.SetPlayer(target.GetComponent<PlayerController>());
+                    panel.Open();
+                } 
+            }
+        }
+
+        public void UnObserve()
+        {
+        }
+
+        public void ParseJoinTeam(Proto.ReqJoinTeam proto)
+        {
+            string text = $"玩家[{currWorld.roleDict[proto.Applicant].name}]申请入队，是否同意？";
+            UIManager.Instance.GetPanel<PopupPanel>().Open(text, () =>
+            {
+                team.Add(proto.Applicant);
+                hudPanel.teamTxt.text = "队长";
+                HUDPanel panel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.hudGroup).GetComponent<HUDPanel>();
+                panel.InitPanel(currWorld.roleDict[proto.Applicant], "队员");
+                currWorld.roleDict[proto.Applicant].obj.hudPanel = panel;
+                Proto.JoinTeamRes joinRes = new()
+                {
+                    Applicant = proto.Applicant,
+                    Responder = Sn,
+                    Agree = true
+                };
+                foreach (ulong currSn in team)
+                    joinRes.Members.Add(new Proto.TeamMember() { MemberSn = currSn });
+                foreach (ulong currSn in team)
+                    if (currSn != Sn)
+                        NetManager.Instance.SendPacket(Proto.MsgId.C2CJoinTeamRes, joinRes);
+            }, () =>
+            {
+                Proto.JoinTeamRes joinRes = new()
+                {
+                    Applicant = proto.Applicant,
+                    Responder = Sn,
+                    Agree = false
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2CJoinTeamRes, joinRes);
+            });
+        }
+
+        public void ParseJoinTeamRes(Proto.JoinTeamRes proto)
+        {
+            if (!proto.Agree)
+            {
+                string text = $"玩家[{currWorld.roleDict[proto.Responder].name}]拒绝了你的入队请求。";
+                UIManager.Instance.GetPanel<PopupPanel>().Open(text, null, null);
+            }
+            else
+            {
+                hudPanel = null;
+                team.Clear();
+                int count = UIManager.Instance.hudGroup.childCount;
+                for (int i = 0; i < count; i++)
+                    PoolManager.Instance.Push(PoolType.HUDPanel, UIManager.Instance.hudGroup.GetChild(0).gameObject);
+                for (int i = 0; i < proto.Members.Count; i++)
+                {
+                    team.Add(proto.Members[i].MemberSn);
+                    HUDPanel panel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.hudGroup).GetComponent<HUDPanel>();
+                    panel.InitPanel(currWorld.roleDict[proto.Members[i].MemberSn], i == 0 ? "队长" : "队员");
+                    currWorld.roleDict[proto.Members[i].MemberSn].obj.hudPanel = panel;
+                }
+            }
         }
     }
 }

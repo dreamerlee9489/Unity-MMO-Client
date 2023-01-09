@@ -31,7 +31,7 @@ namespace Manage
         private AccountInfo _accountInfo;
         private PlayerInfo _player;
         private CinemachineVirtualCamera _virtualCam;
-        private WorldManager _activeWorld;
+        private WorldManager _currWorld;
         private List<PlayerBaseData> _playerBaseDatas;
         private Dictionary<string, List<string>> _dropPotionDict, _dropWeaponDict;
 
@@ -39,7 +39,7 @@ namespace Manage
         public AccountInfo AccountInfo => _accountInfo;
         public PlayerInfo MainPlayer => _player;
         public CinemachineVirtualCamera VirtualCam => _virtualCam;
-        public WorldManager CurrWorld => _activeWorld;
+        public WorldManager CurrWorld => _currWorld;
 
         public List<PlayerBaseData> PlayerBaseDatas => _playerBaseDatas;
         public Dictionary<string, List<string>> DropPotionDict => _dropPotionDict;
@@ -56,8 +56,8 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
-            PoolManager.Instance.Inject(PoolType.RoleToggle, "UI/RoleToggle", 20);
-            PoolManager.Instance.Inject(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
+            PoolManager.Instance.LoadPush(PoolType.RoleToggle, "UI/RoleToggle", 20);
+            PoolManager.Instance.LoadPush(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
         }
 
         private void Start()
@@ -68,6 +68,7 @@ namespace Manage
 
         private void OnDestroy()
         {
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
             SceneManager.sceneLoaded -= OnSceneLoaded;
             MsgManager.Instance.RemoveMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RemoveMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
@@ -76,15 +77,14 @@ namespace Manage
 
         private void OnSceneUnloaded(Scene scene)
         {
-            _activeWorld = null;
-            _canvas.FindPanel<HUDPanel>().Close();
+            _currWorld = null;
             MonoManager.Instance.StartCoroutine(UIManager.Instance.FadeAlpha());
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            _activeWorld = FindObjectOfType<WorldManager>();
-            _canvas.FindPanel<HUDPanel>().Open();
+            _currWorld = FindObjectOfType<WorldManager>();
+            MainPlayer.Obj.currWorld = _currWorld;
         }       
 
         private void PlayerListHandler(Google.Protobuf.IMessage msg)
@@ -94,10 +94,10 @@ namespace Manage
                 _accountInfo ??= new AccountInfo();
                 _accountInfo.ParseProto(proto);
                 if (_accountInfo.Players.Count == 0)
-                    Canvas.FindPanel<CreatePanel>().Open();
+                    Canvas.GetPanel<CreatePanel>().Open();
                 else
                 {
-                    Transform content = Canvas.FindPanel<RolesPanel>().RolesRect.content;
+                    Transform content = Canvas.GetPanel<RolesPanel>().RolesRect.content;
                     for (int i = 0; i < _accountInfo.Players.Count; i++)
                     {
                         RoleToggle roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
@@ -105,7 +105,7 @@ namespace Manage
                         roleToggle.Level.text = "Lv " + _accountInfo.Players[i].Level;
                         roleToggle.Id = _accountInfo.Players[i].Id;
                     }
-                    Canvas.FindPanel<RolesPanel>().Open();
+                    Canvas.GetPanel<RolesPanel>().Open();
                 }
             }
         }
@@ -114,8 +114,8 @@ namespace Manage
         {
             if (msg is EnterWorld proto && proto.WorldId > 2)
             {
-                _canvas.FindPanel<StartPanel>().Close();
-                SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
+                _canvas.GetPanel<StartPanel>().Close();
+                SceneManager.LoadScene(proto.WorldId - 2, LoadSceneMode.Single);
                 MainPlayer.Obj.transform.position = new(proto.Position.X, proto.Position.Y, proto.Position.Z);
             }
         }

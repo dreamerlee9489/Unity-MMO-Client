@@ -2,11 +2,17 @@ using UnityEngine;
 
 namespace Control.CMD
 {
+    public interface IAttacker : IExecutor
+    {
+        void Attack(Transform target);
+        void UnAttack();
+    }
+
     public class AttackCommand : ICommand
     {
         private Transform _target;
 
-        public AttackCommand(IAttackExecutor executor, Transform target) : base(executor)
+        public AttackCommand(IAttacker executor, Transform target) : base(executor)
         {
             _target = target;
         }
@@ -15,12 +21,12 @@ namespace Control.CMD
 
         public override void Execute()
         {
-            (_executor as IAttackExecutor).Attack(_target);
+            (_executor as IAttacker).Attack(_target);
         }
 
         public override void Undo()
         {
-            (_executor as IAttackExecutor).UnAttack();
+            (_executor as IAttacker).UnAttack();
         }
     }
 }

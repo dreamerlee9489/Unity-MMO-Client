@@ -2,11 +2,17 @@ using UnityEngine;
 
 namespace Control.CMD
 {
+    public interface IPicker : IExecutor
+    {
+        void Pickup(Transform item);
+        void UnPickup();
+    }
+
     public class PickupCommand : ICommand
     {
         private Transform _item;
 
-        public PickupCommand(IPickupExecutor executor, Transform item) : base(executor)
+        public PickupCommand(IPicker executor, Transform item) : base(executor)
         {
             _item = item;
         }
@@ -15,12 +21,12 @@ namespace Control.CMD
 
         public override void Execute()
         {
-            (_executor as IPickupExecutor).Pickup(_item);
+            (_executor as IPicker).Pickup(_item);
         }
 
         public override void Undo()
         {
-            (_executor as IPickupExecutor).UnPickup();
+            (_executor as IPicker).UnPickup();
         }
     }
 }

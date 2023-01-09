@@ -7,6 +7,7 @@ namespace Manage
     {
         public const string RoleToggle = "RoleToggle";
         public const string PatrolPath = "PatrolPath";
+        public const string HUDPanel = "HUDPanel";
     }
 
     public class PoolManager : MonoSingleton<PoolManager>
@@ -30,25 +31,23 @@ namespace Manage
         /// <summary>
         /// 实例化count个GameObject并压入池中
         /// </summary>
-        public void Inject(string poolType, string path, int count = 10)
+        public void LoadPush(string poolType, string path, int count = 10)
         {
-            ResourceManager.Instance.LoadAsync<GameObject>(path, (obj) =>
+            GameObject obj = ResourceManager.Instance.Load<GameObject>(path);
+            if (!_roots.ContainsKey(poolType))
             {
-                if (!_roots.ContainsKey(poolType))
-                {
-                    GameObject root = new(poolType + "Root");
-                    root.transform.parent = transform;
-                    _roots.Add(poolType, root);
-                    _pool.Add(poolType, new List<GameObject>());
-                }
-                for (int i = 0; i < count; i++)
-                {
-                    GameObject instObj = Instantiate(obj);
-                    instObj.transform.SetParent(_roots[poolType].transform, false);
-                    instObj.SetActive(false);
-                    _pool[poolType].Add(instObj);
-                }
-            });
+                GameObject root = new(poolType + "Root");
+                root.transform.parent = transform;
+                _roots.Add(poolType, root);
+                _pool.Add(poolType, new List<GameObject>());
+            }
+            for (int i = 0; i < count; i++)
+            {
+                GameObject instObj = Instantiate(obj);
+                instObj.transform.SetParent(_roots[poolType].transform, false);
+                instObj.SetActive(false);
+                _pool[poolType].Add(instObj);
+            }
         }
 
         /// <summary>

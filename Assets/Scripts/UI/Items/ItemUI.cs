@@ -17,7 +17,7 @@ namespace UI
         private void Awake()
         {
             if (_knapPanel == null)
-                _knapPanel = UIManager.Instance.FindPanel<KnapPanel>();
+                _knapPanel = UIManager.Instance.GetPanel<KnapPanel>();
         }
 
         public int AddToBagUI(int index = 0)
@@ -92,7 +92,7 @@ namespace UI
                     PutBackTempIcons();
                 else
                 {
-                    var knapPanle = UIManager.Instance.FindPanel<KnapPanel>();
+                    var knapPanle = UIManager.Instance.GetPanel<KnapPanel>();
                     int count = newSlot.Icons.childCount;
                     for (int i = 0; i < count; i++)
                     {

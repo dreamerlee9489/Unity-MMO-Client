@@ -178,7 +178,7 @@ namespace Manage
         {
             if (!Directory.Exists($"{Application.persistentDataPath}/AssetBundles/{_platform}/"))
                 Directory.CreateDirectory($"{Application.persistentDataPath}/AssetBundles/{_platform}/");
-            _modalPanel = UIManager.Instance.FindPanel<ModalPanel>();
+            _modalPanel = UIManager.Instance.GetPanel<ModalPanel>();
             _modalPanel.Open("检查更新", "", ModalPanelType.Hint);
             GetRemoteInfoList((isOver) =>
             {

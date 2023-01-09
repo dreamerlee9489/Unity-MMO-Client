@@ -12,10 +12,10 @@ namespace Control.FSM
 
         public override void Enter()
         {
-            _owner.Agent.radius = 0;
-            _owner.Agent.isStopped = true;
-            _owner.Agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
-            _owner.Anim.SetBool(GameEntity.death, true);
+            _owner.agent.radius = 0;
+            _owner.agent.isStopped = true;
+            _owner.agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+            _owner.anim.SetBool(GameEntity.death, true);
             _owner.GetComponent<CapsuleCollider>().enabled = false;
         }
 
@@ -26,10 +26,10 @@ namespace Control.FSM
         public override void Exit()
         {
             _owner.currState = null;
-            _owner.Agent.radius = 0.3f;
-            _owner.Agent.isStopped = false;
-            _owner.Agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
-            _owner.Anim.SetBool(GameEntity.death, false);
+            _owner.agent.radius = 0.3f;
+            _owner.agent.isStopped = false;
+            _owner.agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+            _owner.anim.SetBool(GameEntity.death, false);
             _owner.GetComponent<CapsuleCollider>().enabled = true;
         }
     }

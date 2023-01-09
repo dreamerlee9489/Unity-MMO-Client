@@ -9,9 +9,9 @@
 
         public override void Enter()
         {
-            _owner.Agent.speed = _owner.WalkSpeed;
-            _owner.Agent.destination = _target.transform.position;
-            _owner.Anim.SetBool(GameEntity.attack, true);
+            _owner.agent.speed = _owner.walkSpeed;
+            _owner.agent.destination = _target.transform.position;
+            _owner.anim.SetBool(GameEntity.attack, true);
         }
 
         public override void Execute()
@@ -22,7 +22,7 @@
         public override void Exit()
         {
             _owner.currState = null;
-            _owner.Anim.SetBool(GameEntity.attack, false);
+            _owner.anim.SetBool(GameEntity.attack, false);
         }
     }
 }

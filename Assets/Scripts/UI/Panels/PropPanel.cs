@@ -8,7 +8,6 @@ public class PropPanel : BasePanel
     private Text idTxt, lvTxt, xpTxt, hpTxt, mpTxt, atkTxt, defTxt;
     private PlayerController player;
     private PlayerBaseData baseData;
-    private HUDPanel hudPanel;
 
     protected override void Awake()
     {
@@ -25,7 +24,6 @@ public class PropPanel : BasePanel
 
     public void InitPanel()
     {
-        hudPanel = UIManager.Instance.FindPanel<HUDPanel>();
         player = GameManager.Instance.MainPlayer.Obj.GetComponent<PlayerController>();
         baseData = GameManager.Instance.PlayerBaseDatas[player.lv];
         idTxt.text = GameManager.Instance.MainPlayer.Name;
@@ -35,25 +33,17 @@ public class PropPanel : BasePanel
         mpTxt.text = $"{player.mp} / {baseData.mp}";
         atkTxt.text = player.atk.ToString();
         defTxt.text = player.def.ToString();
-        hudPanel.UpdateHp(player.hp, baseData.hp);
-        hudPanel.UpdateXp(player.xp, baseData.xp);
     }
 
     public void UpdateHp(int currHp)
     {
         if(currHp <= baseData.hp) 
-        {
             hpTxt.text = $"{currHp} / {baseData.hp}";
-            hudPanel.UpdateHp(currHp, baseData.hp);
-        }
     }
 
     public void UpdateXp(int currXp)
     {
         if(currXp <= baseData.xp)
-        {
             xpTxt.text = $"{currXp} / {baseData.xp}";
-            hudPanel.UpdateXp(currXp, baseData.xp);
-        }
     }
 }

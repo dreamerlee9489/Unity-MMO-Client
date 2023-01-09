@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace UI
 {
-    public class NpcHpBar : MonoBehaviour
+    public class HpBar : MonoBehaviour
 	{
 		private RectTransform _fore;
         private float timeSpan = 6f;

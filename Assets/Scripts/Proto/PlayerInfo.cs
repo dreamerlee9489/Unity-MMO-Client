@@ -23,7 +23,7 @@ namespace Proto
             string path = _gender == Gender.Male ? "Entity/Player/Player_Knight" : "Entity/Player/Player_Warrior";
             _obj = Object.Instantiate(ResourceManager.Instance.Load<PlayerController>(path));
             _obj.SetNameBar(_name);
-            _obj.Agent.enabled = false;
+            _obj.agent.enabled = false;
             _obj.gameObject.SetActive(false);
             Object.DontDestroyOnLoad(_obj);
         }

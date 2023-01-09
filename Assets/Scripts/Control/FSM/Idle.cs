@@ -9,8 +9,8 @@
 
         public override void Enter()
         {
-            _owner.Agent.speed = _owner.WalkSpeed;
-            _owner.Agent.isStopped = true;
+            _owner.agent.speed = _owner.walkSpeed;
+            _owner.agent.isStopped = true;
         }
 
         public override void Execute()
@@ -20,7 +20,7 @@
         public override void Exit()
         {
             _owner.currState = null;
-            _owner.Agent.isStopped = false;
+            _owner.agent.isStopped = false;
         }
     }
 }

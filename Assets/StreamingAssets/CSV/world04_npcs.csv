@@ -1,0 +1,4 @@
+EnemyID,ResName,Level,InitHp,InitAtk,InitPos,Name
+0,Enemy_Skeleton_01,1,100,5,(-15;0;15),骷髅骑士
+1,Enemy_Skeleton_01,1,100,5,(-15;0;25),骷髅骑士
+2,Enemy_Skeleton_01,1,100,5,(-20;0;20),骷髅骑士

@@ -1,38 +1,44 @@
-using Manage;
+using Control;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HUDPanel : BasePanel
 {
-    private Text _nameBar, _teamBar;
     private RectTransform _hpBar, _xpBar;
+
+    public Text nameTxt, teamTxt;
+    public PlayerController player;
 
     protected override void Awake()
     {
         base.Awake();
-        _nameBar = transform.Find("NameBar").GetComponent<Text>();
-        _teamBar = transform.Find("TeamBar").GetComponent<Text>();
+        nameTxt = transform.Find("NameText").GetComponent<Text>();
+        teamTxt = transform.Find("TeamText").GetComponent<Text>();
         _hpBar = transform.Find("HPBar").GetChild(1).GetComponent<RectTransform>();
         _xpBar = transform.Find("XPBar").GetChild(1).GetComponent<RectTransform>();
         Close();
     }
 
-    public override void Open()
+    public void InitPanel(Proto.AppearRole role, string teamTxt = "")
     {
-        base.Open();
-        _nameBar.text = GameManager.Instance.MainPlayer.Name;
+        player = role.obj;
+        nameTxt.text = role.name;
+        this.teamTxt.text = teamTxt;
+        _hpBar.localScale = new Vector3(player.hp * 1.0f / player.baseData.hp, 1, 1);
+        if(player.xp * 1.0f / player.baseData.xp <= 1)
+            _xpBar.localScale = new Vector3(player.xp * 1.0f / player.baseData.xp, 1, 1);
     }
 
-    public void UpdateHp(int currHp, int maxHp)
+    public void UpdateHp(int currHp)
     {
-        if(currHp <= maxHp)
-            _hpBar.localScale = new Vector3(currHp * 1.0f / maxHp, 1, 1);
+        if(currHp <= player.baseData.hp)
+            _hpBar.localScale = new Vector3(currHp * 1.0f / player.baseData.hp, 1, 1);
     }
 
     public void UpdateXp(int currXp, int maxXp)
     {
-        if(currXp <= maxXp)
-            _xpBar.localScale = new Vector3(currXp * 1.0f / maxXp, 1, 1);
+        if(currXp <= player.baseData.xp)
+            _xpBar.localScale = new Vector3(currXp * 1.0f / player.baseData.xp, 1, 1);
     }
 }

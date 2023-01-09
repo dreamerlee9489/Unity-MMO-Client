@@ -12,22 +12,15 @@ namespace Control
         public static readonly int death = Animator.StringToHash("death");
         public static readonly int pickup = Animator.StringToHash("pickup");
 
-        protected readonly float _walkSpeed = 1.56f;
-        protected readonly float _runSpeed = 5.56f;
-        protected readonly float _attackRadius = 1.5f;
-        protected readonly float _pursuitRadius = 4f;
-        protected readonly float _viewRadius = 6f;
-        protected Animator _anim;
-        protected NavMeshAgent _agent;
-        protected EntityNameBar _nameBar;
+        public readonly float walkSpeed = 1.56f;
+        public readonly float runSpeed = 5.56f;
+        public readonly float attackRadius = 1.5f;
+        public readonly float pursuitRadius = 4f;
+        public readonly float viewRadius = 6f;
 
-        public float WalkSpeed => _walkSpeed;
-        public float RunSpeed => _runSpeed;
-        public float AttackRadius => _attackRadius;
-        public float PursuitRadius => _pursuitRadius;
-        public float ViewRadius => _viewRadius;
-        public Animator Anim => _anim;
-        public NavMeshAgent Agent => _agent;
+        public Animator anim;
+        public NavMeshAgent agent;
+        public EntityNameBar nameBar;     
 
         public ulong Sn { get; set; }
 
@@ -36,25 +29,25 @@ namespace Control
 
         protected virtual void Awake()
         {
-            _agent = GetComponent<NavMeshAgent>();
-            _anim = GetComponent<Animator>();
-            _nameBar = transform.Find("EntityNameBar").GetComponent<EntityNameBar>();
+            agent = GetComponent<NavMeshAgent>();
+            anim = GetComponent<Animator>();
+            nameBar = transform.Find("EntityNameBar").GetComponent<EntityNameBar>();           
         }
 
         protected virtual void Update()
         {
-            _anim.SetFloat(moveSpeed, transform.InverseTransformVector(_agent.velocity).z);
+            anim.SetFloat(moveSpeed, transform.InverseTransformVector(agent.velocity).z);
         }
 
         public void SetNameBar(string name)
         {
-            _nameBar.Name.text = name;
+            nameBar.Name.text = name;
         }
 
         public bool CanSee(GameEntity target)
         {
             Vector3 direction = target.transform.position - transform.position;
-            if (direction.magnitude <= ViewRadius)
+            if (direction.magnitude <= viewRadius)
                 return true;
             return false;
         }
@@ -62,7 +55,7 @@ namespace Control
         public bool CanAttack(GameEntity target)
         {
             Vector3 direction = target.transform.position - transform.position;
-            if (direction.magnitude <= AttackRadius)
+            if (direction.magnitude <= attackRadius)
                 return true;
             return false;
         }      

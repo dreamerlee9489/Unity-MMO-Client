@@ -24,7 +24,7 @@ namespace Proto {
     static ProtoIdReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg5wcm90b19pZC5wcm90bxIFUHJvdG8qkRMKBU1zZ0lkEggKBE5vbmUQABIV",
+            "Cg5wcm90b19pZC5wcm90bxIFUHJvdG8qvxMKBU1zZ0lkEggKBE5vbmUQABIV",
             "ChFNSV9OZXR3b3JrQ29ubmVjdBABEhcKE01JX05ldHdvcmtDb25uZWN0ZWQQ",
             "AhIUChBNSV9OZXR3b3JrTGlzdGVuEAMSFwoTTUlfTmV0d29ya0xpc3Rlbktl",
             "eRAEEhgKFE1JX05ldHdvcmtEaXNjb25uZWN0EAoSGgoWTUlfTmV0d29ya0Rp",
@@ -79,7 +79,8 @@ namespace Proto {
             "QXRrRXZlbnQQwOoBEhUKD1MyQ19OcGNBdGtFdmVudBDB6gESFgoQUzJDX0Ry",
             "b3BJdGVtTGlzdBDC6gESGAoSQzJTX1VwZGF0ZUtuYXBJdGVtEMG4AhIXChFD",
             "MlNfR2V0UGxheWVyS25hcBDCuAISFwoRUzJDX0dldFBsYXllcktuYXAQw7gC",
-            "YgZwcm90bzM="));
+            "EhUKD0MyQ19SZXFKb2luVGVhbRDRhgMSFQoPQzJDX0pvaW5UZWFtUmVzENKG",
+            "A2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.MsgId), }, null, null));
@@ -388,6 +389,8 @@ namespace Proto {
     [pbr::OriginalName("C2S_UpdateKnapItem")] C2SUpdateKnapItem = 40001,
     [pbr::OriginalName("C2S_GetPlayerKnap")] C2SGetPlayerKnap = 40002,
     [pbr::OriginalName("S2C_GetPlayerKnap")] S2CGetPlayerKnap = 40003,
+    [pbr::OriginalName("C2C_ReqJoinTeam")] C2CReqJoinTeam = 50001,
+    [pbr::OriginalName("C2C_JoinTeamRes")] C2CJoinTeamRes = 50002,
   }
 
   #endregion

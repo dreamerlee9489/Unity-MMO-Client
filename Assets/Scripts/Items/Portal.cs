@@ -1,6 +1,5 @@
 using Control;
 using Manage;
-using UnityEngine;
 
 namespace Items
 {
@@ -27,7 +26,7 @@ namespace Items
 
         public void OpenDoor(PlayerController player)
         {
-            player.Agent.enabled = false;
+            player.agent.enabled = false;
             player.gameObject.SetActive(false);
             Proto.EnterWorld proto = new()
             {

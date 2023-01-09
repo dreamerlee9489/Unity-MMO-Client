@@ -31,7 +31,7 @@ public static class SuperCollider
 			return true;
 		}
 
-		Debug.LogError(string.Format("{0} does not have an implementation for ClosestPointOnSurface; GameObject.Name='{1}'", collider.GetType(), collider.gameObject.name));
+		Debug.LogError(string.Format("{0} does not have an implementation for ClosestPointOnSurface; GameObject.name='{1}'", collider.GetType(), collider.gameObject.name));
 		closestPointOnSurface = Vector3.zero;
 		return false;
 	}

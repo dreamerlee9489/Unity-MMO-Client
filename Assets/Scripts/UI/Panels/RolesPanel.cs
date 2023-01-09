@@ -21,7 +21,7 @@ namespace UI
             RolesRect.content.GetComponent<ToggleGroup>().allowSwitchOff = false;
             _createBtn.onClick.AddListener(() =>
             {
-                _canvas.FindPanel<CreatePanel>().Open();
+                _canvas.GetPanel<CreatePanel>().Open();
                 Close();
             });
             _playBtn.onClick.AddListener(() =>

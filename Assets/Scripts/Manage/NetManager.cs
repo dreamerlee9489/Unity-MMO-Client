@@ -79,6 +79,8 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.S2CNpcAtkEvent, ParsePacket<Proto.NpcAtkEvent>);
             RegistParseFunc(Proto.MsgId.S2CDropItemList, ParsePacket<Proto.DropItemList>);
             RegistParseFunc(Proto.MsgId.S2CGetPlayerKnap, ParsePacket<Proto.PlayerKnap>);
+            RegistParseFunc(Proto.MsgId.C2CReqJoinTeam, ParsePacket<Proto.ReqJoinTeam>);
+            RegistParseFunc(Proto.MsgId.C2CJoinTeamRes, ParsePacket<Proto.JoinTeamRes>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
             EventManager.Instance.AddListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
         }
@@ -260,11 +262,11 @@ namespace Manage
 
         private void HotUpdatedCallback(bool updateOver)
         {
-            UIManager.Instance.FindPanel<StartPanel>().Open();
+            UIManager.Instance.GetPanel<StartPanel>().Open();
             if (updateOver)
                 MonoManager.Instance.StartCoroutine(ConnectServer());
             else
-                UIManager.Instance.FindPanel<ModalPanel>().Open("检查更新", "更新失败！", ModalPanelType.Hint);
+                UIManager.Instance.GetPanel<ModalPanel>().Open("检查更新", "更新失败！", ModalPanelType.Hint);
         }
 
         private IEnumerator ConnectServer()

@@ -581,7 +581,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36bbca4cb30e2db40a312e2dd0626f23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: world04_enemy
+  fileName: world04_npcs
 --- !u!1 &2027047617
 GameObject:
   m_ObjectHideFlags: 0
@@ -688,9 +688,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5571bf0cc47cbf244b76d8b8b3c7d8f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemId: 0
+  id: 0
   itemType: 0
-  targetId: 3
+  worldId: 3
 --- !u!114 &5523583047936911638
 MonoBehaviour:
   m_ObjectHideFlags: 0

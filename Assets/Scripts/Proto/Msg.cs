@@ -142,17 +142,21 @@ namespace Proto {
             "IAEoBBIRCgl0YXJnZXRfc24YAiABKAQiNgoOUGxheWVyQXRrRXZlbnQSEQoJ",
             "cGxheWVyX3NuGAEgASgEEhEKCXRhcmdldF9zbhgCIAEoBCJZCgxEcm9wSXRl",
             "bUxpc3QSDgoGbnBjX3NuGAEgASgEEgsKA2V4cBgCIAEoBRIMCgRnb2xkGAMg",
-            "ASgFEh4KBWl0ZW1zGAQgAygLMg8uUHJvdG8uSXRlbURhdGEqeAoHVGFnVHlw",
-            "ZRIPCgtUYWdUeXBlTm9uZRAAEhIKDlRhZ1R5cGVBY2NvdW50EAESDgoKVGFn",
-            "VHlwZUFwcBACEhEKDVRhZ1R5cGVFbnRpdHkQAxISCg5UYWdUeXBlVG9Xb3Js",
-            "ZBAEEhEKDVRhZ1R5cGVQbGF5ZXIQBSqaAQoWQWNjb3VudENoZWNrUmV0dXJu",
-            "Q29kZRIKCgZBUkNfT0sQABIPCgtBUkNfVU5LT05XThABEhkKFUFSQ19OT1Rf",
-            "Rk9VTkRfQUNDT1VOVBACEhYKEkFSQ19QQVNTV09SRF9XUk9ORxADEg8KC0FS",
-            "Q19MT0dHSU5HEAQSDwoLQVJDX1RJTUVPVVQQBRIOCgpBUkNfT05MSU5FEAYq",
-            "RwoTTG9naW5IdHRwUmV0dXJuQ29kZRILCgdMSFJDX09LEAASEAoMTEhSQ19U",
-            "SU1FT1VUEAESEQoNTEhSQ19OT1RGT1VORBACKkwKFkNyZWF0ZVBsYXllclJl",
-            "dHVybkNvZGUSEQoNQ1BSX0NyZWF0ZV9PSxAAEg8KC0NQUl9VbmtvbnduEAES",
-            "DgoKQ1BSX1JlbmFtZRACYgZwcm90bzM="));
+            "ASgFEh4KBWl0ZW1zGAQgAygLMg8uUHJvdG8uSXRlbURhdGEiHwoKVGVhbU1l",
+            "bWJlchIRCgltZW1iZXJfc24YASABKAQiMwoLUmVxSm9pblRlYW0SEQoJYXBw",
+            "bGljYW50GAEgASgEEhEKCXJlc3BvbmRlchgCIAEoBCJmCgtKb2luVGVhbVJl",
+            "cxINCgVhZ3JlZRgBIAEoCBIRCglhcHBsaWNhbnQYAiABKAQSEQoJcmVzcG9u",
+            "ZGVyGAMgASgEEiIKB21lbWJlcnMYBCADKAsyES5Qcm90by5UZWFtTWVtYmVy",
+            "KngKB1RhZ1R5cGUSDwoLVGFnVHlwZU5vbmUQABISCg5UYWdUeXBlQWNjb3Vu",
+            "dBABEg4KClRhZ1R5cGVBcHAQAhIRCg1UYWdUeXBlRW50aXR5EAMSEgoOVGFn",
+            "VHlwZVRvV29ybGQQBBIRCg1UYWdUeXBlUGxheWVyEAUqmgEKFkFjY291bnRD",
+            "aGVja1JldHVybkNvZGUSCgoGQVJDX09LEAASDwoLQVJDX1VOS09OV04QARIZ",
+            "ChVBUkNfTk9UX0ZPVU5EX0FDQ09VTlQQAhIWChJBUkNfUEFTU1dPUkRfV1JP",
+            "TkcQAxIPCgtBUkNfTE9HR0lORxAEEg8KC0FSQ19USU1FT1VUEAUSDgoKQVJD",
+            "X09OTElORRAGKkcKE0xvZ2luSHR0cFJldHVybkNvZGUSCwoHTEhSQ19PSxAA",
+            "EhAKDExIUkNfVElNRU9VVBABEhEKDUxIUkNfTk9URk9VTkQQAipMChZDcmVh",
+            "dGVQbGF5ZXJSZXR1cm5Db2RlEhEKDUNQUl9DcmVhdGVfT0sQABIPCgtDUFJf",
+            "VW5rb253bhABEg4KCkNQUl9SZW5hbWUQAmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Proto.DbReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.TagType), typeof(global::Proto.AccountCheckReturnCode), typeof(global::Proto.LoginHttpReturnCode), typeof(global::Proto.CreatePlayerReturnCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -229,7 +233,10 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ReqLinkPlayer), global::Proto.ReqLinkPlayer.Parser, new[]{ "NpcId", "NpcSn", "Linker" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.NpcAtkEvent), global::Proto.NpcAtkEvent.Parser, new[]{ "NpcSn", "TargetSn" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerAtkEvent), global::Proto.PlayerAtkEvent.Parser, new[]{ "PlayerSn", "TargetSn" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.DropItemList), global::Proto.DropItemList.Parser, new[]{ "NpcSn", "Exp", "Gold", "Items" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.DropItemList), global::Proto.DropItemList.Parser, new[]{ "NpcSn", "Exp", "Gold", "Items" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.TeamMember), global::Proto.TeamMember.Parser, new[]{ "MemberSn" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ReqJoinTeam), global::Proto.ReqJoinTeam.Parser, new[]{ "Applicant", "Responder" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.JoinTeamRes), global::Proto.JoinTeamRes.Parser, new[]{ "Agree", "Applicant", "Responder", "Members" }, null, null, null, null)
           }));
     }
     #endregion
@@ -12435,6 +12442,497 @@ namespace Proto {
           }
           case 34: {
             items_.AddEntriesFrom(input, _repeated_items_codec);
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class TeamMember : pb::IMessage<TeamMember> {
+    private static readonly pb::MessageParser<TeamMember> _parser = new pb::MessageParser<TeamMember>(() => new TeamMember());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<TeamMember> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.MsgReflection.Descriptor.MessageTypes[74]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public TeamMember() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public TeamMember(TeamMember other) : this() {
+      memberSn_ = other.memberSn_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public TeamMember Clone() {
+      return new TeamMember(this);
+    }
+
+    /// <summary>Field number for the "member_sn" field.</summary>
+    public const int MemberSnFieldNumber = 1;
+    private ulong memberSn_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong MemberSn {
+      get { return memberSn_; }
+      set {
+        memberSn_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as TeamMember);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(TeamMember other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (MemberSn != other.MemberSn) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (MemberSn != 0UL) hash ^= MemberSn.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (MemberSn != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(MemberSn);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (MemberSn != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(MemberSn);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(TeamMember other) {
+      if (other == null) {
+        return;
+      }
+      if (other.MemberSn != 0UL) {
+        MemberSn = other.MemberSn;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            MemberSn = input.ReadUInt64();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class ReqJoinTeam : pb::IMessage<ReqJoinTeam> {
+    private static readonly pb::MessageParser<ReqJoinTeam> _parser = new pb::MessageParser<ReqJoinTeam>(() => new ReqJoinTeam());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<ReqJoinTeam> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.MsgReflection.Descriptor.MessageTypes[75]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ReqJoinTeam() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ReqJoinTeam(ReqJoinTeam other) : this() {
+      applicant_ = other.applicant_;
+      responder_ = other.responder_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ReqJoinTeam Clone() {
+      return new ReqJoinTeam(this);
+    }
+
+    /// <summary>Field number for the "applicant" field.</summary>
+    public const int ApplicantFieldNumber = 1;
+    private ulong applicant_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong Applicant {
+      get { return applicant_; }
+      set {
+        applicant_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "responder" field.</summary>
+    public const int ResponderFieldNumber = 2;
+    private ulong responder_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong Responder {
+      get { return responder_; }
+      set {
+        responder_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as ReqJoinTeam);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(ReqJoinTeam other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Applicant != other.Applicant) return false;
+      if (Responder != other.Responder) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Applicant != 0UL) hash ^= Applicant.GetHashCode();
+      if (Responder != 0UL) hash ^= Responder.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Applicant != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(Applicant);
+      }
+      if (Responder != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Responder);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Applicant != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Applicant);
+      }
+      if (Responder != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Responder);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(ReqJoinTeam other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Applicant != 0UL) {
+        Applicant = other.Applicant;
+      }
+      if (other.Responder != 0UL) {
+        Responder = other.Responder;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Applicant = input.ReadUInt64();
+            break;
+          }
+          case 16: {
+            Responder = input.ReadUInt64();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class JoinTeamRes : pb::IMessage<JoinTeamRes> {
+    private static readonly pb::MessageParser<JoinTeamRes> _parser = new pb::MessageParser<JoinTeamRes>(() => new JoinTeamRes());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<JoinTeamRes> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.MsgReflection.Descriptor.MessageTypes[76]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public JoinTeamRes() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public JoinTeamRes(JoinTeamRes other) : this() {
+      agree_ = other.agree_;
+      applicant_ = other.applicant_;
+      responder_ = other.responder_;
+      members_ = other.members_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public JoinTeamRes Clone() {
+      return new JoinTeamRes(this);
+    }
+
+    /// <summary>Field number for the "agree" field.</summary>
+    public const int AgreeFieldNumber = 1;
+    private bool agree_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Agree {
+      get { return agree_; }
+      set {
+        agree_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "applicant" field.</summary>
+    public const int ApplicantFieldNumber = 2;
+    private ulong applicant_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong Applicant {
+      get { return applicant_; }
+      set {
+        applicant_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "responder" field.</summary>
+    public const int ResponderFieldNumber = 3;
+    private ulong responder_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong Responder {
+      get { return responder_; }
+      set {
+        responder_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "members" field.</summary>
+    public const int MembersFieldNumber = 4;
+    private static readonly pb::FieldCodec<global::Proto.TeamMember> _repeated_members_codec
+        = pb::FieldCodec.ForMessage(34, global::Proto.TeamMember.Parser);
+    private readonly pbc::RepeatedField<global::Proto.TeamMember> members_ = new pbc::RepeatedField<global::Proto.TeamMember>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<global::Proto.TeamMember> Members {
+      get { return members_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as JoinTeamRes);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(JoinTeamRes other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Agree != other.Agree) return false;
+      if (Applicant != other.Applicant) return false;
+      if (Responder != other.Responder) return false;
+      if(!members_.Equals(other.members_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Agree != false) hash ^= Agree.GetHashCode();
+      if (Applicant != 0UL) hash ^= Applicant.GetHashCode();
+      if (Responder != 0UL) hash ^= Responder.GetHashCode();
+      hash ^= members_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Agree != false) {
+        output.WriteRawTag(8);
+        output.WriteBool(Agree);
+      }
+      if (Applicant != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Applicant);
+      }
+      if (Responder != 0UL) {
+        output.WriteRawTag(24);
+        output.WriteUInt64(Responder);
+      }
+      members_.WriteTo(output, _repeated_members_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Agree != false) {
+        size += 1 + 1;
+      }
+      if (Applicant != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Applicant);
+      }
+      if (Responder != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Responder);
+      }
+      size += members_.CalculateSize(_repeated_members_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(JoinTeamRes other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Agree != false) {
+        Agree = other.Agree;
+      }
+      if (other.Applicant != 0UL) {
+        Applicant = other.Applicant;
+      }
+      if (other.Responder != 0UL) {
+        Responder = other.Responder;
+      }
+      members_.Add(other.members_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Agree = input.ReadBool();
+            break;
+          }
+          case 16: {
+            Applicant = input.ReadUInt64();
+            break;
+          }
+          case 24: {
+            Responder = input.ReadUInt64();
+            break;
+          }
+          case 34: {
+            members_.AddEntriesFrom(input, _repeated_members_codec);
             break;
           }
         }
