@@ -1,5 +1,6 @@
 using Control;
 using Manage;
+using UnityEngine;
 
 namespace Items
 {
@@ -26,13 +27,14 @@ namespace Items
 
         public void OpenDoor(PlayerController player)
         {
-            player.agent.enabled = false;
             player.gameObject.SetActive(false);
             Proto.EnterWorld proto = new()
             {
                 WorldId = worldId,
                 Position = null
             };
+            foreach (ulong sn in player.team)
+                proto.Team.Add(sn);
             NetManager.Instance.SendPacket(Proto.MsgId.C2GEnterWorld, proto);
         }
     }

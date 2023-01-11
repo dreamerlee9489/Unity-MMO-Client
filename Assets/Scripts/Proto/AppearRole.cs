@@ -34,21 +34,21 @@ namespace Proto
             if (sn != GameManager.Instance.MainPlayer.Sn)
             {
                 string path = gender == Gender.Male ? "Entity/Player/Player_Knight" : "Entity/Player/Player_Warrior";
-                ResourceManager.Instance.LoadAsync<GameObject>(path, (obj) =>
+                ResourceManager.Instance.LoadAsync<GameObject>(path, (objec) =>
                 {
-                    this.obj = Object.Instantiate(obj).GetComponent<PlayerController>();
-                    this.obj.Sn = sn;
-                    this.obj.lv = lv;
-                    this.obj.xp = xp;
-                    this.obj.hp = hp;
-                    this.obj.mp = mp;
-                    this.obj.atk = atk;
-                    this.obj.def = def;
-                    this.obj.name = "Sync_" + name;
-                    this.obj.SetNameBar(name);
-                    this.obj.gameObject.SetActive(false);
-                    this.obj.transform.SetPositionAndRotation(position, Quaternion.identity);
-                    this.obj.gameObject.SetActive(true);
+                    obj = Object.Instantiate(objec).GetComponent<PlayerController>();
+                    obj.Sn = sn;
+                    obj.lv = lv;
+                    obj.xp = xp;
+                    obj.hp = hp;
+                    obj.mp = mp;
+                    obj.atk = atk;
+                    obj.def = def;
+                    obj.SetNameBar(name);
+                    obj.name = "Sync_" + name;
+                    obj.gameObject.SetActive(false);
+                    obj.transform.position = position;
+                    obj.gameObject.SetActive(true);                   
                 });
             }
             else
@@ -61,8 +61,10 @@ namespace Proto
                 obj.mp = mp;
                 obj.atk = atk;
                 obj.def = def;
+                obj.SetNameBar(name);
                 obj.name = "MainPlayer";
-                obj.agent.enabled = true;
+                obj.gameObject.SetActive(false);
+                obj.transform.position = position;
                 obj.gameObject.SetActive(true);
                 UIManager.Instance.GetPanel<PropPanel>().InitPanel();
                 GameManager.Instance.VirtualCam.transform.position = position + new Vector3(0, 6, -8);

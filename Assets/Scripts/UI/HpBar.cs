@@ -26,9 +26,12 @@ namespace UI
 
         public void UpdateHp(int curHp, int maxHp)
         {
-            timeSpan = 0;
-            gameObject.SetActive(true);
-            _fore.transform.localScale = new Vector3(curHp * 1.0f / maxHp, 1, 1);
+            if(curHp <= maxHp)
+            {
+                timeSpan = 0;
+                gameObject.SetActive(true);
+                _fore.transform.localScale = new Vector3(curHp * 1.0f / maxHp, 1, 1);
+            }
         }
     }
 }

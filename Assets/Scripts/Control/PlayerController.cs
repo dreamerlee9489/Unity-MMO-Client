@@ -14,7 +14,6 @@ namespace Control
     {
         private readonly Proto.Vector3D _curPos = new();
         private readonly Proto.Vector3D _hitPos = new();
-        private readonly CancellationTokenSource _tokenSource = new();
 
         private RaycastHit _hit;
         private ICommand _cmd;
@@ -24,9 +23,20 @@ namespace Control
         public int xp = 0, gold = 0;
         public PlayerBaseData baseData;
         public WorldManager currWorld;
+        public CancellationTokenSource tokenSource = new();
         public List<ulong> team = new();
 
-        protected override void Awake() => base.Awake();
+        protected override void Awake()
+        {
+            base.Awake();
+            EventManager.Instance.AddListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+        }
+
+        private void OnEnable()
+        {
+            if (Sn == GameManager.Instance.MainPlayer.Sn)
+                Task.Run(SyncPosTask, (tokenSource = new()).Token);
+        }
 
         private void Start()
         {
@@ -35,15 +45,14 @@ namespace Control
             baseData = GameManager.Instance.PlayerBaseDatas[lv];
             if (Sn == GameManager.Instance.MainPlayer.Sn)
             {
-                gameObject.layer = 2;
-                team.Add(Sn);
                 _knapsack = transform.Find("Knapsack");
                 _handPos = transform.Find("HandPos");
                 nameBar.HpBar.gameObject.SetActive(false);
                 PoolManager.Instance.LoadPush(PoolType.HUDPanel, "UI/Panel/HUDPanel", 4);
                 hudPanel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.hudGroup).GetComponent<HUDPanel>();
                 hudPanel.InitPanel(currWorld.roleDict[Sn]);
-                Task.Run(SyncStateTask);
+                gameObject.layer = 2;
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SGetPlayerKnap, null);
             }
         }
 
@@ -113,21 +122,34 @@ namespace Control
             }
         }
 
-        private void OnApplicationQuit()
+        private void OnDisable()
         {
-            _tokenSource.Cancel();
-            MonoManager.Instance.StopAllCoroutines();
+            if (Sn == GameManager.Instance.MainPlayer.Sn)
+                tokenSource.Cancel();
         }
 
-        private void SyncStateTask()
+        private void OnDestroy()
         {
-            Thread.Sleep(500);
-            NetManager.Instance.SendPacket(Proto.MsgId.C2SGetPlayerKnap, null);
-            while (!_tokenSource.IsCancellationRequested)
+            EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+        }
+
+        private void PlayerLoadedCallback()
+        {
+            if (Sn != GameManager.Instance.MainPlayer.Sn)
+            {
+                Proto.ReqSyncPlayer proto = new() { PlayerSn = Sn };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SReqSyncPlayer, proto);
+            }
+        }
+
+        private void SyncPosTask()
+        {
+            Thread.Sleep(1000);
+            while (!tokenSource.IsCancellationRequested)
             {
                 Proto.SyncPlayerPos syncPos = new() { Pos = _curPos };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerPos, syncPos);
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
             }
         }
 
@@ -169,12 +191,6 @@ namespace Control
                 default:
                     break;
             }
-        }
-
-        public void ResetCmd()
-        {
-            Proto.SyncPlayerCmd proto = new() { Type = 0, PlayerSn = Sn, TargetSn = 0, Point = null };
-            NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerCmd, proto);
         }
 
         public int AddItemToBag(GameItem item, int index = 0)
@@ -251,7 +267,8 @@ namespace Control
         public void Move(Vector3 point)
         {
             agent.destination = point;
-            _cmd = null;
+            if(Vector3.Distance(transform.position, point) <= agent.stoppingDistance)
+                _cmd = null;
         }
 
         public void UnMove()
@@ -293,7 +310,7 @@ namespace Control
         public void Teleport(Transform portal)
         {
             agent.destination = portal.position;
-            if (Vector3.Distance(transform.position, portal.position) <= agent.stoppingDistance)
+            if (Sn == GameManager.Instance.MainPlayer.Sn && Vector3.Distance(transform.position, portal.position) <= agent.stoppingDistance)
             {
                 portal.GetComponent<Portal>().OpenDoor(this);
                 _cmd = null;
@@ -329,6 +346,8 @@ namespace Control
             string text = $"玩家[{currWorld.roleDict[proto.Applicant].name}]申请入队，是否同意？";
             UIManager.Instance.GetPanel<PopupPanel>().Open(text, () =>
             {
+                if (team.Count == 0)
+                    team.Add(Sn);
                 team.Add(proto.Applicant);
                 hudPanel.teamTxt.text = "队长";
                 HUDPanel panel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.hudGroup).GetComponent<HUDPanel>();
@@ -340,11 +359,7 @@ namespace Control
                     Responder = Sn,
                     Agree = true
                 };
-                foreach (ulong currSn in team)
-                    joinRes.Members.Add(new Proto.TeamMember() { MemberSn = currSn });
-                foreach (ulong currSn in team)
-                    if (currSn != Sn)
-                        NetManager.Instance.SendPacket(Proto.MsgId.C2CJoinTeamRes, joinRes);
+                NetManager.Instance.SendPacket(Proto.MsgId.C2CJoinTeamRes, joinRes);                        
             }, () =>
             {
                 Proto.JoinTeamRes joinRes = new()

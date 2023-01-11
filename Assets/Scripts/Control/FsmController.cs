@@ -10,8 +10,8 @@ namespace Control
 {
     public class FsmController : GameEntity
     {
+        private CancellationTokenSource _tokenSource = new();
         private readonly Proto.Vector3D _pos = new();
-        private readonly CancellationTokenSource _tokenSource = new();
 
         public int id = 0;
         public int initHp = 0;
@@ -22,7 +22,8 @@ namespace Control
         {
             base.Awake();
             agent.speed = runSpeed;
-        }       
+            EventManager.Instance.AddListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+        }
 
         protected override void Update()
         {
@@ -35,13 +36,24 @@ namespace Control
 
         private void OnDisable()
         {
-            if(patrolPath != null)
+            _tokenSource.Cancel();
+            if (patrolPath != null)
                 PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
         }
 
         private void OnDestroy()
         {
-            _tokenSource.Cancel();
+            EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+        }
+
+        private void PlayerLoadedCallback()
+        {
+            Proto.ReqSyncNpc proto = new()
+            {
+                NpcId = id,
+                NpcSn = Sn
+            };
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SReqSyncNpc, proto);
         }
 
         private void PushPosTask()
@@ -54,7 +66,7 @@ namespace Control
                     Pos = _pos
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncNpcPos, proto);
-                Thread.Sleep(100);
+                Thread.Sleep(200);
             }
         }
 
@@ -75,7 +87,7 @@ namespace Control
         public void LinkPlayer(bool linker)
         {
             if (linker)
-                Task.Run(PushPosTask);
+                Task.Run(PushPosTask, (_tokenSource = new()).Token);
             else
                 _tokenSource.Cancel();
         }

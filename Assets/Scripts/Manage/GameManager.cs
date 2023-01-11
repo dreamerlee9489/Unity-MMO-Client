@@ -1,6 +1,6 @@
 ﻿using Cinemachine;
 using Items;
-using Proto;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UI;
@@ -28,16 +28,16 @@ namespace Manage
     public class GameManager : MonoSingleton<GameManager>
     {
         private UIManager _canvas;
-        private AccountInfo _accountInfo;
-        private PlayerInfo _player;
+        private Proto.AccountInfo _accountInfo;
+        private Proto.PlayerInfo _player;
         private CinemachineVirtualCamera _virtualCam;
         private WorldManager _currWorld;
         private List<PlayerBaseData> _playerBaseDatas;
         private Dictionary<string, List<string>> _dropPotionDict, _dropWeaponDict;
 
         public UIManager Canvas => _canvas;
-        public AccountInfo AccountInfo => _accountInfo;
-        public PlayerInfo MainPlayer => _player;
+        public Proto.AccountInfo AccountInfo => _accountInfo;
+        public Proto.PlayerInfo MainPlayer => _player;
         public CinemachineVirtualCamera VirtualCam => _virtualCam;
         public WorldManager CurrWorld => _currWorld;
 
@@ -53,12 +53,24 @@ namespace Manage
             ParsePlayerBaseCsv();
             ParseItemPotionsCsv();
             ParseItemWeaponsCsv();
-            MsgManager.Instance.RegistMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
-            MsgManager.Instance.RegistMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqSyncNpc, ReqSyncNpcHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncNpcPos, SyncNpcPosHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqJoinTeam, ReqJoinTeamHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CJoinTeamRes, JoinTeamResHandler);
             PoolManager.Instance.LoadPush(PoolType.RoleToggle, "UI/RoleToggle", 20);
             PoolManager.Instance.LoadPush(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
-        }
+        }       
 
         private void Start()
         {
@@ -70,9 +82,21 @@ namespace Manage
         {
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            MsgManager.Instance.RemoveMsgHandler(MsgId.L2CPlayerList, PlayerListHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.G2CSyncPlayer, SyncPlayerHandler);
-            MsgManager.Instance.RemoveMsgHandler(MsgId.S2CEnterWorld, EnterWorldHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqSyncNpc, ReqSyncNpcHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncNpcPos, SyncNpcPosHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqJoinTeam, ReqJoinTeamHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CJoinTeamRes, JoinTeamResHandler);
         }
 
         private void OnSceneUnloaded(Scene scene)
@@ -85,19 +109,28 @@ namespace Manage
         {
             _currWorld = FindObjectOfType<WorldManager>();
             MainPlayer.Obj.currWorld = _currWorld;
-        }       
+        }
+
+        private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncPlayer proto)
+            {
+                _player ??= new Proto.PlayerInfo();
+                _player.LoadMainPlayer(proto.Player);
+            }
+        }
 
         private void PlayerListHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is PlayerList proto)
+            if (msg is Proto.PlayerList proto)
             {
-                _accountInfo ??= new AccountInfo();
+                _accountInfo ??= new Proto.AccountInfo();
                 _accountInfo.ParseProto(proto);
                 if (_accountInfo.Players.Count == 0)
-                    Canvas.GetPanel<CreatePanel>().Open();
+                    _canvas.GetPanel<CreatePanel>().Open();
                 else
                 {
-                    Transform content = Canvas.GetPanel<RolesPanel>().RolesRect.content;
+                    Transform content = _canvas.GetPanel<RolesPanel>().RolesRect.content;
                     for (int i = 0; i < _accountInfo.Players.Count; i++)
                     {
                         RoleToggle roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
@@ -105,28 +138,91 @@ namespace Manage
                         roleToggle.Level.text = "Lv " + _accountInfo.Players[i].Level;
                         roleToggle.Id = _accountInfo.Players[i].Id;
                     }
-                    Canvas.GetPanel<RolesPanel>().Open();
+                    _canvas.GetPanel<RolesPanel>().Open();
                 }
             }
         }
 
         private void EnterWorldHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is EnterWorld proto && proto.WorldId > 2)
+            if (msg is Proto.EnterWorld proto && proto.WorldId > 2)
             {
                 _canvas.GetPanel<StartPanel>().Close();
-                SceneManager.LoadScene(proto.WorldId - 2, LoadSceneMode.Single);
+                SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
                 MainPlayer.Obj.transform.position = new(proto.Position.X, proto.Position.Y, proto.Position.Z);
             }
         }
 
-        private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
+        private void AllRoleAppearHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is SyncPlayer proto)
-            {
-                _player ??= new PlayerInfo();
-                _player.LoadPlayer(proto.Player);
-            }
+            if (msg is Proto.AllRoleAppear proto)
+                _currWorld.ParseAllRoleAppear(proto);
+        }
+
+        private void RoleDisappearHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.RoleDisappear proto)
+                _currWorld.ParseRoleDisappear(proto);
+        }
+
+        private void JoinTeamResHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.JoinTeamRes proto)
+                _currWorld.ParseJoinTeamRes(proto);
+        }
+
+        private void ReqJoinTeamHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.ReqJoinTeam proto)
+                _currWorld.ParseReqJoinTeam(proto);
+        }
+
+        private void PlayerKnapHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.PlayerKnap proto)
+                MainPlayer.Obj.ParsePlayerKnap(proto);
+        }
+
+        private void DropItemListHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.DropItemList proto)
+                _currWorld.ParseDropItemList(proto);
+        }
+
+        private void ReqLinkPlayerHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.ReqLinkPlayer proto)
+                _currWorld.ParseReqLinkPlayer(proto);
+        }
+
+        private void SyncPlayerCmdHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncPlayerCmd proto)
+                _currWorld.ParseSyncPlayerCmd(proto);
+        }
+
+        private void SyncFsmStateHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncFsmState proto)
+                _currWorld.ParseSyncFsmState(proto);
+        }
+
+        private void SyncNpcPosHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncNpcPos proto)
+                _currWorld.ParseSyncNpcPos(proto);
+        }
+
+        private void ReqSyncNpcHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.ReqSyncNpc proto)
+                _currWorld.ParseReqSyncNpc(proto);
+        }
+
+        private void SyncEntityStatusHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncEntityStatus proto)
+                _currWorld.ParseSyncEntityStatus(proto);
         }
 
         private void ParsePlayerBaseCsv()

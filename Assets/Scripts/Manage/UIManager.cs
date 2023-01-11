@@ -60,14 +60,11 @@ namespace Manage
 
         public IEnumerator FadeAlpha()
         {
-            _cutImage.alpha = 1.0f;
+            _cutImage.alpha = 1f;
             yield return new WaitForSeconds(1f);
-            WaitForSeconds sleep = new(0.02f);
-            while (_cutImage.alpha > 0)
-            {
-                _cutImage.alpha -= 0.01f;
-                yield return sleep;
-            }
+            EventManager.Instance.Invoke(EEventType.PlayerLoaded);
+            yield return new WaitForSeconds(1f);
+            _cutImage.alpha = 0f;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Control;
 using Control.FSM;
 using Items;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -9,7 +10,6 @@ namespace Manage
 {
     public class WorldManager : MonoBehaviour
     {
-        private PropPanel _propPanel;
         private List<FsmController> _npcs = new();
 
         public string fileName = "";
@@ -17,25 +17,8 @@ namespace Manage
         public Dictionary<ulong, FsmController> npcDict = new();
         public Dictionary<ulong, Proto.AppearRole> roleDict = new();
 
-        private void Awake()
-        {
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqSyncNpc, ReqSyncNpcHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncNpcPos, SyncNpcPosHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqJoinTeam, ReqJoinTeamHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CJoinTeamRes, JoinTeamResHandler);
-        }
-
         private void Start()
         {
-            _propPanel = UIManager.Instance.GetPanel<PropPanel>();
             fileName = $"{Application.streamingAssetsPath}/CSV/{fileName}.csv";
             using StreamReader reader = File.OpenText(fileName);
             reader.ReadLine();
@@ -60,95 +43,70 @@ namespace Manage
                     npcObj.patrolPath.transform.position = npcObj.transform.position;
                     npcObj.gameObject.SetActive(true);
                     _npcs.Add(npcObj);
-                    Proto.ReqSyncNpc proto = new()
-                    {
-                        NpcId = npcObj.id,
-                        NpcSn = 0
-                    };
-                    NetManager.Instance.SendPacket(Proto.MsgId.C2SReqSyncNpc, proto);
                 });
             }
         }
 
         private void OnDestroy()
         {
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqSyncNpc, ReqSyncNpcHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncNpcPos, SyncNpcPosHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqJoinTeam, ReqJoinTeamHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CJoinTeamRes, JoinTeamResHandler);
+            _npcs.Clear();
+            npcDict.Clear();
+            itemDict.Clear();
+            roleDict.Clear();
+            GC.Collect();
         }
 
-        private void AllRoleAppearHandler(Google.Protobuf.IMessage msg)
+        public void ParseAllRoleAppear(Proto.AllRoleAppear proto)
         {
-            if (msg is Proto.AllRoleAppear proto)
+            foreach (Proto.Role role in proto.Roles)
             {
-                foreach (Proto.Role role in proto.Roles)
+                ulong sn = role.Sn;
+                if (roleDict.ContainsKey(sn))
+                    roleDict[sn].Parse(role);
+                else
                 {
-                    ulong sn = role.Sn;
-                    if (roleDict.ContainsKey(sn))
-                        roleDict[sn].Parse(role);
-                    else
-                    {
-                        Proto.AppearRole appearRole = new();
-                        appearRole.Parse(role);
-                        appearRole.LoadRole(role);
-                        roleDict.Add(sn, appearRole);
-                    }
+                    Proto.AppearRole appearRole = new();
+                    appearRole.Parse(role);
+                    appearRole.LoadRole(role);
+                    roleDict.TryAdd(sn, appearRole);
                 }
             }
         }
 
-        private void RoleDisappearHandler(Google.Protobuf.IMessage msg)
+        public void ParseRoleDisappear(Proto.RoleDisappear proto)
         {
-            if (msg is Proto.RoleDisappear proto)
+            ulong playSn = proto.Sn;
+            if (roleDict.ContainsKey(playSn) && roleDict[playSn] != null)
             {
-                ulong playSn = proto.Sn;
-                if (roleDict.ContainsKey(playSn))
-                {
-                    foreach (var enemy in _npcs)
-                        if (enemy.currState.Target == roleDict[playSn].obj)
-                            enemy.ResetState();
-                    Destroy(roleDict[playSn].obj);
-                    roleDict.Remove(playSn);
-                }
+                foreach (var enemy in _npcs)
+                    if (enemy.currState.Target == roleDict[playSn].obj)
+                        enemy.ResetState();
+                Destroy(roleDict[playSn].obj.gameObject);
+                roleDict.Remove(playSn);
             }
         }
 
-        private void SyncEntityStatusHandler(Google.Protobuf.IMessage msg)
+        public void ParseSyncEntityStatus(Proto.SyncEntityStatus proto)
         {
-            if (msg is Proto.SyncEntityStatus proto)
+            if (npcDict.ContainsKey(proto.Sn) && npcDict[proto.Sn] != null)
+                npcDict[proto.Sn].ParseStatus(proto);
+            else if (roleDict.ContainsKey(proto.Sn))
+                roleDict[proto.Sn].obj.ParseStatus(proto);
+        }
+
+        public void ParseSyncPlayerCmd(Proto.SyncPlayerCmd proto)
+        {
+            if (roleDict.ContainsKey(proto.PlayerSn))
             {
-                if (npcDict.ContainsKey(proto.Sn))
-                    npcDict[proto.Sn].ParseStatus(proto);
-                else if (roleDict.ContainsKey(proto.Sn))
-                    roleDict[proto.Sn].obj.ParseStatus(proto);
+                Proto.AppearRole player = roleDict[proto.PlayerSn];
+                if (player.obj != null)
+                    player.obj.ParseCmd(proto);
             }
         }
 
-        private void SyncPlayerCmdHandler(Google.Protobuf.IMessage msg)
+        public void ParseReqSyncNpc(Proto.ReqSyncNpc proto)
         {
-            if (msg is Proto.SyncPlayerCmd proto)
-            {
-                if (roleDict.ContainsKey(proto.PlayerSn))
-                {
-                    Proto.AppearRole player = roleDict[proto.PlayerSn];
-                    if (player.obj != null)
-                        player.obj.ParseCmd(proto);
-                }
-            }
-        }
-
-        private void ReqSyncNpcHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.ReqSyncNpc proto)
+            if (_npcs.Count > 0)
             {
                 _npcs[proto.NpcId].Sn = proto.NpcSn;
                 if (_npcs[proto.NpcId] != null)
@@ -156,60 +114,45 @@ namespace Manage
             }
         }
 
-        private void SyncNpcPosHandler(Google.Protobuf.IMessage msg)
+        public void ParseSyncNpcPos(Proto.SyncNpcPos proto)
         {
-            if (msg is Proto.SyncNpcPos proto)
-                if(npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
-                    npcDict[proto.NpcSn].ParsePos(proto.Pos);
+            if(npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
+                npcDict[proto.NpcSn].ParsePos(proto.Pos);
         }
 
-        private void SyncFsmStateHandler(Google.Protobuf.IMessage msg)
+        public void ParseSyncFsmState(Proto.SyncFsmState proto)
         {
-            if (msg is Proto.SyncFsmState proto)
-            {
-                PlayerController target = null;
-                if (roleDict.ContainsKey(proto.PlayerSn))
-                    target = roleDict[proto.PlayerSn].obj;
-                if (npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
-                    npcDict[proto.NpcSn].ParseFsmState((StateType)proto.State, proto.Code, target);
-            }
+            PlayerController target = null;
+            if (roleDict.ContainsKey(proto.PlayerSn))
+                target = roleDict[proto.PlayerSn].obj;
+            if (npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
+                npcDict[proto.NpcSn].ParseFsmState((StateType)proto.State, proto.Code, target);
         }
 
-        private void ReqLinkPlayerHandler(Google.Protobuf.IMessage msg)
+        public void ParseReqLinkPlayer(Proto.ReqLinkPlayer proto)
         {
-            if (msg is Proto.ReqLinkPlayer proto)
-            {
-                if (!npcDict.ContainsKey(proto.NpcSn) && _npcs.Count > 0)
-                    npcDict.TryAdd(proto.NpcSn, _npcs[proto.NpcId]);
-                if (npcDict.ContainsKey(proto.NpcSn))
-                    npcDict[proto.NpcSn].LinkPlayer(proto.Linker);
-            }
+            if (!npcDict.ContainsKey(proto.NpcSn) && _npcs.Count > 0)
+                npcDict.TryAdd(proto.NpcSn, _npcs[proto.NpcId]);
+            if (npcDict.ContainsKey(proto.NpcSn))
+                npcDict[proto.NpcSn].LinkPlayer(proto.Linker);
         }
 
-        private void DropItemListHandler(Google.Protobuf.IMessage msg)
+        public void ParseDropItemList(Proto.DropItemList proto)
         {
-            if (msg is Proto.DropItemList proto)
+            if (npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
                 npcDict[proto.NpcSn].DropItems(proto);
         }
 
-        private void PlayerKnapHandler(Google.Protobuf.IMessage msg)
+        public void ParseReqJoinTeam(Proto.ReqJoinTeam proto)
         {
-            if (msg is Proto.PlayerKnap proto)
-                GameManager.Instance.MainPlayer.Obj.ParsePlayerKnap(proto);
+            if (GameManager.Instance.MainPlayer.Sn == proto.Responder)
+                roleDict[proto.Responder].obj.ParseJoinTeam(proto);
         }
 
-        private void ReqJoinTeamHandler(Google.Protobuf.IMessage msg)
+        public void ParseJoinTeamRes(Proto.JoinTeamRes proto)
         {
-            if (msg is Proto.ReqJoinTeam proto)
-                if(GameManager.Instance.MainPlayer.Sn == proto.Responder)
-                    roleDict[proto.Responder].obj.ParseJoinTeam(proto);
-        }
-
-        private void JoinTeamResHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.JoinTeamRes proto)
-                if (GameManager.Instance.MainPlayer.Sn == proto.Applicant)
-                    roleDict[proto.Applicant].obj.ParseJoinTeamRes(proto);
+            if (GameManager.Instance.MainPlayer.Sn == proto.Applicant)
+                roleDict[proto.Applicant].obj.ParseJoinTeamRes(proto);
         }
     }
 }

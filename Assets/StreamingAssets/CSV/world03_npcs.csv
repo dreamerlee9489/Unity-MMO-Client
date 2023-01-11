@@ -1,4 +1,2 @@
 EnemyID,ResName,Level,InitHp,InitAtk,InitPos,Name
 0,Enemy_Soldier_01,1,100,10,(-15;0;15),巡逻守卫
-1,Enemy_Soldier_01,1,100,10,(-15;0;25),巡逻守卫
-2,Enemy_Soldier_01,1,100,10,(-20;0;20),巡逻守卫

@@ -282,6 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36bbca4cb30e2db40a312e2dd0626f23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldName: world03
   fileName: world03_npcs
 --- !u!1 &2050844190
 GameObject:
