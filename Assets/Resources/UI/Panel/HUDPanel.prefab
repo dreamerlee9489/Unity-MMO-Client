@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 5181253615164700565}
   - component: {fileID: 5181253615164700566}
   m_Layer: 5
-  m_Name: TeamText
+  m_Name: WorkText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -490,7 +490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameTxt: {fileID: 0}
-  teamTxt: {fileID: 0}
+  workTxt: {fileID: 0}
   player: {fileID: 0}
 --- !u!1 &5181253615907903248
 GameObject:

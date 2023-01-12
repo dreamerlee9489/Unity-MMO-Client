@@ -101,9 +101,9 @@ namespace Control
 
         public void DropItems(Proto.DropItemList itemList)
         {
-            var player = GameManager.Instance.MainPlayer.Obj;
-            var potionDict = GameManager.Instance.DropPotionDict;
-            var weaponDict = GameManager.Instance.DropWeaponDict;
+            var player = GameManager.Instance.mainPlayer.Obj;
+            var potionDict = GameManager.Instance.dropPotionDict;
+            var weaponDict = GameManager.Instance.dropWeaponDict;
             player.xp += itemList.Exp;
             player.gold += itemList.Gold;
             UIManager.Instance.GetPanel<PropPanel>().UpdateXp(player.xp);
@@ -125,7 +125,7 @@ namespace Control
                             potion.ObjName = potionDict[key1][0];
                             potion.SetNameBar(potionDict[key1][1]);
                             potion.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
-                            GameManager.Instance.CurrWorld.itemDict.Add(data.Sn, potion);
+                            GameManager.currWorld.itemDict.Add(data.Sn, potion);
                         });
                         break;
                     case Proto.ItemData.Types.ItemType.Weapon:
@@ -139,7 +139,7 @@ namespace Control
                             weapon.ObjName = weaponDict[key2][0];
                             weapon.SetNameBar(weaponDict[key2][1]);
                             weapon.transform.position += transform.position + new Vector3(Random.Range(-1.0f, 1.0f), 0, Random.Range(-1.0f, 1.0f));
-                            GameManager.Instance.CurrWorld.itemDict.Add(data.Sn, weapon);
+                            GameManager.currWorld.itemDict.Add(data.Sn, weapon);
                         });
                         break;
                     default:

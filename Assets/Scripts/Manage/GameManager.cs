@@ -1,6 +1,6 @@
 ﻿using Cinemachine;
+using Control;
 using Items;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using UI;
@@ -25,31 +25,26 @@ namespace Manage
         }
     }
 
-    public class GameManager : MonoSingleton<GameManager>
+    public class GameManager : MonoBehaviour
     {
-        private UIManager _canvas;
-        private Proto.AccountInfo _accountInfo;
-        private Proto.PlayerInfo _player;
-        private CinemachineVirtualCamera _virtualCam;
-        private WorldManager _currWorld;
-        private List<PlayerBaseData> _playerBaseDatas;
-        private Dictionary<string, List<string>> _dropPotionDict, _dropWeaponDict;
+        public UIManager canvas;
+        public Proto.AccountInfo accountInfo;
+        public Proto.PlayerInfo mainPlayer;
+        public CinemachineVirtualCamera virtualCam;
+        public List<PlayerBaseData> playerBaseDatas;
+        public Dictionary<string, List<string>> dropPotionDict;
+        public Dictionary<string, List<string>> dropWeaponDict;
+        public static WorldManager currWorld;
 
-        public UIManager Canvas => _canvas;
-        public Proto.AccountInfo AccountInfo => _accountInfo;
-        public Proto.PlayerInfo MainPlayer => _player;
-        public CinemachineVirtualCamera VirtualCam => _virtualCam;
-        public WorldManager CurrWorld => _currWorld;
+        private static GameManager _instance;
+        public static GameManager Instance => _instance;
 
-        public List<PlayerBaseData> PlayerBaseDatas => _playerBaseDatas;
-        public Dictionary<string, List<string>> DropPotionDict => _dropPotionDict;
-        public Dictionary<string, List<string>> DropWeaponDict => _dropWeaponDict;
-
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
-            _canvas = GameObject.Find("UIManager").GetComponent<UIManager>();
-            _virtualCam = transform.GetChild(1).GetComponent<CinemachineVirtualCamera>();
+            _instance = this;
+            canvas = GameObject.Find("UIManager").GetComponent<UIManager>();
+            virtualCam = transform.GetChild(1).GetComponent<CinemachineVirtualCamera>();
+            DontDestroyOnLoad(gameObject);
             ParsePlayerBaseCsv();
             ParseItemPotionsCsv();
             ParseItemWeaponsCsv();
@@ -101,22 +96,22 @@ namespace Manage
 
         private void OnSceneUnloaded(Scene scene)
         {
-            _currWorld = null;
+            currWorld = null;
+            mainPlayer.Obj.ResetCmd();
             MonoManager.Instance.StartCoroutine(UIManager.Instance.FadeAlpha());
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            _currWorld = FindObjectOfType<WorldManager>();
-            MainPlayer.Obj.currWorld = _currWorld;
+            currWorld = FindObjectOfType<WorldManager>();
         }
 
         private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.SyncPlayer proto)
             {
-                _player ??= new Proto.PlayerInfo();
-                _player.LoadMainPlayer(proto.Player);
+                mainPlayer ??= new Proto.PlayerInfo();
+                mainPlayer.LoadMainPlayer(proto.Player);
             }
         }
 
@@ -124,21 +119,21 @@ namespace Manage
         {
             if (msg is Proto.PlayerList proto)
             {
-                _accountInfo ??= new Proto.AccountInfo();
-                _accountInfo.ParseProto(proto);
-                if (_accountInfo.Players.Count == 0)
-                    _canvas.GetPanel<CreatePanel>().Open();
+                accountInfo ??= new Proto.AccountInfo();
+                accountInfo.ParseProto(proto);
+                if (accountInfo.Players.Count == 0)
+                    canvas.GetPanel<CreatePanel>().Open();
                 else
                 {
-                    Transform content = _canvas.GetPanel<RolesPanel>().RolesRect.content;
-                    for (int i = 0; i < _accountInfo.Players.Count; i++)
+                    Transform content = canvas.GetPanel<RolesPanel>().RolesRect.content;
+                    for (int i = 0; i < accountInfo.Players.Count; i++)
                     {
                         RoleToggle roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
-                        roleToggle.Name.text = _accountInfo.Players[i].Name;
-                        roleToggle.Level.text = "Lv " + _accountInfo.Players[i].Level;
-                        roleToggle.Id = _accountInfo.Players[i].Id;
+                        roleToggle.Name.text = accountInfo.Players[i].Name;
+                        roleToggle.Level.text = "Lv " + accountInfo.Players[i].Level;
+                        roleToggle.Id = accountInfo.Players[i].Id;
                     }
-                    _canvas.GetPanel<RolesPanel>().Open();
+                    canvas.GetPanel<RolesPanel>().Open();
                 }
             }
         }
@@ -146,90 +141,90 @@ namespace Manage
         private void EnterWorldHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.EnterWorld proto && proto.WorldId > 2)
-            {
-                _canvas.GetPanel<StartPanel>().Close();
+            {                
+                canvas.GetPanel<StartPanel>().Close();
                 SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
-                MainPlayer.Obj.transform.position = new(proto.Position.X, proto.Position.Y, proto.Position.Z);
+                mainPlayer.Obj.transform.position = new(proto.Position.X, proto.Position.Y, proto.Position.Z);
             }
         }
 
         private void AllRoleAppearHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.AllRoleAppear proto)
-                _currWorld.ParseAllRoleAppear(proto);
+                currWorld.ParseAllRoleAppear(proto);
         }
 
         private void RoleDisappearHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.RoleDisappear proto)
-                _currWorld.ParseRoleDisappear(proto);
+                currWorld.ParseRoleDisappear(proto);
         }
 
         private void JoinTeamResHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.JoinTeamRes proto)
-                _currWorld.ParseJoinTeamRes(proto);
+                currWorld.ParseJoinTeamRes(proto);
         }
 
         private void ReqJoinTeamHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.ReqJoinTeam proto)
-                _currWorld.ParseReqJoinTeam(proto);
+                currWorld.ParseReqJoinTeam(proto);
         }
 
         private void PlayerKnapHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.PlayerKnap proto)
-                MainPlayer.Obj.ParsePlayerKnap(proto);
+                mainPlayer.Obj.ParsePlayerKnap(proto);
         }
 
         private void DropItemListHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.DropItemList proto)
-                _currWorld.ParseDropItemList(proto);
+                currWorld.ParseDropItemList(proto);
         }
 
         private void ReqLinkPlayerHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.ReqLinkPlayer proto)
-                _currWorld.ParseReqLinkPlayer(proto);
+                currWorld.ParseReqLinkPlayer(proto);
         }
 
         private void SyncPlayerCmdHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.SyncPlayerCmd proto)
-                _currWorld.ParseSyncPlayerCmd(proto);
+                currWorld.ParseSyncPlayerCmd(proto);
         }
 
         private void SyncFsmStateHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.SyncFsmState proto)
-                _currWorld.ParseSyncFsmState(proto);
+                currWorld.ParseSyncFsmState(proto);
         }
 
         private void SyncNpcPosHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.SyncNpcPos proto)
-                _currWorld.ParseSyncNpcPos(proto);
+                currWorld.ParseSyncNpcPos(proto);
         }
 
         private void ReqSyncNpcHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.ReqSyncNpc proto)
-                _currWorld.ParseReqSyncNpc(proto);
+                currWorld.ParseReqSyncNpc(proto);
         }
 
         private void SyncEntityStatusHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.SyncEntityStatus proto)
-                _currWorld.ParseSyncEntityStatus(proto);
+                currWorld.ParseSyncEntityStatus(proto);
         }
 
         private void ParsePlayerBaseCsv()
         {
             using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/player_base.csv");
             reader.ReadLine();
-            _playerBaseDatas = new() { new PlayerBaseData() };
+            playerBaseDatas = new() { new PlayerBaseData() };
             string line;
             while ((line = reader.ReadLine()) != null)
             {
@@ -242,7 +237,7 @@ namespace Manage
                     atk = int.Parse(strs[4]),
                     def = int.Parse(strs[5])
                 };
-                _playerBaseDatas.Add(baseData);
+                playerBaseDatas.Add(baseData);
             }
         }
 
@@ -251,11 +246,11 @@ namespace Manage
             using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/ItemPotions.csv");
             reader.ReadLine();
             string line;
-            _dropPotionDict = new();
+            dropPotionDict = new();
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
-                _dropPotionDict.Add((int)ItemType.Potion + "@" + strs[0], new List<string>() { strs[1], strs[2] });
+                dropPotionDict.Add((int)ItemType.Potion + "@" + strs[0], new List<string>() { strs[1], strs[2] });
             }
         }
 
@@ -264,11 +259,11 @@ namespace Manage
             using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/ItemWeapons.csv");
             reader.ReadLine();
             string line;
-            _dropWeaponDict = new();
+            dropWeaponDict = new();
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
-                _dropWeaponDict.Add((int)ItemType.Weapon + "@" + strs[0], new List<string>() { strs[1], strs[2] });
+                dropWeaponDict.Add((int)ItemType.Weapon + "@" + strs[0], new List<string>() { strs[1], strs[2] });
             }
         }
     }

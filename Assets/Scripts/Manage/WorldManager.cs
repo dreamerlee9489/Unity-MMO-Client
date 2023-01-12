@@ -68,7 +68,8 @@ namespace Manage
                     Proto.AppearRole appearRole = new();
                     appearRole.Parse(role);
                     appearRole.LoadRole(role);
-                    roleDict.TryAdd(sn, appearRole);
+                    roleDict.Add(sn, appearRole);
+                    Debug.Log("add: " + sn);
                 }
             }
         }
@@ -145,14 +146,14 @@ namespace Manage
 
         public void ParseReqJoinTeam(Proto.ReqJoinTeam proto)
         {
-            if (GameManager.Instance.MainPlayer.Sn == proto.Responder)
-                roleDict[proto.Responder].obj.ParseJoinTeam(proto);
+            if (GameManager.Instance.mainPlayer.Sn == proto.Responder)
+                TeamManager.Instance.ParseReqJoinTeam(proto);
         }
 
         public void ParseJoinTeamRes(Proto.JoinTeamRes proto)
         {
-            if (GameManager.Instance.MainPlayer.Sn == proto.Applicant)
-                roleDict[proto.Applicant].obj.ParseJoinTeamRes(proto);
+            if (GameManager.Instance.mainPlayer.Sn == proto.Applicant)
+                TeamManager.Instance.ParseJoinTeamRes(proto);
         }
     }
 }

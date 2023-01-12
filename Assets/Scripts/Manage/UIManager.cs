@@ -23,7 +23,7 @@ namespace Manage
 
         private void Update()
         {
-            if(GameManager.Instance.CurrWorld)
+            if(GameManager.currWorld)
             {
                 if (Input.GetKeyDown(KeyCode.P))
                     GetPanel<PropPanel>().SwitchToggle();

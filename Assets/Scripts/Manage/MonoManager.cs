@@ -11,7 +11,7 @@ namespace Manage
 
         private void Awake()
         {
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(gameObject);
         }
 
         private void Update()
@@ -37,7 +37,6 @@ namespace Manage
         public MonoManager()
         {
             _processor = new GameObject("MonoProcessor").AddComponent<MonoProcessor>();
-            UnityEngine.Object.DontDestroyOnLoad(_processor);
         }
 
         public void AddUpdateAction(Action update)

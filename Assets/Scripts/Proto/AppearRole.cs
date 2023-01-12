@@ -31,7 +31,7 @@ namespace Proto
 
         public void LoadRole(Role proto)
         {
-            if (sn != GameManager.Instance.MainPlayer.Sn)
+            if (sn != GameManager.Instance.mainPlayer.Sn)
             {
                 string path = gender == Gender.Male ? "Entity/Player/Player_Knight" : "Entity/Player/Player_Warrior";
                 ResourceManager.Instance.LoadAsync<GameObject>(path, (objec) =>
@@ -53,7 +53,7 @@ namespace Proto
             }
             else
             {
-                obj = GameManager.Instance.MainPlayer.Obj;
+                obj = GameManager.Instance.mainPlayer.Obj;
                 obj.Sn = sn;
                 obj.lv = lv;
                 obj.xp = xp;
@@ -62,14 +62,14 @@ namespace Proto
                 obj.atk = atk;
                 obj.def = def;
                 obj.SetNameBar(name);
-                obj.name = "MainPlayer";
+                obj.name = "mainPlayer";
                 obj.gameObject.SetActive(false);
                 obj.transform.position = position;
                 obj.gameObject.SetActive(true);
                 UIManager.Instance.GetPanel<PropPanel>().InitPanel();
-                GameManager.Instance.VirtualCam.transform.position = position + new Vector3(0, 6, -8);
-                GameManager.Instance.VirtualCam.transform.rotation = Quaternion.AngleAxis(-50, Vector3.left);
-                GameManager.Instance.VirtualCam.Follow = obj.transform;
+                GameManager.Instance.virtualCam.transform.position = position + new Vector3(0, 6, -8);
+                GameManager.Instance.virtualCam.transform.rotation = Quaternion.AngleAxis(-50, Vector3.left);
+                GameManager.Instance.virtualCam.Follow = obj.transform;
             }
         }
     }

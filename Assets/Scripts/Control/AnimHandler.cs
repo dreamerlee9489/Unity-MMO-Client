@@ -15,23 +15,23 @@ namespace Control
 
         public void AtkAnimEvent()
         {
-            if(CompareTag("Player") && _owner.target && _owner.GetComponent<PlayerController>().Sn == GameManager.Instance.MainPlayer.Sn)
+            if(CompareTag("Player") && _owner.target && _owner.GetComponent<PlayerController>().Sn == GameManager.Instance.mainPlayer.Sn)
             {
                 Proto.PlayerAtkEvent proto = new()
                 {
-                    PlayerSn = GameManager.Instance.MainPlayer.Sn,
+                    PlayerSn = GameManager.Instance.mainPlayer.Sn,
                     TargetSn = _owner.target.GetComponent<FsmController>().Sn
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);
             }
             else if(CompareTag("Enemy"))
             {
-                if (_owner.target && _owner.target.GetComponent<PlayerController>().Sn == GameManager.Instance.MainPlayer.Sn)
+                if (_owner.target && _owner.target.GetComponent<PlayerController>().Sn == GameManager.Instance.mainPlayer.Sn)
                 {
                     Proto.NpcAtkEvent proto = new()
                     {
                         NpcSn = _owner.Sn,
-                        TargetSn = GameManager.Instance.MainPlayer.Sn
+                        TargetSn = GameManager.Instance.mainPlayer.Sn
                     };
                     NetManager.Instance.SendPacket(Proto.MsgId.C2SNpcAtkEvent, proto);
                 }

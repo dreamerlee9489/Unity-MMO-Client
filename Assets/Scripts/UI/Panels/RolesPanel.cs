@@ -68,7 +68,7 @@ namespace UI
             if (msg is Proto.GameToken proto && NetManager.Instance.AppType == EAppType.Login)
             {
                 _token = proto.Token;
-                _account = GameManager.Instance.AccountInfo.Account;
+                _account = GameManager.Instance.accountInfo.Account;
                 NetManager.Instance.Disconnect();
                 NetManager.Instance.Connect(proto.Ip, proto.Port, EAppType.Game);
             }

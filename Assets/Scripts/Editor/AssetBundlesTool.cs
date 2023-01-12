@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class AssetBundlesTool : EditorWindow
 {
-    private string _ftpIp = "ftp://8.130.45.1";
+    private string _ftpIp = "ftp://192.168.120.128";
     private int _index = 0;
     private readonly string[] _platforms = { "Windows", "Android", "IOS" };
 

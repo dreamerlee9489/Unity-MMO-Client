@@ -25,7 +25,7 @@ namespace UI
             { 
                 Proto.ReqJoinTeam proto = new() 
                 { 
-                    Applicant = GameManager.Instance.MainPlayer.Sn,
+                    Applicant = GameManager.Instance.mainPlayer.Sn,
                     Responder = _player.Sn 
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2CReqJoinTeam, proto);

@@ -24,9 +24,9 @@ public class PropPanel : BasePanel
 
     public void InitPanel()
     {
-        player = GameManager.Instance.MainPlayer.Obj.GetComponent<PlayerController>();
-        baseData = GameManager.Instance.PlayerBaseDatas[player.lv];
-        idTxt.text = GameManager.Instance.MainPlayer.Name;
+        player = GameManager.Instance.mainPlayer.Obj.GetComponent<PlayerController>();
+        baseData = GameManager.Instance.playerBaseDatas[player.lv];
+        idTxt.text = GameManager.Instance.mainPlayer.Name;
         lvTxt.text = player.lv.ToString();
         xpTxt.text = $"{player.xp} / {baseData.xp}";
         hpTxt.text = $"{player.hp} / {baseData.hp}";

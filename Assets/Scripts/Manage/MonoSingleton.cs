@@ -25,7 +25,7 @@ namespace Manage
             if (instance == null)
             {
                 instance = this as T;
-                DontDestroyOnLoad(this);
+                DontDestroyOnLoad(gameObject);
             }
         }
     }

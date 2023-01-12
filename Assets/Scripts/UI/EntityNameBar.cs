@@ -18,7 +18,7 @@ namespace UI
         {
             if (transform.parent != null)
             {
-                if (transform.parent.gameObject.name == "MainPlayer")
+                if (transform.parent.gameObject.name == "mainPlayer")
                 {
                     Name.color = Color.green;
                     return;

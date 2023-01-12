@@ -32,18 +32,19 @@ namespace Proto {
             "c24YAiABKAMSIQoIcG9zaXRpb24YAyABKAsyDy5Qcm90by5WZWN0b3IzRCJy",
             "CgpQbGF5ZXJNaXNjEiQKCmxhc3Rfd29ybGQYASABKAsyEC5Qcm90by5MYXN0",
             "V29ybGQSJgoMbGFzdF9kdW5nZW9uGAIgASgLMhAuUHJvdG8uTGFzdFdvcmxk",
-            "EhYKDm9ubGluZV92ZXJzaW9uGAMgASgFIoUBCgZQbGF5ZXISCgoCc24YASAB",
+            "EhYKDm9ubGluZV92ZXJzaW9uGAMgASgFIpMBCgZQbGF5ZXISCgoCc24YASAB",
             "KAQSDAoEbmFtZRgCIAEoCRIfCgRiYXNlGAMgASgLMhEuUHJvdG8uUGxheWVy",
             "QmFzZRIfCgRrbmFwGAQgASgLMhEuUHJvdG8uUGxheWVyS25hcBIfCgRtaXNj",
-            "GAUgASgLMhEuUHJvdG8uUGxheWVyTWlzYyKHAQoISXRlbURhdGESCgoCc24Y",
-            "ASABKAQSJgoEdHlwZRgCIAEoDjIYLlByb3RvLkl0ZW1EYXRhLkl0ZW1UeXBl",
-            "EgoKAmlkGAMgASgFEg0KBWluZGV4GAQgASgFIiwKCEl0ZW1UeXBlEggKBE5v",
-            "bmUQABIKCgZQb3Rpb24QARIKCgZXZWFwb24QAiKGAQoKUGxheWVyS25hcBIM",
-            "CgRnb2xkGAEgASgFEiIKCWJhZ19pdGVtcxgCIAMoCzIPLlByb3RvLkl0ZW1E",
-            "YXRhEiIKCWFjdF9pdGVtcxgDIAMoCzIPLlByb3RvLkl0ZW1EYXRhEiIKCWVx",
-            "dV9pdGVtcxgEIAMoCzIPLlByb3RvLkl0ZW1EYXRhIi8KDlVwZGF0ZUtuYXBJ",
-            "dGVtEh0KBGl0ZW0YASABKAsyDy5Qcm90by5JdGVtRGF0YSooCgZHZW5kZXIS",
-            "CAoEbm9uZRAAEggKBG1hbGUQARIKCgZmZW1hbGUQAmIGcHJvdG8z"));
+            "GAUgASgLMhEuUHJvdG8uUGxheWVyTWlzYxIMCgR0ZWFtGAYgAygEIocBCghJ",
+            "dGVtRGF0YRIKCgJzbhgBIAEoBBImCgR0eXBlGAIgASgOMhguUHJvdG8uSXRl",
+            "bURhdGEuSXRlbVR5cGUSCgoCaWQYAyABKAUSDQoFaW5kZXgYBCABKAUiLAoI",
+            "SXRlbVR5cGUSCAoETm9uZRAAEgoKBlBvdGlvbhABEgoKBldlYXBvbhACIoYB",
+            "CgpQbGF5ZXJLbmFwEgwKBGdvbGQYASABKAUSIgoJYmFnX2l0ZW1zGAIgAygL",
+            "Mg8uUHJvdG8uSXRlbURhdGESIgoJYWN0X2l0ZW1zGAMgAygLMg8uUHJvdG8u",
+            "SXRlbURhdGESIgoJZXF1X2l0ZW1zGAQgAygLMg8uUHJvdG8uSXRlbURhdGEi",
+            "LwoOVXBkYXRlS25hcEl0ZW0SHQoEaXRlbRgBIAEoCzIPLlByb3RvLkl0ZW1E",
+            "YXRhKigKBkdlbmRlchIICgRub25lEAASCAoEbWFsZRABEgoKBmZlbWFsZRAC",
+            "YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.Gender), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -51,7 +52,7 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerBase), global::Proto.PlayerBase.Parser, new[]{ "Gender", "Level", "Xp", "Hp", "Mp", "Atk", "Def" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.LastWorld), global::Proto.LastWorld.Parser, new[]{ "WorldId", "WorldSn", "Position" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerMisc), global::Proto.PlayerMisc.Parser, new[]{ "LastWorld", "LastDungeon", "OnlineVersion" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Knap", "Misc" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Knap", "Misc", "Team" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Sn", "Type", "Id", "Index" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType) }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerKnap), global::Proto.PlayerKnap.Parser, new[]{ "Gold", "BagItems", "ActItems", "EquItems" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.UpdateKnapItem), global::Proto.UpdateKnapItem.Parser, new[]{ "Item" }, null, null, null, null)
@@ -984,6 +985,7 @@ namespace Proto {
       base_ = other.base_ != null ? other.base_.Clone() : null;
       knap_ = other.knap_ != null ? other.knap_.Clone() : null;
       misc_ = other.misc_ != null ? other.misc_.Clone() : null;
+      team_ = other.team_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1047,6 +1049,16 @@ namespace Proto {
       }
     }
 
+    /// <summary>Field number for the "team" field.</summary>
+    public const int TeamFieldNumber = 6;
+    private static readonly pb::FieldCodec<ulong> _repeated_team_codec
+        = pb::FieldCodec.ForUInt64(50);
+    private readonly pbc::RepeatedField<ulong> team_ = new pbc::RepeatedField<ulong>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<ulong> Team {
+      get { return team_; }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as Player);
@@ -1065,6 +1077,7 @@ namespace Proto {
       if (!object.Equals(Base, other.Base)) return false;
       if (!object.Equals(Knap, other.Knap)) return false;
       if (!object.Equals(Misc, other.Misc)) return false;
+      if(!team_.Equals(other.team_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1076,6 +1089,7 @@ namespace Proto {
       if (base_ != null) hash ^= Base.GetHashCode();
       if (knap_ != null) hash ^= Knap.GetHashCode();
       if (misc_ != null) hash ^= Misc.GetHashCode();
+      hash ^= team_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1109,6 +1123,7 @@ namespace Proto {
         output.WriteRawTag(42);
         output.WriteMessage(Misc);
       }
+      team_.WriteTo(output, _repeated_team_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1132,6 +1147,7 @@ namespace Proto {
       if (misc_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Misc);
       }
+      size += team_.CalculateSize(_repeated_team_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1167,6 +1183,7 @@ namespace Proto {
         }
         Misc.MergeFrom(other.Misc);
       }
+      team_.Add(other.team_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1205,6 +1222,11 @@ namespace Proto {
               Misc = new global::Proto.PlayerMisc();
             }
             input.ReadMessage(Misc);
+            break;
+          }
+          case 50:
+          case 48: {
+            team_.AddEntriesFrom(input, _repeated_team_codec);
             break;
           }
         }
