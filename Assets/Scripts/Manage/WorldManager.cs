@@ -53,7 +53,6 @@ namespace Manage
             npcDict.Clear();
             itemDict.Clear();
             roleDict.Clear();
-            GC.Collect();
         }
 
         public void ParseAllRoleAppear(Proto.AllRoleAppear proto)
@@ -69,7 +68,6 @@ namespace Manage
                     appearRole.Parse(role);
                     appearRole.LoadRole(role);
                     roleDict.Add(sn, appearRole);
-                    Debug.Log("add: " + sn);
                 }
             }
         }
@@ -93,6 +91,8 @@ namespace Manage
                 npcDict[proto.Sn].ParseStatus(proto);
             else if (roleDict.ContainsKey(proto.Sn))
                 roleDict[proto.Sn].obj.ParseStatus(proto);
+            else if(TeamManager.Instance.teamDict.ContainsKey(proto.Sn))
+                TeamManager.Instance.teamDict[proto.Sn].UpdateHp(proto.Hp);
         }
 
         public void ParseSyncPlayerCmd(Proto.SyncPlayerCmd proto)
@@ -142,18 +142,6 @@ namespace Manage
         {
             if (npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
                 npcDict[proto.NpcSn].DropItems(proto);
-        }
-
-        public void ParseReqJoinTeam(Proto.ReqJoinTeam proto)
-        {
-            if (GameManager.Instance.mainPlayer.Sn == proto.Responder)
-                TeamManager.Instance.ParseReqJoinTeam(proto);
-        }
-
-        public void ParseJoinTeamRes(Proto.JoinTeamRes proto)
-        {
-            if (GameManager.Instance.mainPlayer.Sn == proto.Applicant)
-                TeamManager.Instance.ParseJoinTeamRes(proto);
         }
     }
 }

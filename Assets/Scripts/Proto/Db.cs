@@ -32,19 +32,20 @@ namespace Proto {
             "c24YAiABKAMSIQoIcG9zaXRpb24YAyABKAsyDy5Qcm90by5WZWN0b3IzRCJy",
             "CgpQbGF5ZXJNaXNjEiQKCmxhc3Rfd29ybGQYASABKAsyEC5Qcm90by5MYXN0",
             "V29ybGQSJgoMbGFzdF9kdW5nZW9uGAIgASgLMhAuUHJvdG8uTGFzdFdvcmxk",
-            "EhYKDm9ubGluZV92ZXJzaW9uGAMgASgFIpMBCgZQbGF5ZXISCgoCc24YASAB",
-            "KAQSDAoEbmFtZRgCIAEoCRIfCgRiYXNlGAMgASgLMhEuUHJvdG8uUGxheWVy",
-            "QmFzZRIfCgRrbmFwGAQgASgLMhEuUHJvdG8uUGxheWVyS25hcBIfCgRtaXNj",
-            "GAUgASgLMhEuUHJvdG8uUGxheWVyTWlzYxIMCgR0ZWFtGAYgAygEIocBCghJ",
-            "dGVtRGF0YRIKCgJzbhgBIAEoBBImCgR0eXBlGAIgASgOMhguUHJvdG8uSXRl",
-            "bURhdGEuSXRlbVR5cGUSCgoCaWQYAyABKAUSDQoFaW5kZXgYBCABKAUiLAoI",
-            "SXRlbVR5cGUSCAoETm9uZRAAEgoKBlBvdGlvbhABEgoKBldlYXBvbhACIoYB",
-            "CgpQbGF5ZXJLbmFwEgwKBGdvbGQYASABKAUSIgoJYmFnX2l0ZW1zGAIgAygL",
-            "Mg8uUHJvdG8uSXRlbURhdGESIgoJYWN0X2l0ZW1zGAMgAygLMg8uUHJvdG8u",
-            "SXRlbURhdGESIgoJZXF1X2l0ZW1zGAQgAygLMg8uUHJvdG8uSXRlbURhdGEi",
-            "LwoOVXBkYXRlS25hcEl0ZW0SHQoEaXRlbRgBIAEoCzIPLlByb3RvLkl0ZW1E",
-            "YXRhKigKBkdlbmRlchIICgRub25lEAASCAoEbWFsZRABEgoKBmZlbWFsZRAC",
-            "YgZwcm90bzM="));
+            "EhYKDm9ubGluZV92ZXJzaW9uGAMgASgFIigKBFRlYW0SDwoHY2FwdGFpbhgB",
+            "IAEoBBIPCgdtZW1iZXJzGAIgAygEIqABCgZQbGF5ZXISCgoCc24YASABKAQS",
+            "DAoEbmFtZRgCIAEoCRIfCgRiYXNlGAMgASgLMhEuUHJvdG8uUGxheWVyQmFz",
+            "ZRIfCgRrbmFwGAQgASgLMhEuUHJvdG8uUGxheWVyS25hcBIfCgRtaXNjGAUg",
+            "ASgLMhEuUHJvdG8uUGxheWVyTWlzYxIZCgR0ZWFtGAYgASgLMgsuUHJvdG8u",
+            "VGVhbSKHAQoISXRlbURhdGESCgoCc24YASABKAQSJgoEdHlwZRgCIAEoDjIY",
+            "LlByb3RvLkl0ZW1EYXRhLkl0ZW1UeXBlEgoKAmlkGAMgASgFEg0KBWluZGV4",
+            "GAQgASgFIiwKCEl0ZW1UeXBlEggKBE5vbmUQABIKCgZQb3Rpb24QARIKCgZX",
+            "ZWFwb24QAiKGAQoKUGxheWVyS25hcBIMCgRnb2xkGAEgASgFEiIKCWJhZ19p",
+            "dGVtcxgCIAMoCzIPLlByb3RvLkl0ZW1EYXRhEiIKCWFjdF9pdGVtcxgDIAMo",
+            "CzIPLlByb3RvLkl0ZW1EYXRhEiIKCWVxdV9pdGVtcxgEIAMoCzIPLlByb3Rv",
+            "Lkl0ZW1EYXRhIi8KDlVwZGF0ZUtuYXBJdGVtEh0KBGl0ZW0YASABKAsyDy5Q",
+            "cm90by5JdGVtRGF0YSooCgZHZW5kZXISCAoEbm9uZRAAEggKBG1hbGUQARIK",
+            "CgZmZW1hbGUQAmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.Gender), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -52,6 +53,7 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerBase), global::Proto.PlayerBase.Parser, new[]{ "Gender", "Level", "Xp", "Hp", "Mp", "Atk", "Def" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.LastWorld), global::Proto.LastWorld.Parser, new[]{ "WorldId", "WorldSn", "Position" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerMisc), global::Proto.PlayerMisc.Parser, new[]{ "LastWorld", "LastDungeon", "OnlineVersion" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Team), global::Proto.Team.Parser, new[]{ "Captain", "Members" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Knap", "Misc", "Team" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Sn", "Type", "Id", "Index" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType) }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerKnap), global::Proto.PlayerKnap.Parser, new[]{ "Gold", "BagItems", "ActItems", "EquItems" }, null, null, null, null),
@@ -955,6 +957,156 @@ namespace Proto {
 
   }
 
+  public sealed partial class Team : pb::IMessage<Team> {
+    private static readonly pb::MessageParser<Team> _parser = new pb::MessageParser<Team>(() => new Team());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<Team> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[4]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Team() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Team(Team other) : this() {
+      captain_ = other.captain_;
+      members_ = other.members_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Team Clone() {
+      return new Team(this);
+    }
+
+    /// <summary>Field number for the "captain" field.</summary>
+    public const int CaptainFieldNumber = 1;
+    private ulong captain_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong Captain {
+      get { return captain_; }
+      set {
+        captain_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "members" field.</summary>
+    public const int MembersFieldNumber = 2;
+    private static readonly pb::FieldCodec<ulong> _repeated_members_codec
+        = pb::FieldCodec.ForUInt64(18);
+    private readonly pbc::RepeatedField<ulong> members_ = new pbc::RepeatedField<ulong>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<ulong> Members {
+      get { return members_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as Team);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(Team other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Captain != other.Captain) return false;
+      if(!members_.Equals(other.members_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Captain != 0UL) hash ^= Captain.GetHashCode();
+      hash ^= members_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Captain != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(Captain);
+      }
+      members_.WriteTo(output, _repeated_members_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Captain != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Captain);
+      }
+      size += members_.CalculateSize(_repeated_members_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(Team other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Captain != 0UL) {
+        Captain = other.Captain;
+      }
+      members_.Add(other.members_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Captain = input.ReadUInt64();
+            break;
+          }
+          case 18:
+          case 16: {
+            members_.AddEntriesFrom(input, _repeated_members_codec);
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
   public sealed partial class Player : pb::IMessage<Player> {
     private static readonly pb::MessageParser<Player> _parser = new pb::MessageParser<Player>(() => new Player());
     private pb::UnknownFieldSet _unknownFields;
@@ -963,7 +1115,7 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.DbReflection.Descriptor.MessageTypes[4]; }
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -985,7 +1137,7 @@ namespace Proto {
       base_ = other.base_ != null ? other.base_.Clone() : null;
       knap_ = other.knap_ != null ? other.knap_.Clone() : null;
       misc_ = other.misc_ != null ? other.misc_.Clone() : null;
-      team_ = other.team_.Clone();
+      team_ = other.team_ != null ? other.team_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1051,12 +1203,13 @@ namespace Proto {
 
     /// <summary>Field number for the "team" field.</summary>
     public const int TeamFieldNumber = 6;
-    private static readonly pb::FieldCodec<ulong> _repeated_team_codec
-        = pb::FieldCodec.ForUInt64(50);
-    private readonly pbc::RepeatedField<ulong> team_ = new pbc::RepeatedField<ulong>();
+    private global::Proto.Team team_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<ulong> Team {
+    public global::Proto.Team Team {
       get { return team_; }
+      set {
+        team_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1077,7 +1230,7 @@ namespace Proto {
       if (!object.Equals(Base, other.Base)) return false;
       if (!object.Equals(Knap, other.Knap)) return false;
       if (!object.Equals(Misc, other.Misc)) return false;
-      if(!team_.Equals(other.team_)) return false;
+      if (!object.Equals(Team, other.Team)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1089,7 +1242,7 @@ namespace Proto {
       if (base_ != null) hash ^= Base.GetHashCode();
       if (knap_ != null) hash ^= Knap.GetHashCode();
       if (misc_ != null) hash ^= Misc.GetHashCode();
-      hash ^= team_.GetHashCode();
+      if (team_ != null) hash ^= Team.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1123,7 +1276,10 @@ namespace Proto {
         output.WriteRawTag(42);
         output.WriteMessage(Misc);
       }
-      team_.WriteTo(output, _repeated_team_codec);
+      if (team_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(Team);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1147,7 +1303,9 @@ namespace Proto {
       if (misc_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Misc);
       }
-      size += team_.CalculateSize(_repeated_team_codec);
+      if (team_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Team);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1183,7 +1341,12 @@ namespace Proto {
         }
         Misc.MergeFrom(other.Misc);
       }
-      team_.Add(other.team_);
+      if (other.team_ != null) {
+        if (team_ == null) {
+          Team = new global::Proto.Team();
+        }
+        Team.MergeFrom(other.Team);
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1224,9 +1387,11 @@ namespace Proto {
             input.ReadMessage(Misc);
             break;
           }
-          case 50:
-          case 48: {
-            team_.AddEntriesFrom(input, _repeated_team_codec);
+          case 50: {
+            if (team_ == null) {
+              Team = new global::Proto.Team();
+            }
+            input.ReadMessage(Team);
             break;
           }
         }
@@ -1243,7 +1408,7 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.DbReflection.Descriptor.MessageTypes[5]; }
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[6]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1469,7 +1634,7 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.DbReflection.Descriptor.MessageTypes[6]; }
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[7]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1658,7 +1823,7 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.DbReflection.Descriptor.MessageTypes[7]; }
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[8]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

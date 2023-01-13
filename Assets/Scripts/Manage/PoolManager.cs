@@ -31,7 +31,7 @@ namespace Manage
         /// <summary>
         /// 实例化count个GameObject并压入池中
         /// </summary>
-        public void LoadPush(string poolType, string path, int count = 10)
+        public void Load(string poolType, string path, int count = 10)
         {
             GameObject obj = ResourceManager.Instance.Load<GameObject>(path);
             if (!_roots.ContainsKey(poolType))

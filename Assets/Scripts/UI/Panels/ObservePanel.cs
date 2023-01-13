@@ -23,7 +23,7 @@ namespace UI
             });
             _teamBtn.onClick.AddListener(() => 
             { 
-                Proto.ReqJoinTeam proto = new() 
+                Proto.JoinTeam proto = new() 
                 { 
                     Applicant = GameManager.Instance.mainPlayer.Sn,
                     Responder = _player.Sn 

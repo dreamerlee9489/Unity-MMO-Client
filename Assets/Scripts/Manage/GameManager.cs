@@ -1,6 +1,6 @@
 ﻿using Cinemachine;
-using Control;
 using Items;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UI;
@@ -61,11 +61,14 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.MiGlobalChat, GlobalChatHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.MiTeamChat, TeamChatHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqJoinTeam, ReqJoinTeamHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CJoinTeamRes, JoinTeamResHandler);
-            PoolManager.Instance.LoadPush(PoolType.RoleToggle, "UI/RoleToggle", 20);
-            PoolManager.Instance.LoadPush(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
-        }       
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.MiCreateTeam, CreateTeamHandler);
+            PoolManager.Instance.Load(PoolType.RoleToggle, "UI/RoleToggle", 20);
+            PoolManager.Instance.Load(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
+        }
 
         private void Start()
         {
@@ -90,20 +93,25 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.MiGlobalChat, GlobalChatHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.MiTeamChat, TeamChatHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqJoinTeam, ReqJoinTeamHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CJoinTeamRes, JoinTeamResHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.MiCreateTeam, CreateTeamHandler);
         }
 
         private void OnSceneUnloaded(Scene scene)
         {
             currWorld = null;
             mainPlayer.Obj.ResetCmd();
+            UIManager.Instance.GetPanel<ChatPanel>().Close();
             MonoManager.Instance.StartCoroutine(UIManager.Instance.FadeAlpha());
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             currWorld = FindObjectOfType<WorldManager>();
+            UIManager.Instance.GetPanel<ChatPanel>().Open();
         }
 
         private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
@@ -160,18 +168,6 @@ namespace Manage
                 currWorld.ParseRoleDisappear(proto);
         }
 
-        private void JoinTeamResHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.JoinTeamRes proto)
-                currWorld.ParseJoinTeamRes(proto);
-        }
-
-        private void ReqJoinTeamHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.ReqJoinTeam proto)
-                currWorld.ParseReqJoinTeam(proto);
-        }
-
         private void PlayerKnapHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.PlayerKnap proto)
@@ -218,6 +214,36 @@ namespace Manage
         {
             if (msg is Proto.SyncEntityStatus proto)
                 currWorld.ParseSyncEntityStatus(proto);
+        }
+
+        private void GlobalChatHandler(Google.Protobuf.IMessage msg)
+        {
+            if(msg is Proto.GlobalChat proto)
+                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg($"[全服] {proto.Account}：{proto.Content}", Color.yellow);
+        }
+
+        private void TeamChatHandler(Google.Protobuf.IMessage msg)
+        {
+            if(msg is Proto.TeamChat proto)
+                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg($"[团队] {proto.Account}：{proto.Content}", Color.green);
+        }
+
+        private void ReqJoinTeamHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.JoinTeam proto)
+                TeamManager.Instance.ParseReqJoinTeam(proto);
+        }
+
+        private void JoinTeamResHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.JoinTeam proto)
+                TeamManager.Instance.ParseJoinTeamRes(proto);
+        }
+
+        private void CreateTeamHandler(Google.Protobuf.IMessage msg)
+        {
+            if(msg is Proto.CreateTeam proto)
+                TeamManager.Instance.ParseCreateTeam(proto);
         }
 
         private void ParsePlayerBaseCsv()

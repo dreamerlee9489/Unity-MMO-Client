@@ -11,7 +11,7 @@ namespace Manage
         public void Initial()
 		{
             _mainSn = GameManager.Instance.mainPlayer.Sn;
-            PoolManager.Instance.LoadPush(PoolType.HUDPanel, "UI/Panel/HUDPanel", 4);
+            PoolManager.Instance.Load(PoolType.HUDPanel, "UI/Panel/HUDPanel", 4);
             HUDPanel panel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.hudGroup).GetComponent<HUDPanel>();
             panel.InitPanel(GameManager.currWorld.roleDict[_mainSn]);
             teamDict.Add(_mainSn, panel);
@@ -25,16 +25,12 @@ namespace Manage
                 PoolManager.Instance.Push(PoolType.HUDPanel, UIManager.Instance.hudGroup.GetChild(0).gameObject);
         }
 
-        public void ParseReqJoinTeam(Proto.ReqJoinTeam proto)
+        public void ParseReqJoinTeam(Proto.JoinTeam proto)
         {
             string text = $"玩家[{GameManager.currWorld.roleDict[proto.Applicant].name}]申请入队，是否同意？";
             UIManager.Instance.GetPanel<PopupPanel>().Open(text, () =>
             {
-                teamDict[_mainSn].workTxt.text = "队长";
-                HUDPanel panel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.hudGroup).GetComponent<HUDPanel>();
-                panel.InitPanel(GameManager.currWorld.roleDict[proto.Applicant], "队员");
-                teamDict.Add(proto.Applicant, panel);
-                Proto.JoinTeamRes joinRes = new()
+                Proto.JoinTeam joinRes = new()
                 {
                     Applicant = proto.Applicant,
                     Responder = _mainSn,
@@ -43,7 +39,7 @@ namespace Manage
                 NetManager.Instance.SendPacket(Proto.MsgId.C2CJoinTeamRes, joinRes);
             }, () =>
             {
-                Proto.JoinTeamRes joinRes = new()
+                Proto.JoinTeam joinRes = new()
                 {
                     Applicant = proto.Applicant,
                     Responder = _mainSn,
@@ -53,25 +49,26 @@ namespace Manage
             });
         }
 
-        public void ParseJoinTeamRes(Proto.JoinTeamRes proto)
+        public void ParseJoinTeamRes(Proto.JoinTeam proto)
         {
             if (!proto.Agree)
             {
                 string text = $"玩家[{GameManager.currWorld.roleDict[proto.Responder].name}]拒绝了你的入队请求。";
                 UIManager.Instance.GetPanel<PopupPanel>().Open(text, null, null);
             }
-            else
+        }
+
+        public void ParseCreateTeam(Proto.CreateTeam proto)
+        {
+            teamDict.Clear();
+            int count = UIManager.Instance.hudGroup.childCount;
+            for (int i = 0; i < count; i++)
+                PoolManager.Instance.Push(PoolType.HUDPanel, UIManager.Instance.hudGroup.GetChild(0).gameObject);
+            for (int i = 0; i < proto.Members.Count; i++)
             {
-                teamDict.Clear();
-                int count = UIManager.Instance.hudGroup.childCount;
-                for (int i = 0; i < count; i++)
-                    PoolManager.Instance.Push(PoolType.HUDPanel, UIManager.Instance.hudGroup.GetChild(0).gameObject);
-                for (int i = 0; i < proto.Members.Count; i++)
-                {
-                    HUDPanel panel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.hudGroup).GetComponent<HUDPanel>();
-                    panel.InitPanel(GameManager.currWorld.roleDict[proto.Members[i].MemberSn], i == 0 ? "队长" : "队员");
-                    teamDict.Add(proto.Members[i].MemberSn, panel);
-                }
+                HUDPanel panel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.hudGroup).GetComponent<HUDPanel>();
+                panel.InitPanel(GameManager.currWorld.roleDict[proto.Members[i]], proto.Members[i] == proto.Captain ? "队长" : "队员");
+                teamDict.Add(proto.Members[i], panel);
             }
         }
     }

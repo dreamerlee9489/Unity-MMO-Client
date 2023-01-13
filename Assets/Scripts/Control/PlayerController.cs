@@ -108,10 +108,32 @@ namespace Control
             {
                 Proto.PlayerAtkEvent proto = new()
                 {
-                    PlayerSn = GameManager.Instance.mainPlayer.Sn,
+                    PlayerSn = Sn,
                     TargetSn = 0,
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);
+            }
+
+            if(Input.GetKeyDown(KeyCode.G))
+            {
+                Proto.GlobalChat proto = new()
+                {
+                    Sender = Sn,
+                    Account = GameManager.Instance.mainPlayer.Name,
+                    Content = "Hello, World!"
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.MiGlobalChat, proto);
+            }
+
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                Proto.TeamChat proto = new()
+                {
+                    Sender = Sn,
+                    Account = GameManager.Instance.mainPlayer.Name,
+                    Content = "Hello, World!"
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.MiTeamChat, proto);
             }
         }
 
