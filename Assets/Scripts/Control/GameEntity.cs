@@ -39,10 +39,9 @@ namespace Control
             anim.SetFloat(moveSpeed, transform.InverseTransformVector(agent.velocity).z);
         }
 
-        public void SetNameBar(string name)
-        {
-            nameBar.Name.text = name;
-        }
+        public void SetNameBar(string name) => nameBar.Name.text = name;
+
+        public string GetNameBar() => nameBar.Name.text;
 
         public bool CanSee(GameEntity target)
         {

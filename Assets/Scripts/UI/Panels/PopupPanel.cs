@@ -20,11 +20,10 @@ namespace UI
         public void Open(string msg, UnityAction yesFunc, UnityAction noFunc)
         {
             _text.text = msg;
-            if(yesFunc != null && noFunc != null)
-            {
+            if(yesFunc != null)
                 _yesBtn.onClick.AddListener(yesFunc);
+            if(noFunc != null)
                 _noBtn.onClick.AddListener(noFunc);
-            }
             _yesBtn.onClick.AddListener(Close);
             _noBtn.onClick.AddListener(Close);
             base.Open();

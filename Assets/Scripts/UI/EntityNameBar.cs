@@ -42,5 +42,21 @@ namespace UI
         {
             transform.forward = Camera.main.transform.forward;
         }
+
+        public void ChangeCamp()
+        {
+            switch (transform.parent.tag)
+            {
+                case "Player":
+                case "NPC":
+                    Name.color = Color.yellow;
+                    break;
+                case "Enemy":
+                    Name.color = Color.red;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

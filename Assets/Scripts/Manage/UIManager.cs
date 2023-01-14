@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Manage
 {
@@ -23,7 +24,7 @@ namespace Manage
 
         private void Update()
         {
-            if(GameManager.currWorld)
+            if(GameManager.currWorld && !EventSystem.current.IsPointerOverGameObject())
             {
                 if (Input.GetKeyDown(KeyCode.P))
                     GetPanel<PropPanel>().SwitchToggle();

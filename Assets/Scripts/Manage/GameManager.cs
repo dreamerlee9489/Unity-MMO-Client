@@ -1,6 +1,5 @@
 ﻿using Cinemachine;
 using Items;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using UI;
@@ -32,6 +31,7 @@ namespace Manage
         public Proto.PlayerInfo mainPlayer;
         public CinemachineVirtualCamera virtualCam;
         public List<PlayerBaseData> playerBaseDatas;
+        public Dictionary<int, string> worldDict;
         public Dictionary<string, List<string>> dropPotionDict;
         public Dictionary<string, List<string>> dropWeaponDict;
         public static WorldManager currWorld;
@@ -48,6 +48,7 @@ namespace Manage
             ParsePlayerBaseCsv();
             ParseItemPotionsCsv();
             ParseItemWeaponsCsv();
+            ParseWorldCsv();
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
@@ -62,10 +63,15 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.MiGlobalChat, GlobalChatHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.MiWorldChat, WorldChatHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.MiTeamChat, TeamChatHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.MiPrivateChat, PrivateChatHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.MiCreateTeam, CreateTeamHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqJoinTeam, ReqJoinTeamHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CJoinTeamRes, JoinTeamResHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.MiCreateTeam, CreateTeamHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqEnterDungeon, ReqEnterDungeonHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqPvp, ReqPvpHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CPvpRes, PvpResHandler);
             PoolManager.Instance.Load(PoolType.RoleToggle, "UI/RoleToggle", 20);
             PoolManager.Instance.Load(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
         }
@@ -94,10 +100,15 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CDropItemList, DropItemListHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CGetPlayerKnap, PlayerKnapHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.MiGlobalChat, GlobalChatHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.MiWorldChat, WorldChatHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.MiTeamChat, TeamChatHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.MiPrivateChat, PrivateChatHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.MiCreateTeam, CreateTeamHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqJoinTeam, ReqJoinTeamHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CJoinTeamRes, JoinTeamResHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.MiCreateTeam, CreateTeamHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqEnterDungeon, ReqEnterDungeonHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqPvp, ReqPvpHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CPvpRes, PvpResHandler);
         }
 
         private void OnSceneUnloaded(Scene scene)
@@ -129,17 +140,17 @@ namespace Manage
             {
                 accountInfo ??= new Proto.AccountInfo();
                 accountInfo.ParseProto(proto);
-                if (accountInfo.Players.Count == 0)
+                if (accountInfo.Roles.Count == 0)
                     canvas.GetPanel<CreatePanel>().Open();
                 else
                 {
                     Transform content = canvas.GetPanel<RolesPanel>().RolesRect.content;
-                    for (int i = 0; i < accountInfo.Players.Count; i++)
+                    for (int i = 0; i < accountInfo.Roles.Count; i++)
                     {
                         RoleToggle roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
-                        roleToggle.Name.text = accountInfo.Players[i].Name;
-                        roleToggle.Level.text = "Lv " + accountInfo.Players[i].Level;
-                        roleToggle.Id = accountInfo.Players[i].Id;
+                        roleToggle.Name.text = accountInfo.Roles[i].Name;
+                        roleToggle.Level.text = "Lv " + accountInfo.Roles[i].Level;
+                        roleToggle.Id = accountInfo.Roles[i].Id;
                     }
                     canvas.GetPanel<RolesPanel>().Open();
                 }
@@ -218,14 +229,26 @@ namespace Manage
 
         private void GlobalChatHandler(Google.Protobuf.IMessage msg)
         {
-            if(msg is Proto.GlobalChat proto)
-                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg($"[全服] {proto.Account}：{proto.Content}", Color.yellow);
+            if(msg is Proto.ChatMsg proto)
+                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg(ChatType.Global, $"{proto.Name}：{proto.Content}");
+        }
+
+        private void WorldChatHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.ChatMsg proto)
+                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg(ChatType.World, $"{proto.Name}：{proto.Content}");
         }
 
         private void TeamChatHandler(Google.Protobuf.IMessage msg)
         {
-            if(msg is Proto.TeamChat proto)
-                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg($"[团队] {proto.Account}：{proto.Content}", Color.green);
+            if(msg is Proto.ChatMsg proto)
+                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg(ChatType.Team, $"{proto.Name}：{proto.Content}");
+        }
+
+        private void PrivateChatHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.ChatMsg proto)
+                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg(ChatType.Private, $"{proto.Name}：{proto.Content[(proto.Content.IndexOf(' ') + 1)..]}");
         }
 
         private void ReqJoinTeamHandler(Google.Protobuf.IMessage msg)
@@ -244,6 +267,24 @@ namespace Manage
         {
             if(msg is Proto.CreateTeam proto)
                 TeamManager.Instance.ParseCreateTeam(proto);
+        }
+
+        private void ReqEnterDungeonHandler(Google.Protobuf.IMessage msg)
+        {
+            if(msg is Proto.EnterDungeon proto)
+                mainPlayer.Obj.ParseEnterDungeon(proto, worldDict[proto.WorldId]);
+        }
+
+        private void ReqPvpHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.Pvp proto)
+                mainPlayer.Obj.ParseReqPvp(proto, currWorld.roleDict[proto.Atker].name);
+        }
+
+        private void PvpResHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.Pvp proto)
+                mainPlayer.Obj.ParsePvpRes(proto);
         }
 
         private void ParsePlayerBaseCsv()
@@ -290,6 +331,20 @@ namespace Manage
             {
                 string[] strs = line.Split(',');
                 dropWeaponDict.Add((int)ItemType.Weapon + "@" + strs[0], new List<string>() { strs[1], strs[2] });
+            }
+        }
+
+        private void ParseWorldCsv()
+        {
+            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/world.csv");
+            reader.ReadLine();
+            string line;
+            worldDict = new();
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                if (!strs[1].Equals("null"))
+                    worldDict.Add(int.Parse(strs[0]), strs[1]);
             }
         }
     }

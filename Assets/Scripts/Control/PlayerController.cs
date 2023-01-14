@@ -5,11 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using UI;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.EventSystems;
 
 namespace Control
 {
-    public partial class PlayerController : GameEntity, IMover, IAttacker, IPicker, ITeleporter, IObserver
+    public partial class PlayerController : GameEntity, IMover, IAttacker, IPicker, ITeleporter, IObserver, ILiver
     {
         private readonly Proto.Vector3D _curPos = new();
         private readonly Proto.Vector3D _hitPos = new();
@@ -79,7 +80,10 @@ namespace Control
                     case "Enemy":
                         syncCmd.Type = 2;
                         syncCmd.PlayerSn = Sn;
-                        syncCmd.TargetSn = _hit.transform.GetComponent<FsmController>().Sn;
+                        if (_hit.transform.GetComponent<FsmController>() != null)
+                            syncCmd.TargetSn = _hit.transform.GetComponent<FsmController>().Sn;
+                        else
+                            syncCmd.TargetSn = _hit.transform.GetComponent<PlayerController>().Sn;
                         syncCmd.Point = null;
                         break;
                     case "Item":
@@ -112,28 +116,6 @@ namespace Control
                     TargetSn = 0,
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);
-            }
-
-            if(Input.GetKeyDown(KeyCode.G))
-            {
-                Proto.GlobalChat proto = new()
-                {
-                    Sender = Sn,
-                    Account = GameManager.Instance.mainPlayer.Name,
-                    Content = "Hello, World!"
-                };
-                NetManager.Instance.SendPacket(Proto.MsgId.MiGlobalChat, proto);
-            }
-
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                Proto.TeamChat proto = new()
-                {
-                    Sender = Sn,
-                    Account = GameManager.Instance.mainPlayer.Name,
-                    Content = "Hello, World!"
-                };
-                NetManager.Instance.SendPacket(Proto.MsgId.MiTeamChat, proto);
             }
         }
 
@@ -191,7 +173,10 @@ namespace Control
                     _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
                     break;
                 case CommandType.Attack:
-                    target = GameManager.currWorld.npcDict[proto.TargetSn].transform;
+                    if(GameManager.currWorld.npcDict.ContainsKey(proto.TargetSn))
+                        target = GameManager.currWorld.npcDict[proto.TargetSn].transform;
+                    else
+                        target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
                     _cmd = new AttackCommand(this, target);
                     break;
                 case CommandType.Pickup:
@@ -210,6 +195,22 @@ namespace Control
                 case CommandType.Dialog:
                     target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
                     _cmd = new ObserveCommand(this, target);
+                    break;
+                case CommandType.Death:
+                    string atkName;
+                    if (GameManager.currWorld.roleDict.ContainsKey(proto.TargetSn))
+                    {
+                        var tmp = GameManager.currWorld.roleDict[proto.TargetSn].obj;
+                        target = tmp.transform;
+                        atkName = tmp.GetNameBar();
+                    }
+                    else
+                    {
+                        var tmp = GameManager.currWorld.npcDict[proto.TargetSn];
+                        target = tmp.transform;
+                        atkName = tmp.GetNameBar();
+                    }
+                    _cmd = new DeathCommand(this, target, atkName);
                     break;
                 default:
                     break;
@@ -277,6 +278,8 @@ namespace Control
         public void ParseStatus(Proto.SyncEntityStatus proto)
         {
             hp = proto.Hp;
+            if (CompareTag("Enemy"))
+                nameBar.HpBar.UpdateHp(hp, baseData.hp);
             if (GameManager.Instance.mainPlayer.Sn == Sn)
                 UIManager.Instance.GetPanel<PropPanel>().UpdateHp(hp);
             if (TeamManager.Instance.teamDict.ContainsKey(Sn))
@@ -358,6 +361,77 @@ namespace Control
 
         public void UnObserve()
         {
+        }
+
+        public void Die(string atkName)
+        {
+            _cmd = null;
+            agent.radius = 0;
+            agent.isStopped = true;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+            anim.SetBool(death, true);
+            GetComponent<CapsuleCollider>().enabled = false;
+            if (Sn == GameManager.Instance.mainPlayer.Sn)
+                UIManager.Instance.GetPanel<PopupPanel>().Open($"你被[{atkName}]击杀了。", null, null);
+        }
+
+        public void Rebirth()
+        {
+            agent.radius = 0.3f;
+            agent.isStopped = false;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+            anim.SetBool(death, false);
+            GetComponent<CapsuleCollider>().enabled = true;
+            _cmd = null;
+        }
+
+        public void ParseEnterDungeon(Proto.EnterDungeon proto, string dungeon)
+        {
+            string text = $"玩家[{proto.Sender}]邀请你进入副本[{dungeon}]，是否同意？";
+            UIManager.Instance.GetPanel<PopupPanel>().Open(text, () =>
+            {
+                Proto.EnterDungeon protoRes = new()
+                { 
+                    WorldId = proto.WorldId,
+                    WorldSn = proto.WorldSn,
+                    Agree = true
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2CEnterDungeonRes, protoRes);
+            }, null);
+        }
+
+        public void ParseReqPvp(Proto.Pvp proto, string atker)
+        {
+            string text = $"玩家[{atker}]向你发起挑战，是否同意？";
+            UIManager.Instance.GetPanel<PopupPanel>().Open(text, () =>
+            {
+                Proto.Pvp protoRes = new()
+                { 
+                    Atker = proto.Atker,
+                    Defer = Sn,
+                    Agree = true
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2CPvpRes, protoRes);
+            }, null);
+        }
+
+        public void ParsePvpRes(Proto.Pvp proto)
+        {
+            if(proto.Agree)
+            {
+                if (Sn == proto.Atker)
+                {
+                    var defer = GameManager.currWorld.roleDict[proto.Defer].obj;
+                    defer.tag = "Enemy";
+                    defer.nameBar.ChangeCamp();
+                }
+                else if(Sn == proto.Defer)
+                {
+                    var atker = GameManager.currWorld.roleDict[proto.Atker].obj;
+                    atker.tag = "Enemy";
+                    atker.nameBar.ChangeCamp();
+                }
+            }
         }
     }
 }

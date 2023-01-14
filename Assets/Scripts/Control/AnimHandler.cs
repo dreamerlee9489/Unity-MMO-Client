@@ -6,31 +6,33 @@ namespace Control
 {
     public class AnimHandler : MonoBehaviour
     {
-        private GameEntity _owner;
+        private PlayerController _player;
+        private FsmController _npc;
 
         private void Awake()
         {
-            _owner = GetComponent<GameEntity>();
+            _player = GetComponent<PlayerController>();
+            _npc = GetComponent<FsmController>();
         }
 
         public void AtkAnimEvent()
         {
-            if(CompareTag("Player") && _owner.target && _owner.GetComponent<PlayerController>().Sn == GameManager.Instance.mainPlayer.Sn)
+            if (_player && _player.target && _player.Sn == GameManager.Instance.mainPlayer.Sn)
             {
-                Proto.PlayerAtkEvent proto = new()
-                {
-                    PlayerSn = GameManager.Instance.mainPlayer.Sn,
-                    TargetSn = _owner.target.GetComponent<FsmController>().Sn
-                };
+                Proto.PlayerAtkEvent proto = new() { PlayerSn = GameManager.Instance.mainPlayer.Sn };
+                if (_player.target.GetComponent<FsmController>() != null)
+                    proto.TargetSn = _player.target.GetComponent<FsmController>().Sn;
+                else
+                    proto.TargetSn = _player.target.GetComponent<PlayerController>().Sn;
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);
             }
-            else if(CompareTag("Enemy"))
+            else if (_npc)
             {
-                if (_owner.target && _owner.target.GetComponent<PlayerController>().Sn == GameManager.Instance.mainPlayer.Sn)
+                if (_npc.target && _npc.target.GetComponent<PlayerController>().Sn == GameManager.Instance.mainPlayer.Sn)
                 {
                     Proto.NpcAtkEvent proto = new()
                     {
-                        NpcSn = _owner.Sn,
+                        NpcSn = _npc.Sn,
                         TargetSn = GameManager.Instance.mainPlayer.Sn
                     };
                     NetManager.Instance.SendPacket(Proto.MsgId.C2SNpcAtkEvent, proto);
@@ -40,10 +42,10 @@ namespace Control
 
         public void PickupEvent()
         {
-            if (_owner.target)
+            if (_player.target)
             {
-                _owner.target.GetComponent<GameItem>().RequestPickup(_owner.GetComponent<PlayerController>());
-                _owner.target = null;
+                _player.target.GetComponent<GameItem>().RequestPickup(_player);
+                _player.target = null;
             }
         }
     }

@@ -79,11 +79,16 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.S2CNpcAtkEvent, ParsePacket<Proto.NpcAtkEvent>);
             RegistParseFunc(Proto.MsgId.S2CDropItemList, ParsePacket<Proto.DropItemList>);
             RegistParseFunc(Proto.MsgId.S2CGetPlayerKnap, ParsePacket<Proto.PlayerKnap>);
-            RegistParseFunc(Proto.MsgId.MiGlobalChat, ParsePacket<Proto.GlobalChat>);
-            RegistParseFunc(Proto.MsgId.MiTeamChat, ParsePacket<Proto.TeamChat>);
+            RegistParseFunc(Proto.MsgId.MiGlobalChat, ParsePacket<Proto.ChatMsg>);
+            RegistParseFunc(Proto.MsgId.MiWorldChat, ParsePacket<Proto.ChatMsg>);
+            RegistParseFunc(Proto.MsgId.MiTeamChat, ParsePacket<Proto.ChatMsg>);
+            RegistParseFunc(Proto.MsgId.MiPrivateChat, ParsePacket<Proto.ChatMsg>);
+            RegistParseFunc(Proto.MsgId.MiCreateTeam, ParsePacket<Proto.CreateTeam>);
             RegistParseFunc(Proto.MsgId.C2CReqJoinTeam, ParsePacket<Proto.JoinTeam>);
             RegistParseFunc(Proto.MsgId.C2CJoinTeamRes, ParsePacket<Proto.JoinTeam>);
-            RegistParseFunc(Proto.MsgId.MiCreateTeam, ParsePacket<Proto.CreateTeam>);
+            RegistParseFunc(Proto.MsgId.C2CReqEnterDungeon, ParsePacket<Proto.EnterDungeon>);
+            RegistParseFunc(Proto.MsgId.C2CReqPvp, ParsePacket<Proto.Pvp>);
+            RegistParseFunc(Proto.MsgId.C2CPvpRes, ParsePacket<Proto.Pvp>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
             EventManager.Instance.AddListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
         }

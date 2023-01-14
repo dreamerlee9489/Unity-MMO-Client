@@ -1,6 +1,6 @@
 ﻿namespace Control.CMD
 {
-    public enum CommandType { None, Move, Attack, Pickup, Teleport, Dialog }
+    public enum CommandType { None, Move, Attack, Pickup, Teleport, Dialog, Death }
 
     public abstract class ICommand
     {

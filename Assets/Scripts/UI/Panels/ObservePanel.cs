@@ -33,6 +33,12 @@ namespace UI
             });
             _fightBtn.onClick.AddListener(() => 
             {
+                Proto.Pvp proto = new()
+                { 
+                    Atker = GameManager.Instance.mainPlayer.Sn,
+                    Defer = _player.Sn
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2CReqPvp, proto);
                 Close();
             });
             _dealBtn.onClick.AddListener(() => 

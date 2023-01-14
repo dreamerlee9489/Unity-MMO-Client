@@ -145,20 +145,22 @@ namespace Proto {
             "bnBjX3NuGAEgASgEEgsKA2V4cBgCIAEoBRIMCgRnb2xkGAMgASgFEh4KBWl0",
             "ZW1zGAQgAygLMg8uUHJvdG8uSXRlbURhdGEiPwoISm9pblRlYW0SDQoFYWdy",
             "ZWUYASABKAgSEQoJYXBwbGljYW50GAIgASgEEhEKCXJlc3BvbmRlchgDIAEo",
-            "BCI+CgpHbG9iYWxDaGF0Eg4KBnNlbmRlchgBIAEoBBIPCgdhY2NvdW50GAIg",
-            "ASgJEg8KB2NvbnRlbnQYAyABKAkiPAoIVGVhbUNoYXQSDgoGc2VuZGVyGAEg",
-            "ASgEEg8KB2FjY291bnQYAiABKAkSDwoHY29udGVudBgDIAEoCSIuCgpDcmVh",
-            "dGVUZWFtEg8KB2NhcHRhaW4YASABKAQSDwoHbWVtYmVycxgCIAMoBCp4CgdU",
-            "YWdUeXBlEg8KC1RhZ1R5cGVOb25lEAASEgoOVGFnVHlwZUFjY291bnQQARIO",
-            "CgpUYWdUeXBlQXBwEAISEQoNVGFnVHlwZUVudGl0eRADEhIKDlRhZ1R5cGVU",
-            "b1dvcmxkEAQSEQoNVGFnVHlwZVBsYXllchAFKpoBChZBY2NvdW50Q2hlY2tS",
-            "ZXR1cm5Db2RlEgoKBkFSQ19PSxAAEg8KC0FSQ19VTktPTldOEAESGQoVQVJD",
-            "X05PVF9GT1VORF9BQ0NPVU5UEAISFgoSQVJDX1BBU1NXT1JEX1dST05HEAMS",
-            "DwoLQVJDX0xPR0dJTkcQBBIPCgtBUkNfVElNRU9VVBAFEg4KCkFSQ19PTkxJ",
-            "TkUQBipHChNMb2dpbkh0dHBSZXR1cm5Db2RlEgsKB0xIUkNfT0sQABIQCgxM",
-            "SFJDX1RJTUVPVVQQARIRCg1MSFJDX05PVEZPVU5EEAIqTAoWQ3JlYXRlUGxh",
-            "eWVyUmV0dXJuQ29kZRIRCg1DUFJfQ3JlYXRlX09LEAASDwoLQ1BSX1Vua29u",
-            "d24QARIOCgpDUFJfUmVuYW1lEAJiBnByb3RvMw=="));
+            "BCI4CgdDaGF0TXNnEg4KBnNlbmRlchgBIAEoBBIMCgRuYW1lGAIgASgJEg8K",
+            "B2NvbnRlbnQYAyABKAkiLgoKQ3JlYXRlVGVhbRIPCgdjYXB0YWluGAEgASgE",
+            "Eg8KB21lbWJlcnMYAiADKAQiUQoMRW50ZXJEdW5nZW9uEhAKCHdvcmxkX2lk",
+            "GAEgASgFEhAKCHdvcmxkX3NuGAIgASgEEg0KBWFncmVlGAMgASgIEg4KBnNl",
+            "bmRlchgEIAEoCSIyCgNQdnASDQoFYXRrZXIYASABKAQSDQoFZGVmZXIYAiAB",
+            "KAQSDQoFYWdyZWUYAyABKAgqeAoHVGFnVHlwZRIPCgtUYWdUeXBlTm9uZRAA",
+            "EhIKDlRhZ1R5cGVBY2NvdW50EAESDgoKVGFnVHlwZUFwcBACEhEKDVRhZ1R5",
+            "cGVFbnRpdHkQAxISCg5UYWdUeXBlVG9Xb3JsZBAEEhEKDVRhZ1R5cGVQbGF5",
+            "ZXIQBSqaAQoWQWNjb3VudENoZWNrUmV0dXJuQ29kZRIKCgZBUkNfT0sQABIP",
+            "CgtBUkNfVU5LT05XThABEhkKFUFSQ19OT1RfRk9VTkRfQUNDT1VOVBACEhYK",
+            "EkFSQ19QQVNTV09SRF9XUk9ORxADEg8KC0FSQ19MT0dHSU5HEAQSDwoLQVJD",
+            "X1RJTUVPVVQQBRIOCgpBUkNfT05MSU5FEAYqRwoTTG9naW5IdHRwUmV0dXJu",
+            "Q29kZRILCgdMSFJDX09LEAASEAoMTEhSQ19USU1FT1VUEAESEQoNTEhSQ19O",
+            "T1RGT1VORBACKkwKFkNyZWF0ZVBsYXllclJldHVybkNvZGUSEQoNQ1BSX0Ny",
+            "ZWF0ZV9PSxAAEg8KC0NQUl9VbmtvbnduEAESDgoKQ1BSX1JlbmFtZRACYgZw",
+            "cm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Proto.DbReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.TagType), typeof(global::Proto.AccountCheckReturnCode), typeof(global::Proto.LoginHttpReturnCode), typeof(global::Proto.CreatePlayerReturnCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -238,9 +240,10 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerAtkEvent), global::Proto.PlayerAtkEvent.Parser, new[]{ "PlayerSn", "TargetSn" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.DropItemList), global::Proto.DropItemList.Parser, new[]{ "NpcSn", "Exp", "Gold", "Items" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.JoinTeam), global::Proto.JoinTeam.Parser, new[]{ "Agree", "Applicant", "Responder" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.GlobalChat), global::Proto.GlobalChat.Parser, new[]{ "Sender", "Account", "Content" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.TeamChat), global::Proto.TeamChat.Parser, new[]{ "Sender", "Account", "Content" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.CreateTeam), global::Proto.CreateTeam.Parser, new[]{ "Captain", "Members" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ChatMsg), global::Proto.ChatMsg.Parser, new[]{ "Sender", "Name", "Content" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.CreateTeam), global::Proto.CreateTeam.Parser, new[]{ "Captain", "Members" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.EnterDungeon), global::Proto.EnterDungeon.Parser, new[]{ "WorldId", "WorldSn", "Agree", "Sender" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Pvp), global::Proto.Pvp.Parser, new[]{ "Atker", "Defer", "Agree" }, null, null, null, null)
           }));
     }
     #endregion
@@ -12768,11 +12771,11 @@ namespace Proto {
 
   }
 
-  public sealed partial class GlobalChat : pb::IMessage<GlobalChat> {
-    private static readonly pb::MessageParser<GlobalChat> _parser = new pb::MessageParser<GlobalChat>(() => new GlobalChat());
+  public sealed partial class ChatMsg : pb::IMessage<ChatMsg> {
+    private static readonly pb::MessageParser<ChatMsg> _parser = new pb::MessageParser<ChatMsg>(() => new ChatMsg());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<GlobalChat> Parser { get { return _parser; } }
+    public static pb::MessageParser<ChatMsg> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -12785,23 +12788,23 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public GlobalChat() {
+    public ChatMsg() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public GlobalChat(GlobalChat other) : this() {
+    public ChatMsg(ChatMsg other) : this() {
       sender_ = other.sender_;
-      account_ = other.account_;
+      name_ = other.name_;
       content_ = other.content_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public GlobalChat Clone() {
-      return new GlobalChat(this);
+    public ChatMsg Clone() {
+      return new ChatMsg(this);
     }
 
     /// <summary>Field number for the "sender" field.</summary>
@@ -12815,14 +12818,14 @@ namespace Proto {
       }
     }
 
-    /// <summary>Field number for the "account" field.</summary>
-    public const int AccountFieldNumber = 2;
-    private string account_ = "";
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 2;
+    private string name_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Account {
-      get { return account_; }
+    public string Name {
+      get { return name_; }
       set {
-        account_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -12839,11 +12842,11 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as GlobalChat);
+      return Equals(other as ChatMsg);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(GlobalChat other) {
+    public bool Equals(ChatMsg other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -12851,7 +12854,7 @@ namespace Proto {
         return true;
       }
       if (Sender != other.Sender) return false;
-      if (Account != other.Account) return false;
+      if (Name != other.Name) return false;
       if (Content != other.Content) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -12860,7 +12863,7 @@ namespace Proto {
     public override int GetHashCode() {
       int hash = 1;
       if (Sender != 0UL) hash ^= Sender.GetHashCode();
-      if (Account.Length != 0) hash ^= Account.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (Content.Length != 0) hash ^= Content.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -12879,9 +12882,9 @@ namespace Proto {
         output.WriteRawTag(8);
         output.WriteUInt64(Sender);
       }
-      if (Account.Length != 0) {
+      if (Name.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteString(Account);
+        output.WriteString(Name);
       }
       if (Content.Length != 0) {
         output.WriteRawTag(26);
@@ -12898,8 +12901,8 @@ namespace Proto {
       if (Sender != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Sender);
       }
-      if (Account.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Account);
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
       if (Content.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Content);
@@ -12911,15 +12914,15 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(GlobalChat other) {
+    public void MergeFrom(ChatMsg other) {
       if (other == null) {
         return;
       }
       if (other.Sender != 0UL) {
         Sender = other.Sender;
       }
-      if (other.Account.Length != 0) {
-        Account = other.Account;
+      if (other.Name.Length != 0) {
+        Name = other.Name;
       }
       if (other.Content.Length != 0) {
         Content = other.Content;
@@ -12940,192 +12943,7 @@ namespace Proto {
             break;
           }
           case 18: {
-            Account = input.ReadString();
-            break;
-          }
-          case 26: {
-            Content = input.ReadString();
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
-  public sealed partial class TeamChat : pb::IMessage<TeamChat> {
-    private static readonly pb::MessageParser<TeamChat> _parser = new pb::MessageParser<TeamChat>(() => new TeamChat());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<TeamChat> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.MsgReflection.Descriptor.MessageTypes[77]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public TeamChat() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public TeamChat(TeamChat other) : this() {
-      sender_ = other.sender_;
-      account_ = other.account_;
-      content_ = other.content_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public TeamChat Clone() {
-      return new TeamChat(this);
-    }
-
-    /// <summary>Field number for the "sender" field.</summary>
-    public const int SenderFieldNumber = 1;
-    private ulong sender_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ulong Sender {
-      get { return sender_; }
-      set {
-        sender_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "account" field.</summary>
-    public const int AccountFieldNumber = 2;
-    private string account_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Account {
-      get { return account_; }
-      set {
-        account_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "content" field.</summary>
-    public const int ContentFieldNumber = 3;
-    private string content_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Content {
-      get { return content_; }
-      set {
-        content_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as TeamChat);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(TeamChat other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (Sender != other.Sender) return false;
-      if (Account != other.Account) return false;
-      if (Content != other.Content) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (Sender != 0UL) hash ^= Sender.GetHashCode();
-      if (Account.Length != 0) hash ^= Account.GetHashCode();
-      if (Content.Length != 0) hash ^= Content.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-      if (Sender != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(Sender);
-      }
-      if (Account.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(Account);
-      }
-      if (Content.Length != 0) {
-        output.WriteRawTag(26);
-        output.WriteString(Content);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (Sender != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Sender);
-      }
-      if (Account.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Account);
-      }
-      if (Content.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Content);
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(TeamChat other) {
-      if (other == null) {
-        return;
-      }
-      if (other.Sender != 0UL) {
-        Sender = other.Sender;
-      }
-      if (other.Account.Length != 0) {
-        Account = other.Account;
-      }
-      if (other.Content.Length != 0) {
-        Content = other.Content;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 8: {
-            Sender = input.ReadUInt64();
-            break;
-          }
-          case 18: {
-            Account = input.ReadString();
+            Name = input.ReadString();
             break;
           }
           case 26: {
@@ -13146,7 +12964,7 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.MsgReflection.Descriptor.MessageTypes[78]; }
+      get { return global::Proto.MsgReflection.Descriptor.MessageTypes[77]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -13280,6 +13098,404 @@ namespace Proto {
           case 18:
           case 16: {
             members_.AddEntriesFrom(input, _repeated_members_codec);
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class EnterDungeon : pb::IMessage<EnterDungeon> {
+    private static readonly pb::MessageParser<EnterDungeon> _parser = new pb::MessageParser<EnterDungeon>(() => new EnterDungeon());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<EnterDungeon> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.MsgReflection.Descriptor.MessageTypes[78]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public EnterDungeon() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public EnterDungeon(EnterDungeon other) : this() {
+      worldId_ = other.worldId_;
+      worldSn_ = other.worldSn_;
+      agree_ = other.agree_;
+      sender_ = other.sender_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public EnterDungeon Clone() {
+      return new EnterDungeon(this);
+    }
+
+    /// <summary>Field number for the "world_id" field.</summary>
+    public const int WorldIdFieldNumber = 1;
+    private int worldId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int WorldId {
+      get { return worldId_; }
+      set {
+        worldId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "world_sn" field.</summary>
+    public const int WorldSnFieldNumber = 2;
+    private ulong worldSn_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong WorldSn {
+      get { return worldSn_; }
+      set {
+        worldSn_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "agree" field.</summary>
+    public const int AgreeFieldNumber = 3;
+    private bool agree_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Agree {
+      get { return agree_; }
+      set {
+        agree_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "sender" field.</summary>
+    public const int SenderFieldNumber = 4;
+    private string sender_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Sender {
+      get { return sender_; }
+      set {
+        sender_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as EnterDungeon);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(EnterDungeon other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (WorldId != other.WorldId) return false;
+      if (WorldSn != other.WorldSn) return false;
+      if (Agree != other.Agree) return false;
+      if (Sender != other.Sender) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (WorldId != 0) hash ^= WorldId.GetHashCode();
+      if (WorldSn != 0UL) hash ^= WorldSn.GetHashCode();
+      if (Agree != false) hash ^= Agree.GetHashCode();
+      if (Sender.Length != 0) hash ^= Sender.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (WorldId != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(WorldId);
+      }
+      if (WorldSn != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(WorldSn);
+      }
+      if (Agree != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(Agree);
+      }
+      if (Sender.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteString(Sender);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (WorldId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(WorldId);
+      }
+      if (WorldSn != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(WorldSn);
+      }
+      if (Agree != false) {
+        size += 1 + 1;
+      }
+      if (Sender.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Sender);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(EnterDungeon other) {
+      if (other == null) {
+        return;
+      }
+      if (other.WorldId != 0) {
+        WorldId = other.WorldId;
+      }
+      if (other.WorldSn != 0UL) {
+        WorldSn = other.WorldSn;
+      }
+      if (other.Agree != false) {
+        Agree = other.Agree;
+      }
+      if (other.Sender.Length != 0) {
+        Sender = other.Sender;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            WorldId = input.ReadInt32();
+            break;
+          }
+          case 16: {
+            WorldSn = input.ReadUInt64();
+            break;
+          }
+          case 24: {
+            Agree = input.ReadBool();
+            break;
+          }
+          case 34: {
+            Sender = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class Pvp : pb::IMessage<Pvp> {
+    private static readonly pb::MessageParser<Pvp> _parser = new pb::MessageParser<Pvp>(() => new Pvp());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<Pvp> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.MsgReflection.Descriptor.MessageTypes[79]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Pvp() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Pvp(Pvp other) : this() {
+      atker_ = other.atker_;
+      defer_ = other.defer_;
+      agree_ = other.agree_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Pvp Clone() {
+      return new Pvp(this);
+    }
+
+    /// <summary>Field number for the "atker" field.</summary>
+    public const int AtkerFieldNumber = 1;
+    private ulong atker_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong Atker {
+      get { return atker_; }
+      set {
+        atker_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "defer" field.</summary>
+    public const int DeferFieldNumber = 2;
+    private ulong defer_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public ulong Defer {
+      get { return defer_; }
+      set {
+        defer_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "agree" field.</summary>
+    public const int AgreeFieldNumber = 3;
+    private bool agree_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Agree {
+      get { return agree_; }
+      set {
+        agree_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as Pvp);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(Pvp other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Atker != other.Atker) return false;
+      if (Defer != other.Defer) return false;
+      if (Agree != other.Agree) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Atker != 0UL) hash ^= Atker.GetHashCode();
+      if (Defer != 0UL) hash ^= Defer.GetHashCode();
+      if (Agree != false) hash ^= Agree.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Atker != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(Atker);
+      }
+      if (Defer != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Defer);
+      }
+      if (Agree != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(Agree);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Atker != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Atker);
+      }
+      if (Defer != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Defer);
+      }
+      if (Agree != false) {
+        size += 1 + 1;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(Pvp other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Atker != 0UL) {
+        Atker = other.Atker;
+      }
+      if (other.Defer != 0UL) {
+        Defer = other.Defer;
+      }
+      if (other.Agree != false) {
+        Agree = other.Agree;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Atker = input.ReadUInt64();
+            break;
+          }
+          case 16: {
+            Defer = input.ReadUInt64();
+            break;
+          }
+          case 24: {
+            Agree = input.ReadBool();
             break;
           }
         }

@@ -41,7 +41,6 @@ namespace Manage
                     npcObj.SetNameBar(strs[6]);
                     npcObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
                     npcObj.patrolPath.transform.position = npcObj.transform.position;
-                    npcObj.gameObject.SetActive(true);
                     _npcs.Add(npcObj);
                 });
             }
