@@ -143,24 +143,22 @@ namespace Proto {
             "YXJnZXRfc24YAiABKAQiNgoOUGxheWVyQXRrRXZlbnQSEQoJcGxheWVyX3Nu",
             "GAEgASgEEhEKCXRhcmdldF9zbhgCIAEoBCJZCgxEcm9wSXRlbUxpc3QSDgoG",
             "bnBjX3NuGAEgASgEEgsKA2V4cBgCIAEoBRIMCgRnb2xkGAMgASgFEh4KBWl0",
-            "ZW1zGAQgAygLMg8uUHJvdG8uSXRlbURhdGEiPwoISm9pblRlYW0SDQoFYWdy",
-            "ZWUYASABKAgSEQoJYXBwbGljYW50GAIgASgEEhEKCXJlc3BvbmRlchgDIAEo",
-            "BCI4CgdDaGF0TXNnEg4KBnNlbmRlchgBIAEoBBIMCgRuYW1lGAIgASgJEg8K",
-            "B2NvbnRlbnQYAyABKAkiLgoKQ3JlYXRlVGVhbRIPCgdjYXB0YWluGAEgASgE",
-            "Eg8KB21lbWJlcnMYAiADKAQiUQoMRW50ZXJEdW5nZW9uEhAKCHdvcmxkX2lk",
-            "GAEgASgFEhAKCHdvcmxkX3NuGAIgASgEEg0KBWFncmVlGAMgASgIEg4KBnNl",
-            "bmRlchgEIAEoCSIyCgNQdnASDQoFYXRrZXIYASABKAQSDQoFZGVmZXIYAiAB",
-            "KAQSDQoFYWdyZWUYAyABKAgqeAoHVGFnVHlwZRIPCgtUYWdUeXBlTm9uZRAA",
-            "EhIKDlRhZ1R5cGVBY2NvdW50EAESDgoKVGFnVHlwZUFwcBACEhEKDVRhZ1R5",
-            "cGVFbnRpdHkQAxISCg5UYWdUeXBlVG9Xb3JsZBAEEhEKDVRhZ1R5cGVQbGF5",
-            "ZXIQBSqaAQoWQWNjb3VudENoZWNrUmV0dXJuQ29kZRIKCgZBUkNfT0sQABIP",
-            "CgtBUkNfVU5LT05XThABEhkKFUFSQ19OT1RfRk9VTkRfQUNDT1VOVBACEhYK",
-            "EkFSQ19QQVNTV09SRF9XUk9ORxADEg8KC0FSQ19MT0dHSU5HEAQSDwoLQVJD",
-            "X1RJTUVPVVQQBRIOCgpBUkNfT05MSU5FEAYqRwoTTG9naW5IdHRwUmV0dXJu",
-            "Q29kZRILCgdMSFJDX09LEAASEAoMTEhSQ19USU1FT1VUEAESEQoNTEhSQ19O",
-            "T1RGT1VORBACKkwKFkNyZWF0ZVBsYXllclJldHVybkNvZGUSEQoNQ1BSX0Ny",
-            "ZWF0ZV9PSxAAEg8KC0NQUl9VbmtvbnduEAESDgoKQ1BSX1JlbmFtZRACYgZw",
-            "cm90bzM="));
+            "ZW1zGAQgAygLMg8uUHJvdG8uSXRlbURhdGEiQAoJUGxheWVyUmVxEg0KBWFn",
+            "cmVlGAEgASgIEhEKCWFwcGxpY2FudBgCIAEoBBIRCglyZXNwb25kZXIYAyAB",
+            "KAQiOAoHQ2hhdE1zZxIOCgZzZW5kZXIYASABKAQSDAoEbmFtZRgCIAEoCRIP",
+            "Cgdjb250ZW50GAMgASgJIi4KCkNyZWF0ZVRlYW0SDwoHY2FwdGFpbhgBIAEo",
+            "BBIPCgdtZW1iZXJzGAIgAygEIlEKDEVudGVyRHVuZ2VvbhIQCgh3b3JsZF9p",
+            "ZBgBIAEoBRIQCgh3b3JsZF9zbhgCIAEoBBINCgVhZ3JlZRgDIAEoCBIOCgZz",
+            "ZW5kZXIYBCABKAkqeAoHVGFnVHlwZRIPCgtUYWdUeXBlTm9uZRAAEhIKDlRh",
+            "Z1R5cGVBY2NvdW50EAESDgoKVGFnVHlwZUFwcBACEhEKDVRhZ1R5cGVFbnRp",
+            "dHkQAxISCg5UYWdUeXBlVG9Xb3JsZBAEEhEKDVRhZ1R5cGVQbGF5ZXIQBSqa",
+            "AQoWQWNjb3VudENoZWNrUmV0dXJuQ29kZRIKCgZBUkNfT0sQABIPCgtBUkNf",
+            "VU5LT05XThABEhkKFUFSQ19OT1RfRk9VTkRfQUNDT1VOVBACEhYKEkFSQ19Q",
+            "QVNTV09SRF9XUk9ORxADEg8KC0FSQ19MT0dHSU5HEAQSDwoLQVJDX1RJTUVP",
+            "VVQQBRIOCgpBUkNfT05MSU5FEAYqRwoTTG9naW5IdHRwUmV0dXJuQ29kZRIL",
+            "CgdMSFJDX09LEAASEAoMTEhSQ19USU1FT1VUEAESEQoNTEhSQ19OT1RGT1VO",
+            "RBACKkwKFkNyZWF0ZVBsYXllclJldHVybkNvZGUSEQoNQ1BSX0NyZWF0ZV9P",
+            "SxAAEg8KC0NQUl9VbmtvbnduEAESDgoKQ1BSX1JlbmFtZRACYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Proto.DbReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.TagType), typeof(global::Proto.AccountCheckReturnCode), typeof(global::Proto.LoginHttpReturnCode), typeof(global::Proto.CreatePlayerReturnCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -239,11 +237,10 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.NpcAtkEvent), global::Proto.NpcAtkEvent.Parser, new[]{ "NpcSn", "TargetSn" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerAtkEvent), global::Proto.PlayerAtkEvent.Parser, new[]{ "PlayerSn", "TargetSn" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.DropItemList), global::Proto.DropItemList.Parser, new[]{ "NpcSn", "Exp", "Gold", "Items" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.JoinTeam), global::Proto.JoinTeam.Parser, new[]{ "Agree", "Applicant", "Responder" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerReq), global::Proto.PlayerReq.Parser, new[]{ "Agree", "Applicant", "Responder" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ChatMsg), global::Proto.ChatMsg.Parser, new[]{ "Sender", "Name", "Content" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.CreateTeam), global::Proto.CreateTeam.Parser, new[]{ "Captain", "Members" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.EnterDungeon), global::Proto.EnterDungeon.Parser, new[]{ "WorldId", "WorldSn", "Agree", "Sender" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Pvp), global::Proto.Pvp.Parser, new[]{ "Atker", "Defer", "Agree" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.EnterDungeon), global::Proto.EnterDungeon.Parser, new[]{ "WorldId", "WorldSn", "Agree", "Sender" }, null, null, null, null)
           }));
     }
     #endregion
@@ -12586,11 +12583,11 @@ namespace Proto {
 
   }
 
-  public sealed partial class JoinTeam : pb::IMessage<JoinTeam> {
-    private static readonly pb::MessageParser<JoinTeam> _parser = new pb::MessageParser<JoinTeam>(() => new JoinTeam());
+  public sealed partial class PlayerReq : pb::IMessage<PlayerReq> {
+    private static readonly pb::MessageParser<PlayerReq> _parser = new pb::MessageParser<PlayerReq>(() => new PlayerReq());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<JoinTeam> Parser { get { return _parser; } }
+    public static pb::MessageParser<PlayerReq> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -12603,14 +12600,14 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public JoinTeam() {
+    public PlayerReq() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public JoinTeam(JoinTeam other) : this() {
+    public PlayerReq(PlayerReq other) : this() {
       agree_ = other.agree_;
       applicant_ = other.applicant_;
       responder_ = other.responder_;
@@ -12618,8 +12615,8 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public JoinTeam Clone() {
-      return new JoinTeam(this);
+    public PlayerReq Clone() {
+      return new PlayerReq(this);
     }
 
     /// <summary>Field number for the "agree" field.</summary>
@@ -12657,11 +12654,11 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as JoinTeam);
+      return Equals(other as PlayerReq);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(JoinTeam other) {
+    public bool Equals(PlayerReq other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -12729,7 +12726,7 @@ namespace Proto {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(JoinTeam other) {
+    public void MergeFrom(PlayerReq other) {
       if (other == null) {
         return;
       }
@@ -13311,191 +13308,6 @@ namespace Proto {
           }
           case 34: {
             Sender = input.ReadString();
-            break;
-          }
-        }
-      }
-    }
-
-  }
-
-  public sealed partial class Pvp : pb::IMessage<Pvp> {
-    private static readonly pb::MessageParser<Pvp> _parser = new pb::MessageParser<Pvp>(() => new Pvp());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<Pvp> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.MsgReflection.Descriptor.MessageTypes[79]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Pvp() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Pvp(Pvp other) : this() {
-      atker_ = other.atker_;
-      defer_ = other.defer_;
-      agree_ = other.agree_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public Pvp Clone() {
-      return new Pvp(this);
-    }
-
-    /// <summary>Field number for the "atker" field.</summary>
-    public const int AtkerFieldNumber = 1;
-    private ulong atker_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ulong Atker {
-      get { return atker_; }
-      set {
-        atker_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "defer" field.</summary>
-    public const int DeferFieldNumber = 2;
-    private ulong defer_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ulong Defer {
-      get { return defer_; }
-      set {
-        defer_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "agree" field.</summary>
-    public const int AgreeFieldNumber = 3;
-    private bool agree_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Agree {
-      get { return agree_; }
-      set {
-        agree_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as Pvp);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(Pvp other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (Atker != other.Atker) return false;
-      if (Defer != other.Defer) return false;
-      if (Agree != other.Agree) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (Atker != 0UL) hash ^= Atker.GetHashCode();
-      if (Defer != 0UL) hash ^= Defer.GetHashCode();
-      if (Agree != false) hash ^= Agree.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-      if (Atker != 0UL) {
-        output.WriteRawTag(8);
-        output.WriteUInt64(Atker);
-      }
-      if (Defer != 0UL) {
-        output.WriteRawTag(16);
-        output.WriteUInt64(Defer);
-      }
-      if (Agree != false) {
-        output.WriteRawTag(24);
-        output.WriteBool(Agree);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (Atker != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Atker);
-      }
-      if (Defer != 0UL) {
-        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Defer);
-      }
-      if (Agree != false) {
-        size += 1 + 1;
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(Pvp other) {
-      if (other == null) {
-        return;
-      }
-      if (other.Atker != 0UL) {
-        Atker = other.Atker;
-      }
-      if (other.Defer != 0UL) {
-        Defer = other.Defer;
-      }
-      if (other.Agree != false) {
-        Agree = other.Agree;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 8: {
-            Atker = input.ReadUInt64();
-            break;
-          }
-          case 16: {
-            Defer = input.ReadUInt64();
-            break;
-          }
-          case 24: {
-            Agree = input.ReadBool();
             break;
           }
         }

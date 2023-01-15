@@ -89,7 +89,7 @@ public class PerfectLookAtLegStabilizer
 	public void Initialize()
 	{
 		if (m_BonesCount <= 1) {
-			Debug.LogWarning("PerfectLookAtLegStabilizer bone count is set to 0 or 1. It will be ignored.");
+			Debug.LogWarning("PerfectLookAtLegStabilizer bone Count is set to 0 or 1. It will be ignored.");
 			return;
 		}
 
@@ -108,7 +108,7 @@ public class PerfectLookAtLegStabilizer
 	public void CacheBones()
 	{
 		if (m_BonesCount <= 1) {
-			Debug.LogWarning("PerfectLookAtLegStabilizer bone count is set to 0 or 1. It will be ignored.");
+			Debug.LogWarning("PerfectLookAtLegStabilizer bone Count is set to 0 or 1. It will be ignored.");
 			return;
 		}
 

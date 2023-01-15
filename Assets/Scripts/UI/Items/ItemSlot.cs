@@ -6,11 +6,12 @@ namespace UI
 {
 	public class ItemSlot : MonoBehaviour
 	{
-        public int index = 0;
-        public ItemType slotType = ItemType.None;
-        
-        public Transform Icons { get; set; }
-        public Text Count { get; set; }
+        public ItemType itemType = ItemType.None;
+        public KnapType knapType = KnapType.Bag;
+
+        public int Index { get; set; }
+        public Transform Icons { get; private set; }
+        public Text Count { get; private set; }
 
         private void Awake()
         {

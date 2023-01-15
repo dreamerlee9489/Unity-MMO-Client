@@ -30,7 +30,7 @@ namespace Manage
                     GetPanel<PropPanel>().SwitchToggle();
 
                 if (Input.GetKeyDown(KeyCode.K))
-                    GetPanel<KnapPanel>().SwitchToggle();
+                    GetPanel<BagPanel>().SwitchToggle();
 
                 if (Input.GetKeyDown(KeyCode.E))
                     GetPanel<EquipPanel>().SwitchToggle();

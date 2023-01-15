@@ -6,19 +6,19 @@ using UnityEngine;
 namespace Items
 {
     public enum ItemType { None, Potion, Weapon, Shield, Helmet, Chest, Boots, Neck, Gloves, Pants, Portal }
-    public enum ItemState { World, Knap, Equip }
+    public enum KnapType { World, Bag, Equip, Action, Trade }
 
     public abstract class GameItem : MonoBehaviour
     {
-        protected ItemState _itemState = ItemState.World;
         protected ItemNameBar _nameBar;
+
+        public int id = 0;
+        public ItemType itemType = ItemType.None;
+        public KnapType knapType = KnapType.World;
 
         public ulong Sn { get; set; }
         public string ObjName { get; set; }
         public ItemUI ItemUI { get; set; }
-
-        public int id = 0;
-        public ItemType itemType = ItemType.None;
 
         public override int GetHashCode()
         {
@@ -43,9 +43,9 @@ namespace Items
 
         private void Update()
         {
-            if (_itemState != ItemState.World && gameObject.activeSelf)
+            if (knapType != KnapType.World && gameObject.activeSelf)
                 gameObject.SetActive(false);
-            else if (_itemState == ItemState.World && !gameObject.activeSelf)
+            else if (knapType == KnapType.World && !gameObject.activeSelf)
                 gameObject.SetActive(true);
         }
 
@@ -53,22 +53,25 @@ namespace Items
 
         public virtual void RequestPickup(PlayerController player)
         {
-            _itemState = ItemState.Knap;
+            knapType = KnapType.Bag;
             Proto.UpdateKnapItem proto = new() { Item = new() };
-            switch (itemType)
-            {
-                case ItemType.Potion:
-                    proto.Item.Type = Proto.ItemData.Types.ItemType.Potion;
-                    break;
-                case ItemType.Weapon:
-                    proto.Item.Type = Proto.ItemData.Types.ItemType.Weapon;
-                    break;
-                default:
-                    break;
-            }
             proto.Item.Sn = Sn;
             proto.Item.Id = id;
-            proto.Item.Index = player.AddItemToBag(this);
+            proto.Item.Index = player.AddItemToKnap(this);
+            proto.Item.ItemType = (Proto.ItemData.Types.ItemType)itemType;
+            proto.Item.KnapType = (Proto.ItemData.Types.KnapType)knapType;
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
+        }
+
+        public void UpdateUiLoc(KnapType knapType, int index)
+        {
+            this.knapType = knapType;
+            Proto.UpdateKnapItem proto = new() { Item = new() };
+            proto.Item.Sn = Sn;
+            proto.Item.Id = id;
+            proto.Item.Index = index;
+            proto.Item.ItemType = (Proto.ItemData.Types.ItemType)itemType;
+            proto.Item.KnapType = (Proto.ItemData.Types.KnapType)knapType;
             NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
         }
     }

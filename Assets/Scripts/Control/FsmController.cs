@@ -107,10 +107,10 @@ namespace Control
             player.xp += itemList.Exp;
             player.gold += itemList.Gold;
             UIManager.Instance.GetPanel<PropPanel>().UpdateXp(player.xp);
-            UIManager.Instance.GetPanel<KnapPanel>().UpdateGold(player.gold);
+            UIManager.Instance.GetPanel<BagPanel>().UpdateGold(player.gold);
             foreach (Proto.ItemData data in itemList.Items)
             {
-                switch (data.Type)
+                switch (data.ItemType)
                 {
                     case Proto.ItemData.Types.ItemType.None:
                         break;
@@ -120,6 +120,7 @@ namespace Control
                         {
                             Potion potion = Instantiate(obj).GetComponent<Potion>();
                             potion.itemType = ItemType.Potion;
+                            potion.knapType = KnapType.World;
                             potion.id = data.Id;
                             potion.Sn = data.Sn;
                             potion.ObjName = potionDict[key1][0];
@@ -134,6 +135,7 @@ namespace Control
                         {
                             Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
                             weapon.itemType = ItemType.Weapon;
+                            weapon.knapType = KnapType.World;
                             weapon.id = data.Id;
                             weapon.Sn = data.Sn;
                             weapon.ObjName = weaponDict[key2][0];

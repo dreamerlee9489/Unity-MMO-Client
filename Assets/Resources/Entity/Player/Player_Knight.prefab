@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 147478836427827141}
   m_Layer: 0
-  m_Name: HandPos
+  m_Name: HandPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 3486705334604088767}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1640819471663552864
+--- !u!1 &3440186334202340920
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -39,21 +39,21 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8181082772093587771}
+  - component: {fileID: 4032387352190401164}
   m_Layer: 0
-  m_Name: InputPoint
+  m_Name: ActPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8181082772093587771
+--- !u!4 &4032387352190401164
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1640819471663552864}
+  m_GameObject: {fileID: 3440186334202340920}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -99,7 +99,8 @@ Transform:
   - {fileID: 8682721324149199086}
   - {fileID: 4064278202559409287}
   - {fileID: 147478836427827141}
-  - {fileID: 8181082772093587771}
+  - {fileID: 4032387352190401164}
+  - {fileID: 8828917270573410051}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -194,8 +195,6 @@ MonoBehaviour:
   target: {fileID: 0}
   xp: 0
   gold: 0
-  currWorld: {fileID: 0}
-  team: 
 --- !u!1 &3905425796652821104
 GameObject:
   m_ObjectHideFlags: 0
@@ -272,6 +271,37 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &4267093840979583158
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8828917270573410051}
+  m_Layer: 0
+  m_Name: TradePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8828917270573410051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4267093840979583158}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3486705334604088767}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5383154881955332099
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,7 +312,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4064278202559409287}
   m_Layer: 0
-  m_Name: Knapsack
+  m_Name: BagPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

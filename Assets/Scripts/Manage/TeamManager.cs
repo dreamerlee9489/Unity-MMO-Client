@@ -25,12 +25,12 @@ namespace Manage
                 PoolManager.Instance.Push(PoolType.HUDPanel, UIManager.Instance.hudGroup.GetChild(0).gameObject);
         }
 
-        public void ParseReqJoinTeam(Proto.JoinTeam proto)
+        public void ParseReqJoinTeam(Proto.PlayerReq proto)
         {
             string text = $"玩家[{GameManager.currWorld.roleDict[proto.Applicant].name}]申请入队，是否同意？";
             UIManager.Instance.GetPanel<PopupPanel>().Open(text, () =>
             {
-                Proto.JoinTeam joinRes = new()
+                Proto.PlayerReq joinRes = new()
                 {
                     Applicant = proto.Applicant,
                     Responder = _mainSn,
@@ -39,7 +39,7 @@ namespace Manage
                 NetManager.Instance.SendPacket(Proto.MsgId.C2CJoinTeamRes, joinRes);
             }, () =>
             {
-                Proto.JoinTeam joinRes = new()
+                Proto.PlayerReq joinRes = new()
                 {
                     Applicant = proto.Applicant,
                     Responder = _mainSn,
@@ -49,7 +49,7 @@ namespace Manage
             });
         }
 
-        public void ParseJoinTeamRes(Proto.JoinTeam proto)
+        public void ParseJoinTeamRes(Proto.PlayerReq proto)
         {
             if (!proto.Agree)
             {

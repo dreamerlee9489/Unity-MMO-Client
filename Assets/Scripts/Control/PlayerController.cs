@@ -1,6 +1,7 @@
 ﻿using Control.CMD;
 using Items;
 using Manage;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UI;
@@ -17,7 +18,7 @@ namespace Control
 
         private RaycastHit _hit;
         private ICommand _cmd;
-        private Transform _knapsack, _handPos;
+        private Transform _bagPoint, _handPoint, _actPoint, _tradePoint;
 
         public int xp = 0, gold = 0;
         public static PlayerBaseData baseData;
@@ -41,8 +42,10 @@ namespace Control
             baseData ??= GameManager.Instance.playerBaseDatas[lv];
             if (Sn == GameManager.Instance.mainPlayer.Sn)
             {
-                _knapsack = transform.Find("Knapsack");
-                _handPos = transform.Find("HandPos");
+                _bagPoint = transform.Find("BagPoint");
+                _handPoint = transform.Find("HandPoint");
+                _actPoint = transform.Find("ActPoint");
+                _tradePoint = transform.Find("TradePoint");
                 nameBar.HpBar.gameObject.SetActive(false);
                 gameObject.layer = 2;
                 TeamManager.Instance.Initial();
@@ -217,61 +220,79 @@ namespace Control
             }
         }
 
-        public int AddItemToBag(GameItem item, int index = 0)
+        public int AddItemToKnap(GameItem item, int index = 0)
         {
-            item.gameObject.SetActive(false);
-            item.transform.SetParent(_knapsack);
             GameObject obj = ResourceManager.Instance.Load<GameObject>($"UI/ItemUI/{item.itemType}/{item.ObjName}");
             ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();
+            PoolManager.Instance.Push(item.ObjName, itemUI.gameObject);
             itemUI.Item = item;
             item.ItemUI = itemUI;
-            PoolManager.Instance.Push(item.ObjName, itemUI.gameObject);
-            return itemUI.AddToBagUI(index);
+            item.gameObject.SetActive(false);
+            switch (item.knapType)
+            {
+                case KnapType.Bag:
+                    item.transform.SetParent(_bagPoint);
+                    return itemUI.AddToBagUI(index);
+                case KnapType.Equip:
+                    item.transform.SetParent(_handPoint);
+                    return itemUI.AddToEquipUI(index);
+                case KnapType.Action:
+                    item.transform.SetParent(_actPoint);
+                    return itemUI.AddToActionUI(index);
+                case KnapType.Trade:
+                    item.transform.SetParent(_tradePoint);
+                    return itemUI.AddToTradeUI(index);
+                default:
+                    return -1;
+            }
         }
 
         public void ParsePlayerKnap(Proto.PlayerKnap playerKnap)
         {
             gold = playerKnap.Gold;
-            UIManager.Instance.GetPanel<KnapPanel>().UpdateGold(gold);
-            var potionDict = GameManager.Instance.dropPotionDict;
-            var weaponDict = GameManager.Instance.dropWeaponDict;
-            foreach (Proto.ItemData data in playerKnap.BagItems)
+            UIManager.Instance.GetPanel<BagPanel>().UpdateGold(gold);
+            foreach (Proto.ItemData data in playerKnap.Items)
+                ParseItemDataToKnap(data);
+        }
+
+        public void ParseItemDataToKnap(Proto.ItemData data)
+        {
+            switch (data.ItemType)
             {
-                switch (data.Type)
-                {
-                    case Proto.ItemData.Types.ItemType.None:
-                        break;
-                    case Proto.ItemData.Types.ItemType.Potion:
-                        string key1 = new((int)ItemType.Potion + "@" + data.Id);
-                        ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{potionDict[key1][0]}", (obj) =>
-                        {
-                            Potion potion = Instantiate(obj).GetComponent<Potion>();
-                            potion.itemType = ItemType.Potion;
-                            potion.id = data.Id;
-                            potion.Sn = data.Sn;
-                            potion.ObjName = potionDict[key1][0];
-                            potion.SetNameBar(potionDict[key1][1]);
-                            potion.transform.position = transform.position;
-                            AddItemToBag(potion, data.Index);
-                        });
-                        break;
-                    case Proto.ItemData.Types.ItemType.Weapon:
-                        string key2 = new((int)ItemType.Weapon + "@" + data.Id);
-                        ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{weaponDict[key2][0]}", (obj) =>
-                        {
-                            Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
-                            weapon.itemType = ItemType.Weapon;
-                            weapon.id = data.Id;
-                            weapon.Sn = data.Sn;
-                            weapon.ObjName = weaponDict[key2][0];
-                            weapon.SetNameBar(weaponDict[key2][1]);
-                            weapon.transform.position = transform.position;
-                            AddItemToBag(weapon, data.Index);
-                        });
-                        break;
-                    default:
-                        break;
-                }
+                case Proto.ItemData.Types.ItemType.None:
+                    break;
+                case Proto.ItemData.Types.ItemType.Potion:
+                    string key1 = new((int)ItemType.Potion + "@" + data.Id);
+                    ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{GameManager.Instance.dropPotionDict[key1][0]}", (obj) =>
+                    {
+                        Potion potion = Instantiate(obj).GetComponent<Potion>();
+                        potion.itemType = ItemType.Potion;
+                        potion.knapType = (KnapType)data.KnapType;
+                        potion.id = data.Id;
+                        potion.Sn = data.Sn;
+                        potion.ObjName = GameManager.Instance.dropPotionDict[key1][0];
+                        potion.SetNameBar(GameManager.Instance.dropPotionDict[key1][1]);
+                        potion.transform.position = transform.position;
+                        AddItemToKnap(potion, data.Index);
+                    });
+                    break;
+                case Proto.ItemData.Types.ItemType.Weapon:
+                    string key2 = new((int)ItemType.Weapon + "@" + data.Id);
+                    ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{GameManager.Instance.dropWeaponDict[key2][0]}", (obj) =>
+                    {
+                        Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
+                        weapon.itemType = ItemType.Weapon;
+                        weapon.knapType = (KnapType)data.KnapType;
+                        weapon.id = data.Id;
+                        weapon.Sn = data.Sn;
+                        weapon.ObjName = GameManager.Instance.dropWeaponDict[key2][0];
+                        weapon.SetNameBar(GameManager.Instance.dropWeaponDict[key2][1]);
+                        weapon.transform.position = transform.position;
+                        AddItemToKnap(weapon, data.Index);
+                    });
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -383,55 +404,6 @@ namespace Control
             anim.SetBool(death, false);
             GetComponent<CapsuleCollider>().enabled = true;
             _cmd = null;
-        }
-
-        public void ParseEnterDungeon(Proto.EnterDungeon proto, string dungeon)
-        {
-            string text = $"玩家[{proto.Sender}]邀请你进入副本[{dungeon}]，是否同意？";
-            UIManager.Instance.GetPanel<PopupPanel>().Open(text, () =>
-            {
-                Proto.EnterDungeon protoRes = new()
-                { 
-                    WorldId = proto.WorldId,
-                    WorldSn = proto.WorldSn,
-                    Agree = true
-                };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2CEnterDungeonRes, protoRes);
-            }, null);
-        }
-
-        public void ParseReqPvp(Proto.Pvp proto, string atker)
-        {
-            string text = $"玩家[{atker}]向你发起挑战，是否同意？";
-            UIManager.Instance.GetPanel<PopupPanel>().Open(text, () =>
-            {
-                Proto.Pvp protoRes = new()
-                { 
-                    Atker = proto.Atker,
-                    Defer = Sn,
-                    Agree = true
-                };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2CPvpRes, protoRes);
-            }, null);
-        }
-
-        public void ParsePvpRes(Proto.Pvp proto)
-        {
-            if(proto.Agree)
-            {
-                if (Sn == proto.Atker)
-                {
-                    var defer = GameManager.currWorld.roleDict[proto.Defer].obj;
-                    defer.tag = "Enemy";
-                    defer.nameBar.ChangeCamp();
-                }
-                else if(Sn == proto.Defer)
-                {
-                    var atker = GameManager.currWorld.roleDict[proto.Atker].obj;
-                    atker.tag = "Enemy";
-                    atker.nameBar.ChangeCamp();
-                }
-            }
         }
     }
 }

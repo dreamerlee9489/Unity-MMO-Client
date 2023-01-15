@@ -62,7 +62,7 @@ namespace Proto
                 obj.atk = atk;
                 obj.def = def;
                 obj.SetNameBar(name);
-                obj.name = "mainPlayer";
+                obj.name = "MainPlayer";
                 obj.gameObject.SetActive(false);
                 obj.transform.position = position;
                 obj.gameObject.SetActive(true);

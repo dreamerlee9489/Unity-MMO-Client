@@ -7,7 +7,7 @@ namespace UI
     public class ObservePanel : BasePanel
     {
         private PlayerController _player;
-        private Button _propBtn, _teamBtn, _fightBtn, _dealBtn;
+        private Button _propBtn, _teamBtn, _fightBtn, _tradeBtn;
 
         protected override void Awake()
         {
@@ -15,7 +15,7 @@ namespace UI
             _propBtn = transform.Find("PropBtn").GetComponent<Button>();
             _teamBtn = transform.Find("TeamBtn").GetComponent<Button>();
             _fightBtn = transform.Find("FightBtn").GetComponent<Button>();
-            _dealBtn = transform.Find("DealBtn").GetComponent<Button>();
+            _tradeBtn = transform.Find("TradeBtn").GetComponent<Button>();
 
             _propBtn.onClick.AddListener(() =>
             {
@@ -23,7 +23,7 @@ namespace UI
             });
             _teamBtn.onClick.AddListener(() => 
             { 
-                Proto.JoinTeam proto = new() 
+                Proto.PlayerReq proto = new() 
                 { 
                     Applicant = GameManager.Instance.mainPlayer.Sn,
                     Responder = _player.Sn 
@@ -33,16 +33,22 @@ namespace UI
             });
             _fightBtn.onClick.AddListener(() => 
             {
-                Proto.Pvp proto = new()
+                Proto.PlayerReq proto = new()
                 { 
-                    Atker = GameManager.Instance.mainPlayer.Sn,
-                    Defer = _player.Sn
+                    Applicant = GameManager.Instance.mainPlayer.Sn,
+                    Responder = _player.Sn
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2CReqPvp, proto);
                 Close();
             });
-            _dealBtn.onClick.AddListener(() => 
-            { 
+            _tradeBtn.onClick.AddListener(() => 
+            {
+                Proto.PlayerReq proto = new()
+                {
+                    Applicant = GameManager.Instance.mainPlayer.Sn,
+                    Responder = _player.Sn
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2CReqTrade, proto);
                 Close(); 
             });
             Close();

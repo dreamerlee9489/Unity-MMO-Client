@@ -84,11 +84,14 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.MiTeamChat, ParsePacket<Proto.ChatMsg>);
             RegistParseFunc(Proto.MsgId.MiPrivateChat, ParsePacket<Proto.ChatMsg>);
             RegistParseFunc(Proto.MsgId.MiCreateTeam, ParsePacket<Proto.CreateTeam>);
-            RegistParseFunc(Proto.MsgId.C2CReqJoinTeam, ParsePacket<Proto.JoinTeam>);
-            RegistParseFunc(Proto.MsgId.C2CJoinTeamRes, ParsePacket<Proto.JoinTeam>);
             RegistParseFunc(Proto.MsgId.C2CReqEnterDungeon, ParsePacket<Proto.EnterDungeon>);
-            RegistParseFunc(Proto.MsgId.C2CReqPvp, ParsePacket<Proto.Pvp>);
-            RegistParseFunc(Proto.MsgId.C2CPvpRes, ParsePacket<Proto.Pvp>);
+            RegistParseFunc(Proto.MsgId.C2CReqJoinTeam, ParsePacket<Proto.PlayerReq>);
+            RegistParseFunc(Proto.MsgId.C2CJoinTeamRes, ParsePacket<Proto.PlayerReq>);
+            RegistParseFunc(Proto.MsgId.C2CReqPvp, ParsePacket<Proto.PlayerReq>);
+            RegistParseFunc(Proto.MsgId.C2CPvpRes, ParsePacket<Proto.PlayerReq>);            
+            RegistParseFunc(Proto.MsgId.C2CReqTrade, ParsePacket<Proto.PlayerReq>);
+            RegistParseFunc(Proto.MsgId.C2CTradeRes, ParsePacket<Proto.PlayerReq>);
+            RegistParseFunc(Proto.MsgId.S2CUpdateKnapItem, ParsePacket<Proto.UpdateKnapItem>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
             EventManager.Instance.AddListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
         }

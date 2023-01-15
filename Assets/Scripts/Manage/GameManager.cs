@@ -1,5 +1,6 @@
 ﻿using Cinemachine;
 using Items;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UI;
@@ -71,7 +72,10 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CJoinTeamRes, JoinTeamResHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqEnterDungeon, ReqEnterDungeonHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqPvp, ReqPvpHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CPvpRes, PvpResHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CPvpRes, PvpResHandler);            
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqTrade, ReqTradeHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CTradeRes, TradeResHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CUpdateKnapItem, UpdateKnapItemHandler);
             PoolManager.Instance.Load(PoolType.RoleToggle, "UI/RoleToggle", 20);
             PoolManager.Instance.Load(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
         }
@@ -109,20 +113,84 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqEnterDungeon, ReqEnterDungeonHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqPvp, ReqPvpHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CPvpRes, PvpResHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqTrade, ReqTradeHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CTradeRes, TradeResHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CUpdateKnapItem, UpdateKnapItemHandler);
+        }
+
+        private void ParsePlayerBaseCsv()
+        {
+            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/player_base.csv");
+            reader.ReadLine();
+            playerBaseDatas = new() { new PlayerBaseData() };
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                PlayerBaseData baseData = new()
+                {
+                    xp = int.Parse(strs[1]),
+                    hp = int.Parse(strs[2]),
+                    mp = int.Parse(strs[3]),
+                    atk = int.Parse(strs[4]),
+                    def = int.Parse(strs[5])
+                };
+                playerBaseDatas.Add(baseData);
+            }
+        }
+
+        private void ParseItemPotionsCsv()
+        {
+            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/ItemPotions.csv");
+            reader.ReadLine();
+            string line;
+            dropPotionDict = new();
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                dropPotionDict.Add((int)ItemType.Potion + "@" + strs[0], new List<string>() { strs[1], strs[2] });
+            }
+        }
+
+        private void ParseItemWeaponsCsv()
+        {
+            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/ItemWeapons.csv");
+            reader.ReadLine();
+            string line;
+            dropWeaponDict = new();
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                dropWeaponDict.Add((int)ItemType.Weapon + "@" + strs[0], new List<string>() { strs[1], strs[2] });
+            }
+        }
+
+        private void ParseWorldCsv()
+        {
+            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/world.csv");
+            reader.ReadLine();
+            string line;
+            worldDict = new();
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] strs = line.Split(',');
+                if (!strs[1].Equals("null"))
+                    worldDict.Add(int.Parse(strs[0]), strs[1]);
+            }
         }
 
         private void OnSceneUnloaded(Scene scene)
         {
             currWorld = null;
             mainPlayer.Obj.ResetCmd();
-            UIManager.Instance.GetPanel<ChatPanel>().Close();
-            MonoManager.Instance.StartCoroutine(UIManager.Instance.FadeAlpha());
+            canvas.GetPanel<ChatPanel>().Close();
+            MonoManager.Instance.StartCoroutine(canvas.FadeAlpha());
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             currWorld = FindObjectOfType<WorldManager>();
-            UIManager.Instance.GetPanel<ChatPanel>().Open();
+            canvas.GetPanel<ChatPanel>().Open();
         }
 
         private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
@@ -230,36 +298,36 @@ namespace Manage
         private void GlobalChatHandler(Google.Protobuf.IMessage msg)
         {
             if(msg is Proto.ChatMsg proto)
-                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg(ChatType.Global, $"{proto.Name}：{proto.Content}");
+                canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.Global, $"{proto.Name}：{proto.Content}");
         }
 
         private void WorldChatHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.ChatMsg proto)
-                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg(ChatType.World, $"{proto.Name}：{proto.Content}");
+                canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.World, $"{proto.Name}：{proto.Content}");
         }
 
         private void TeamChatHandler(Google.Protobuf.IMessage msg)
         {
             if(msg is Proto.ChatMsg proto)
-                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg(ChatType.Team, $"{proto.Name}：{proto.Content}");
+                canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.Team, $"{proto.Name}：{proto.Content}");
         }
 
         private void PrivateChatHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.ChatMsg proto)
-                UIManager.Instance.GetPanel<ChatPanel>().ShowMsg(ChatType.Private, $"{proto.Name}：{proto.Content[(proto.Content.IndexOf(' ') + 1)..]}");
+                canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.Private, $"{proto.Name}：{proto.Content[(proto.Content.IndexOf(' ') + 1)..]}");
         }
 
         private void ReqJoinTeamHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.JoinTeam proto)
+            if (msg is Proto.PlayerReq proto)
                 TeamManager.Instance.ParseReqJoinTeam(proto);
         }
 
         private void JoinTeamResHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.JoinTeam proto)
+            if (msg is Proto.PlayerReq proto)
                 TeamManager.Instance.ParseJoinTeamRes(proto);
         }
 
@@ -272,79 +340,88 @@ namespace Manage
         private void ReqEnterDungeonHandler(Google.Protobuf.IMessage msg)
         {
             if(msg is Proto.EnterDungeon proto)
-                mainPlayer.Obj.ParseEnterDungeon(proto, worldDict[proto.WorldId]);
+            {
+                string text = $"玩家[{proto.Sender}]邀请你进入副本[{worldDict[proto.WorldId]}]，是否同意？";
+                canvas.GetPanel<PopupPanel>().Open(text, () =>
+                {
+                    Proto.EnterDungeon protoRes = new()
+                    {
+                        WorldId = proto.WorldId,
+                        WorldSn = proto.WorldSn,
+                        Agree = true
+                    };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2CEnterDungeonRes, protoRes);
+                }, null);
+            }
         }
 
         private void ReqPvpHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.Pvp proto)
-                mainPlayer.Obj.ParseReqPvp(proto, currWorld.roleDict[proto.Atker].name);
+            if (msg is Proto.PlayerReq proto)
+            {
+                string text = $"玩家[{currWorld.roleDict[proto.Applicant].name}]向你发起挑战，是否同意？";
+                canvas.GetPanel<PopupPanel>().Open(text, () =>
+                {
+                    Proto.PlayerReq protoRes = new()
+                    {
+                        Applicant = proto.Applicant,
+                        Responder = mainPlayer.Sn,
+                        Agree = true
+                    };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2CPvpRes, protoRes);
+                }, null);
+            }
         }
 
         private void PvpResHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.Pvp proto)
-                mainPlayer.Obj.ParsePvpRes(proto);
-        }
-
-        private void ParsePlayerBaseCsv()
-        {
-            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/player_base.csv");
-            reader.ReadLine();
-            playerBaseDatas = new() { new PlayerBaseData() };
-            string line;
-            while ((line = reader.ReadLine()) != null)
+            if (msg is Proto.PlayerReq proto)
             {
-                string[] strs = line.Split(',');
-                PlayerBaseData baseData = new()
+                if (mainPlayer.Sn == proto.Applicant)
                 {
-                    xp = int.Parse(strs[1]),
-                    hp = int.Parse(strs[2]),
-                    mp = int.Parse(strs[3]),
-                    atk = int.Parse(strs[4]),
-                    def = int.Parse(strs[5])
-                };
-                playerBaseDatas.Add(baseData);
+                    var defer = currWorld.roleDict[proto.Responder].obj;
+                    defer.tag = "Enemy";
+                    defer.nameBar.ChangeCamp();
+                }
+                else if (mainPlayer.Sn == proto.Responder)
+                {
+                    var atker = currWorld.roleDict[proto.Applicant].obj;
+                    atker.tag = "Enemy";
+                    atker.nameBar.ChangeCamp();
+                }
             }
         }
 
-        private void ParseItemPotionsCsv()
+        private void ReqTradeHandler(Google.Protobuf.IMessage msg)
         {
-            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/ItemPotions.csv");
-            reader.ReadLine();
-            string line;
-            dropPotionDict = new();
-            while ((line = reader.ReadLine()) != null)
+            if(msg is Proto.PlayerReq proto) 
             {
-                string[] strs = line.Split(',');
-                dropPotionDict.Add((int)ItemType.Potion + "@" + strs[0], new List<string>() { strs[1], strs[2] });
+                string text = $"玩家[{currWorld.roleDict[proto.Applicant].name}]邀请你交易，是否同意？";
+                canvas.GetPanel<PopupPanel>().Open(text, () =>
+                {
+                    Proto.PlayerReq protoRes = new()
+                    {
+                        Applicant = proto.Applicant,
+                        Responder = mainPlayer.Sn,
+                        Agree = true
+                    };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2CTradeRes, protoRes);
+                }, null);
             }
         }
 
-        private void ParseItemWeaponsCsv()
+        private void TradeResHandler(Google.Protobuf.IMessage msg)
         {
-            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/ItemWeapons.csv");
-            reader.ReadLine();
-            string line;
-            dropWeaponDict = new();
-            while ((line = reader.ReadLine()) != null)
-            {
-                string[] strs = line.Split(',');
-                dropWeaponDict.Add((int)ItemType.Weapon + "@" + strs[0], new List<string>() { strs[1], strs[2] });
-            }
+            if (msg is Proto.PlayerReq proto)
+                canvas.GetPanel<TradePanel>().Open(currWorld.roleDict[proto.Applicant], currWorld.roleDict[proto.Responder]);
         }
 
-        private void ParseWorldCsv()
+        private void UpdateKnapItemHandler(Google.Protobuf.IMessage msg)
         {
-            using var reader = File.OpenText($"{Application.streamingAssetsPath}/CSV/world.csv");
-            reader.ReadLine();
-            string line;
-            worldDict = new();
-            while ((line = reader.ReadLine()) != null)
+            if(msg is Proto.UpdateKnapItem proto)
             {
-                string[] strs = line.Split(',');
-                if (!strs[1].Equals("null"))
-                    worldDict.Add(int.Parse(strs[0]), strs[1]);
+                if (proto.Item.KnapType == Proto.ItemData.Types.KnapType.Trade)
+                    mainPlayer.Obj.ParseItemDataToKnap(proto.Item);
             }
         }
     }

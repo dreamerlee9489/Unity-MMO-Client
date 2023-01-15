@@ -70,12 +70,12 @@ namespace Manage
         /// <summary>
         /// 将一个已实例化的GameObject弹出池中
         /// </summary>
-        public GameObject Pop(string poolType, Transform parent = null)
+        public GameObject Pop(string poolType, Transform parent = null, bool isStay = false)
         {
             if (_pool.ContainsKey(poolType) && _pool[poolType].Count > 0)
             {
                 GameObject instObj = _pool[poolType][0];
-                instObj.transform.SetParent(parent, false);
+                instObj.transform.SetParent(parent, isStay);
                 instObj.SetActive(true);
                 _pool[poolType].RemoveAt(0);
                 return instObj;
