@@ -90,8 +90,9 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.C2CReqPvp, ParsePacket<Proto.PlayerReq>);
             RegistParseFunc(Proto.MsgId.C2CPvpRes, ParsePacket<Proto.PlayerReq>);            
             RegistParseFunc(Proto.MsgId.C2CReqTrade, ParsePacket<Proto.PlayerReq>);
-            RegistParseFunc(Proto.MsgId.C2CTradeRes, ParsePacket<Proto.PlayerReq>);
-            RegistParseFunc(Proto.MsgId.S2CUpdateKnapItem, ParsePacket<Proto.UpdateKnapItem>);
+            RegistParseFunc(Proto.MsgId.C2CUpdateTradeItem, ParsePacket<Proto.UpdateTradeItem>);
+            RegistParseFunc(Proto.MsgId.S2CTradeOpen, ParsePacket<Proto.TradeOpen>);
+            RegistParseFunc(Proto.MsgId.S2CTradeClose, ParsePacket<Proto.TradeClose>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
             EventManager.Instance.AddListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
         }

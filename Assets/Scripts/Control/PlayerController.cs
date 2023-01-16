@@ -159,153 +159,7 @@ namespace Control
             }
         }
 
-        public void ResetCmd() => _cmd?.Undo();
-
-        public void ParseCmd(Proto.SyncPlayerCmd proto)
-        {
-            CommandType newType = (CommandType)proto.Type;
-            if (_cmd != null && _cmd.GetCommandType() != newType)
-                _cmd.Undo();
-            switch (newType)
-            {
-                case CommandType.None:
-                    _cmd?.Undo();
-                    break;
-                case CommandType.Move:
-                    target = null;
-                    _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
-                    break;
-                case CommandType.Attack:
-                    if(GameManager.currWorld.npcDict.ContainsKey(proto.TargetSn))
-                        target = GameManager.currWorld.npcDict[proto.TargetSn].transform;
-                    else
-                        target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
-                    _cmd = new AttackCommand(this, target);
-                    break;
-                case CommandType.Pickup:
-                    if (!GameManager.currWorld.itemDict.ContainsKey(proto.TargetSn))
-                        _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
-                    else
-                    {
-                        target = GameManager.currWorld.itemDict[proto.TargetSn].transform;
-                        _cmd = new PickupCommand(this, target);
-                    }
-                    break;
-                case CommandType.Teleport:
-                    target = GameManager.currWorld.itemDict[proto.TargetSn].transform;
-                    _cmd = new TeleportCommand(this, target);
-                    break;
-                case CommandType.Dialog:
-                    target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
-                    _cmd = new ObserveCommand(this, target);
-                    break;
-                case CommandType.Death:
-                    string atkName;
-                    if (GameManager.currWorld.roleDict.ContainsKey(proto.TargetSn))
-                    {
-                        var tmp = GameManager.currWorld.roleDict[proto.TargetSn].obj;
-                        target = tmp.transform;
-                        atkName = tmp.GetNameBar();
-                    }
-                    else
-                    {
-                        var tmp = GameManager.currWorld.npcDict[proto.TargetSn];
-                        target = tmp.transform;
-                        atkName = tmp.GetNameBar();
-                    }
-                    _cmd = new DeathCommand(this, target, atkName);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public int AddItemToKnap(GameItem item, int index = 0)
-        {
-            GameObject obj = ResourceManager.Instance.Load<GameObject>($"UI/ItemUI/{item.itemType}/{item.ObjName}");
-            ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();
-            PoolManager.Instance.Push(item.ObjName, itemUI.gameObject);
-            itemUI.Item = item;
-            item.ItemUI = itemUI;
-            item.gameObject.SetActive(false);
-            switch (item.knapType)
-            {
-                case KnapType.Bag:
-                    item.transform.SetParent(_bagPoint);
-                    return itemUI.AddToBagUI(index);
-                case KnapType.Equip:
-                    item.transform.SetParent(_handPoint);
-                    return itemUI.AddToEquipUI(index);
-                case KnapType.Action:
-                    item.transform.SetParent(_actPoint);
-                    return itemUI.AddToActionUI(index);
-                case KnapType.Trade:
-                    item.transform.SetParent(_tradePoint);
-                    return itemUI.AddToTradeUI(index);
-                default:
-                    return -1;
-            }
-        }
-
-        public void ParsePlayerKnap(Proto.PlayerKnap playerKnap)
-        {
-            gold = playerKnap.Gold;
-            UIManager.Instance.GetPanel<BagPanel>().UpdateGold(gold);
-            foreach (Proto.ItemData data in playerKnap.Items)
-                ParseItemDataToKnap(data);
-        }
-
-        public void ParseItemDataToKnap(Proto.ItemData data)
-        {
-            switch (data.ItemType)
-            {
-                case Proto.ItemData.Types.ItemType.None:
-                    break;
-                case Proto.ItemData.Types.ItemType.Potion:
-                    string key1 = new((int)ItemType.Potion + "@" + data.Id);
-                    ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{GameManager.Instance.dropPotionDict[key1][0]}", (obj) =>
-                    {
-                        Potion potion = Instantiate(obj).GetComponent<Potion>();
-                        potion.itemType = ItemType.Potion;
-                        potion.knapType = (KnapType)data.KnapType;
-                        potion.id = data.Id;
-                        potion.Sn = data.Sn;
-                        potion.ObjName = GameManager.Instance.dropPotionDict[key1][0];
-                        potion.SetNameBar(GameManager.Instance.dropPotionDict[key1][1]);
-                        potion.transform.position = transform.position;
-                        AddItemToKnap(potion, data.Index);
-                    });
-                    break;
-                case Proto.ItemData.Types.ItemType.Weapon:
-                    string key2 = new((int)ItemType.Weapon + "@" + data.Id);
-                    ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{GameManager.Instance.dropWeaponDict[key2][0]}", (obj) =>
-                    {
-                        Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
-                        weapon.itemType = ItemType.Weapon;
-                        weapon.knapType = (KnapType)data.KnapType;
-                        weapon.id = data.Id;
-                        weapon.Sn = data.Sn;
-                        weapon.ObjName = GameManager.Instance.dropWeaponDict[key2][0];
-                        weapon.SetNameBar(GameManager.Instance.dropWeaponDict[key2][1]);
-                        weapon.transform.position = transform.position;
-                        AddItemToKnap(weapon, data.Index);
-                    });
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public void ParseStatus(Proto.SyncEntityStatus proto)
-        {
-            hp = proto.Hp;
-            if (CompareTag("Enemy"))
-                nameBar.HpBar.UpdateHp(hp, baseData.hp);
-            if (GameManager.Instance.mainPlayer.Sn == Sn)
-                UIManager.Instance.GetPanel<PropPanel>().UpdateHp(hp);
-            if (TeamManager.Instance.teamDict.ContainsKey(Sn))
-                TeamManager.Instance.teamDict[Sn].UpdateHp(hp);
-        }
+        public void ResetCmd() => _cmd?.Undo();          
 
         public void Move(Vector3 point)
         {
@@ -404,6 +258,169 @@ namespace Control
             anim.SetBool(death, false);
             GetComponent<CapsuleCollider>().enabled = true;
             _cmd = null;
+        }
+
+        public int AddItemToKnap(GameItem item, int index = 0)
+        {
+            GameObject obj = ResourceManager.Instance.Load<GameObject>($"UI/ItemUI/{item.itemType}/{item.ObjName}");
+            ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();            
+            itemUI.Item = item;
+            item.ItemUI = itemUI;
+            item.gameObject.SetActive(false);
+            switch (item.knapType)
+            {
+                case KnapType.Bag:
+                    item.transform.SetParent(_bagPoint);
+                    return itemUI.AddToBagUI(index);
+                case KnapType.Equip:
+                    item.transform.SetParent(_handPoint);
+                    return itemUI.AddToEquipUI(index);
+                case KnapType.Action:
+                    item.transform.SetParent(_actPoint);
+                    return itemUI.AddToActionUI(index);
+                case KnapType.Trade:
+                    item.transform.SetParent(_tradePoint);
+                    return itemUI.AddToTradeUI(index);
+                default:
+                    return -1;
+            }
+        }
+
+        public void ParseCmd(Proto.SyncPlayerCmd proto)
+        {
+            CommandType newType = (CommandType)proto.Type;
+            if (_cmd != null && _cmd.GetCommandType() != newType)
+                _cmd.Undo();
+            switch (newType)
+            {
+                case CommandType.None:
+                    _cmd?.Undo();
+                    break;
+                case CommandType.Move:
+                    target = null;
+                    _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
+                    break;
+                case CommandType.Attack:
+                    if (GameManager.currWorld.npcDict.ContainsKey(proto.TargetSn))
+                        target = GameManager.currWorld.npcDict[proto.TargetSn].transform;
+                    else
+                        target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
+                    _cmd = new AttackCommand(this, target);
+                    break;
+                case CommandType.Pickup:
+                    if (!GameManager.currWorld.itemDict.ContainsKey(proto.TargetSn))
+                        _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
+                    else
+                    {
+                        target = GameManager.currWorld.itemDict[proto.TargetSn].transform;
+                        _cmd = new PickupCommand(this, target);
+                    }
+                    break;
+                case CommandType.Teleport:
+                    target = GameManager.currWorld.itemDict[proto.TargetSn].transform;
+                    _cmd = new TeleportCommand(this, target);
+                    break;
+                case CommandType.Dialog:
+                    target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
+                    _cmd = new ObserveCommand(this, target);
+                    break;
+                case CommandType.Death:
+                    string atkName;
+                    if (GameManager.currWorld.roleDict.ContainsKey(proto.TargetSn))
+                    {
+                        var tmp = GameManager.currWorld.roleDict[proto.TargetSn].obj;
+                        target = tmp.transform;
+                        atkName = tmp.GetNameBar();
+                    }
+                    else
+                    {
+                        var tmp = GameManager.currWorld.npcDict[proto.TargetSn];
+                        target = tmp.transform;
+                        atkName = tmp.GetNameBar();
+                    }
+                    _cmd = new DeathCommand(this, target, atkName);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void ParseStatus(Proto.SyncEntityStatus proto)
+        {
+            hp = proto.Hp;
+            if (CompareTag("Enemy"))
+                nameBar.HpBar.UpdateHp(hp, baseData.hp);
+            if (GameManager.Instance.mainPlayer.Sn == Sn)
+                UIManager.Instance.GetPanel<PropPanel>().UpdateHp(hp);
+            if (TeamManager.Instance.teamDict.ContainsKey(Sn))
+                TeamManager.Instance.teamDict[Sn].UpdateHp(hp);
+        }
+
+        public void ParsePlayerKnap(Proto.PlayerKnap proto)
+        {
+            gold = proto.Gold;
+            UIManager.Instance.GetPanel<BagPanel>().UpdateGold(gold);
+            foreach (Proto.ItemData data in proto.Items)
+                ParseItemToKnap(data);
+        }
+
+        public void ParseItemToKnap(Proto.ItemData data)
+        {
+            switch (data.ItemType)
+            {
+                case Proto.ItemData.Types.ItemType.None:
+                    break;
+                case Proto.ItemData.Types.ItemType.Potion:
+                    string key1 = new((int)ItemType.Potion + "@" + data.Id);
+                    ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{GameManager.Instance.dropPotionDict[key1][0]}", (obj) =>
+                    {
+                        Potion potion = Instantiate(obj).GetComponent<Potion>();
+                        potion.itemType = ItemType.Potion;
+                        potion.knapType = (KnapType)data.KnapType;
+                        potion.id = data.Id;
+                        potion.Sn = data.Sn;
+                        potion.ObjName = GameManager.Instance.dropPotionDict[key1][0];
+                        potion.SetNameBar(GameManager.Instance.dropPotionDict[key1][1]);
+                        potion.transform.position = transform.position;
+                        AddItemToKnap(potion, data.Index);
+                    });
+                    break;
+                case Proto.ItemData.Types.ItemType.Weapon:
+                    string key2 = new((int)ItemType.Weapon + "@" + data.Id);
+                    ResourceManager.Instance.LoadAsync<GameObject>($"Item/Weapon/{GameManager.Instance.dropWeaponDict[key2][0]}", (obj) =>
+                    {
+                        Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
+                        weapon.itemType = ItemType.Weapon;
+                        weapon.knapType = (KnapType)data.KnapType;
+                        weapon.id = data.Id;
+                        weapon.Sn = data.Sn;
+                        weapon.ObjName = GameManager.Instance.dropWeaponDict[key2][0];
+                        weapon.SetNameBar(GameManager.Instance.dropWeaponDict[key2][1]);
+                        weapon.transform.position = transform.position;
+                        AddItemToKnap(weapon, data.Index);
+                    });
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void ParseTradeClose(Proto.TradeClose proto)
+        {
+            if (proto.Success)
+            {
+                var tradePanel = UIManager.Instance.GetPanel<TradePanel>();
+                if (tradePanel.LocalRect.GoldField.text.Length > 0)
+                    gold -= int.Parse(tradePanel.LocalRect.GoldField.text);
+                if (tradePanel.RemoteRect.GoldField.text.Length > 0)
+                    gold += int.Parse(tradePanel.RemoteRect.GoldField.text);
+                UIManager.Instance.GetPanel<BagPanel>().UpdateGold(gold);
+                tradePanel.LocalRect.RemoveAll();
+                tradePanel.RemoteRect.AddAllUiToBag();
+                int count = _tradePoint.childCount;
+                for (int i = 0; i < count; i++)
+                    _tradePoint.GetChild(0).SetParent(_bagPoint);
+            }
         }
     }
 }

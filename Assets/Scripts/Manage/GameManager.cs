@@ -74,8 +74,9 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqPvp, ReqPvpHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CPvpRes, PvpResHandler);            
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CReqTrade, ReqTradeHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CTradeRes, TradeResHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CUpdateKnapItem, UpdateKnapItemHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CUpdateTradeItem, UpdateTradeItemHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CTradeOpen, TradeOpenHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CTradeClose, TradeCloseHandler);
             PoolManager.Instance.Load(PoolType.RoleToggle, "UI/RoleToggle", 20);
             PoolManager.Instance.Load(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
         }
@@ -86,7 +87,7 @@ namespace Manage
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        private void OnDestroy()
+        private void OnApplicationQuit()
         {
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
             SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -114,8 +115,9 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqPvp, ReqPvpHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CPvpRes, PvpResHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CReqTrade, ReqTradeHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CTradeRes, TradeResHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CUpdateKnapItem, UpdateKnapItemHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CUpdateTradeItem, UpdateTradeItemHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CTradeOpen, TradeOpenHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CTradeClose, TradeCloseHandler);
         }
 
         private void ParsePlayerBaseCsv()
@@ -228,7 +230,7 @@ namespace Manage
         private void EnterWorldHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.EnterWorld proto && proto.WorldId > 2)
-            {                
+            {
                 canvas.GetPanel<StartPanel>().Close();
                 SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
                 mainPlayer.Obj.transform.position = new(proto.Position.X, proto.Position.Y, proto.Position.Z);
@@ -406,22 +408,35 @@ namespace Manage
                         Agree = true
                     };
                     NetManager.Instance.SendPacket(Proto.MsgId.C2CTradeRes, protoRes);
+                    canvas.GetPanel<TradePanel>().Open(currWorld.roleDict[proto.Applicant], currWorld.roleDict[mainPlayer.Sn]);
                 }, null);
             }
         }
 
-        private void TradeResHandler(Google.Protobuf.IMessage msg)
+        private void UpdateTradeItemHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.PlayerReq proto)
+            if (msg is Proto.UpdateTradeItem proto)
+            {
+                if (proto.Item != null)
+                    mainPlayer.Obj.ParseItemToKnap(proto.Item);
+                if (proto.Gold > 0)
+                    canvas.GetPanel<TradePanel>().RemoteRect.GoldField.text = proto.Gold.ToString();
+                canvas.GetPanel<TradePanel>().RemoteRect.SureTog.isOn = proto.Ack;
+            }
+        }
+
+        private void TradeOpenHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.TradeOpen proto)
                 canvas.GetPanel<TradePanel>().Open(currWorld.roleDict[proto.Applicant], currWorld.roleDict[proto.Responder]);
         }
 
-        private void UpdateKnapItemHandler(Google.Protobuf.IMessage msg)
+        private void TradeCloseHandler(Google.Protobuf.IMessage msg)
         {
-            if(msg is Proto.UpdateKnapItem proto)
+            if (msg is Proto.TradeClose proto)
             {
-                if (proto.Item.KnapType == Proto.ItemData.Types.KnapType.Trade)
-                    mainPlayer.Obj.ParseItemDataToKnap(proto.Item);
+                canvas.GetPanel<TradePanel>().Close();
+                mainPlayer.Obj.ParseTradeClose(proto);
             }
         }
     }

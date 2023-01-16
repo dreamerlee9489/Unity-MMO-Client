@@ -28,6 +28,7 @@ namespace UI
 
         public int AddToBagUI(int index = 0)
         {
+            PoolManager.Instance.Push(Item.ObjName, gameObject);
             if (!_bagPanel.UiIndexDict.ContainsKey(Item.GetHashCode()))
             {
                 CurrSlot = index > 0 ? _bagPanel.GetSlotByIndex(index) : _bagPanel.GetFirstEmptySlot();
@@ -38,13 +39,14 @@ namespace UI
             {
                 CurrSlot = _bagPanel.itemSlots[_bagPanel.UiIndexDict[Item.GetHashCode()]];
                 PoolManager.Instance.Pop(Item.ObjName, CurrSlot.Icons);
-                CurrSlot.Count.text = CurrSlot.Icons.childCount.ToString();
+                CurrSlot.Count.text = CurrSlot.Icons.childCount > 1 ? CurrSlot.Icons.childCount.ToString() : "";
             }
             return CurrSlot.Index;
         }
 
         public int AddToEquipUI(int index) 
         {
+            PoolManager.Instance.Push(Item.ObjName, gameObject);
             CurrSlot = _equipPanel.GetSlotByIndex(index);
             PoolManager.Instance.Pop(Item.ObjName, CurrSlot.Icons);
             return index; 
@@ -54,6 +56,7 @@ namespace UI
 
         public int AddToTradeUI(int index = 0) 
         {
+            PoolManager.Instance.Push(Item.ObjName, gameObject);
             if (!_tradePanel.RemoteRect.UiIndexDict.ContainsKey(Item.GetHashCode()))
             {
                 CurrSlot = index > 0 ? _tradePanel.RemoteRect.GetSlotByIndex(index) : _tradePanel.RemoteRect.GetFirstEmptySlot();
@@ -122,6 +125,8 @@ namespace UI
             {
                 if (!CanSwapUI(target.transform.parent, out ItemSlot newSlot))
                     PutBackTempIcons();
+                else if (newSlot.knapType == KnapType.Trade && CurrSlot.knapType == KnapType.Trade)
+                    PutBackTempIcons();
                 else
                 {
                     int count = newSlot.Icons.childCount;
@@ -139,7 +144,7 @@ namespace UI
                     {
                         _currUI = UIManager.Instance.tempSlot.GetChild(0).GetComponent<ItemUI>();
                         _currUI.CurrSlot = newSlot;
-                        _currUI.Item.UpdateUiLoc(CurrSlot.knapType, newSlot.Index);
+                        _currUI.Item.UpdateUiLoc(newSlot.knapType, newSlot.Index);
                         _currUI.transform.SetParent(newSlot.Icons, true);
                         _currUI.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
                         _currUI.GetComponent<Image>().raycastTarget = true;

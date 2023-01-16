@@ -66,13 +66,40 @@ namespace Items
         public void UpdateUiLoc(KnapType knapType, int index)
         {
             this.knapType = knapType;
-            Proto.UpdateKnapItem proto = new() { Item = new() };
-            proto.Item.Sn = Sn;
-            proto.Item.Id = id;
-            proto.Item.Index = index;
-            proto.Item.ItemType = (Proto.ItemData.Types.ItemType)itemType;
-            proto.Item.KnapType = (Proto.ItemData.Types.KnapType)knapType;
-            NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
+            if(knapType != KnapType.Trade)
+            {
+                Proto.UpdateKnapItem proto = new()
+                {
+                    Item = new()
+                    {
+                        Sn = Sn,
+                        Id = id,
+                        Index = index,
+                        ItemType = (Proto.ItemData.Types.ItemType)itemType,
+                        KnapType = (Proto.ItemData.Types.KnapType)knapType
+                    }
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
+            }
+            else
+            {
+                Proto.UpdateTradeItem proto = new()
+                {
+                    Sender = UIManager.Instance.GetPanel<TradePanel>().localSn,
+                    Recver = UIManager.Instance.GetPanel<TradePanel>().remoteSn,
+                    Ack = false,
+                    Gold = 0,
+                    Item = new()
+                    {
+                        Sn = Sn,
+                        Id = id,
+                        Index = index,
+                        ItemType = (Proto.ItemData.Types.ItemType)itemType,
+                        KnapType = (Proto.ItemData.Types.KnapType)knapType
+                    }
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2CUpdateTradeItem, proto);
+            }
         }
     }
 }
