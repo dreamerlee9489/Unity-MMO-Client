@@ -44,13 +44,14 @@ namespace Proto {
             "CgZXZWFwb24QAiJACghLbmFwVHlwZRIJCgVXb3JsZBAAEgcKA0JhZxABEgkK",
             "BUVxdWlwEAISCgoGQWN0aW9uEAMSCQoFVHJhZGUQBCI6CgpQbGF5ZXJLbmFw",
             "EgwKBGdvbGQYASABKAUSHgoFaXRlbXMYAiADKAsyDy5Qcm90by5JdGVtRGF0",
-            "YSIvCg5VcGRhdGVLbmFwSXRlbRIdCgRpdGVtGAEgASgLMg8uUHJvdG8uSXRl",
-            "bURhdGEiawoPVXBkYXRlVHJhZGVJdGVtEg4KBnNlbmRlchgBIAEoBBIOCgZy",
-            "ZWN2ZXIYAiABKAQSHQoEaXRlbRgDIAEoCzIPLlByb3RvLkl0ZW1EYXRhEgwK",
-            "BGdvbGQYBCABKAUSCwoDYWNrGAUgASgIIjEKCVRyYWRlT3BlbhIRCglhcHBs",
-            "aWNhbnQYASABKAQSEQoJcmVzcG9uZGVyGAIgASgEIh0KClRyYWRlQ2xvc2US",
-            "DwoHc3VjY2VzcxgBIAEoCCooCgZHZW5kZXISCAoEbm9uZRAAEggKBG1hbGUQ",
-            "ARIKCgZmZW1hbGUQAmIGcHJvdG8z"));
+            "YSIeCg5VcGRhdGVLbmFwR29sZBIMCgRnb2xkGAEgASgFIi8KDlVwZGF0ZUtu",
+            "YXBJdGVtEh0KBGl0ZW0YASABKAsyDy5Qcm90by5JdGVtRGF0YSJrCg9VcGRh",
+            "dGVUcmFkZUl0ZW0SDgoGc2VuZGVyGAEgASgEEg4KBnJlY3ZlchgCIAEoBBId",
+            "CgRpdGVtGAMgASgLMg8uUHJvdG8uSXRlbURhdGESDAoEZ29sZBgEIAEoBRIL",
+            "CgNhY2sYBSABKAgiMQoJVHJhZGVPcGVuEhEKCWFwcGxpY2FudBgBIAEoBBIR",
+            "CglyZXNwb25kZXIYAiABKAQiHQoKVHJhZGVDbG9zZRIPCgdzdWNjZXNzGAEg",
+            "ASgIKigKBkdlbmRlchIICgRub25lEAASCAoEbWFsZRABEgoKBmZlbWFsZRAC",
+            "YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.Gender), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -62,6 +63,7 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Knap", "Misc", "Team" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Sn", "ItemType", "Id", "KnapType", "Index" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType), typeof(global::Proto.ItemData.Types.KnapType) }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerKnap), global::Proto.PlayerKnap.Parser, new[]{ "Gold", "Items" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.UpdateKnapGold), global::Proto.UpdateKnapGold.Parser, new[]{ "Gold" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.UpdateKnapItem), global::Proto.UpdateKnapItem.Parser, new[]{ "Item" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.UpdateTradeItem), global::Proto.UpdateTradeItem.Parser, new[]{ "Sender", "Recver", "Item", "Gold", "Ack" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.TradeOpen), global::Proto.TradeOpen.Parser, new[]{ "Applicant", "Responder" }, null, null, null, null),
@@ -1819,6 +1821,135 @@ namespace Proto {
 
   }
 
+  public sealed partial class UpdateKnapGold : pb::IMessage<UpdateKnapGold> {
+    private static readonly pb::MessageParser<UpdateKnapGold> _parser = new pb::MessageParser<UpdateKnapGold>(() => new UpdateKnapGold());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<UpdateKnapGold> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[8]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public UpdateKnapGold() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public UpdateKnapGold(UpdateKnapGold other) : this() {
+      gold_ = other.gold_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public UpdateKnapGold Clone() {
+      return new UpdateKnapGold(this);
+    }
+
+    /// <summary>Field number for the "gold" field.</summary>
+    public const int GoldFieldNumber = 1;
+    private int gold_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Gold {
+      get { return gold_; }
+      set {
+        gold_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as UpdateKnapGold);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(UpdateKnapGold other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Gold != other.Gold) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Gold != 0) hash ^= Gold.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Gold != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Gold);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Gold != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Gold);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(UpdateKnapGold other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Gold != 0) {
+        Gold = other.Gold;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Gold = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
   public sealed partial class UpdateKnapItem : pb::IMessage<UpdateKnapItem> {
     private static readonly pb::MessageParser<UpdateKnapItem> _parser = new pb::MessageParser<UpdateKnapItem>(() => new UpdateKnapItem());
     private pb::UnknownFieldSet _unknownFields;
@@ -1827,7 +1958,7 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.DbReflection.Descriptor.MessageTypes[8]; }
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[9]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1962,7 +2093,7 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.DbReflection.Descriptor.MessageTypes[9]; }
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2209,7 +2340,7 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.DbReflection.Descriptor.MessageTypes[10]; }
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[11]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2366,7 +2497,7 @@ namespace Proto {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.DbReflection.Descriptor.MessageTypes[11]; }
+      get { return global::Proto.DbReflection.Descriptor.MessageTypes[12]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

@@ -1,7 +1,6 @@
 ﻿using Control.CMD;
 using Items;
 using Manage;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UI;
@@ -13,16 +12,19 @@ namespace Control
 {
     public partial class PlayerController : GameEntity, IMover, IAttacker, IPicker, ITeleporter, IObserver, ILiver
     {
-        private readonly Proto.Vector3D _curPos = new();
-        private readonly Proto.Vector3D _hitPos = new();
-
         private RaycastHit _hit;
         private ICommand _cmd;
-        private Transform _bagPoint, _handPoint, _actPoint, _tradePoint;
+        private readonly Proto.Vector3D _curPos = new();
+        private readonly Proto.Vector3D _hitPos = new();
 
         public int xp = 0, gold = 0;
         public static PlayerBaseData baseData;
         public static CancellationTokenSource tokenSource = new();
+        
+        public Transform BagPoint { get; set; }
+        public Transform HandPoint { get; set; }
+        public Transform ActPoint { get; set; }
+        public Transform TradePoint { get; set; }
 
         protected override void Awake()
         {
@@ -42,10 +44,10 @@ namespace Control
             baseData ??= GameManager.Instance.playerBaseDatas[lv];
             if (Sn == GameManager.Instance.mainPlayer.Sn)
             {
-                _bagPoint = transform.Find("BagPoint");
-                _handPoint = transform.Find("HandPoint");
-                _actPoint = transform.Find("ActPoint");
-                _tradePoint = transform.Find("TradePoint");
+                BagPoint = transform.Find("BagPoint");
+                HandPoint = transform.Find("HandPoint");
+                ActPoint = transform.Find("ActPoint");
+                TradePoint = transform.Find("TradePoint");
                 nameBar.HpBar.gameObject.SetActive(false);
                 gameObject.layer = 2;
                 TeamManager.Instance.Initial();
@@ -260,27 +262,32 @@ namespace Control
             _cmd = null;
         }
 
-        public int AddItemToKnap(GameItem item, int index = 0)
+        public int AddItemToKnap(KnapType knapType, GameItem item, int index = 0)
         {
-            GameObject obj = ResourceManager.Instance.Load<GameObject>($"UI/ItemUI/{item.itemType}/{item.ObjName}");
-            ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();            
-            itemUI.Item = item;
-            item.ItemUI = itemUI;
+            item.knapType = knapType;
             item.gameObject.SetActive(false);
+            if (item.ItemUI == null)
+            {
+                GameObject obj = ResourceManager.Instance.Load<GameObject>($"UI/ItemUI/{item.itemType}/{item.ObjName}");
+                ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();
+                itemUI.Item = item;
+                item.ItemUI = itemUI;
+                item.gameObject.SetActive(false);
+            }
             switch (item.knapType)
             {
                 case KnapType.Bag:
-                    item.transform.SetParent(_bagPoint);
-                    return itemUI.AddToBagUI(index);
+                    item.transform.SetParent(BagPoint);
+                    return item.ItemUI.AddToBagUI(index);
                 case KnapType.Equip:
-                    item.transform.SetParent(_handPoint);
-                    return itemUI.AddToEquipUI(index);
+                    item.transform.SetParent(HandPoint);
+                    return item.ItemUI.AddToEquipUI(index);
                 case KnapType.Action:
-                    item.transform.SetParent(_actPoint);
-                    return itemUI.AddToActionUI(index);
+                    item.transform.SetParent(ActPoint);
+                    return item.ItemUI.AddToActionUI(index);
                 case KnapType.Trade:
-                    item.transform.SetParent(_tradePoint);
-                    return itemUI.AddToTradeUI(index);
+                    item.transform.SetParent(TradePoint);
+                    return item.ItemUI.AddToTradeUI(index);
                 default:
                     return -1;
             }
@@ -376,13 +383,12 @@ namespace Control
                     {
                         Potion potion = Instantiate(obj).GetComponent<Potion>();
                         potion.itemType = ItemType.Potion;
-                        potion.knapType = (KnapType)data.KnapType;
                         potion.id = data.Id;
                         potion.Sn = data.Sn;
                         potion.ObjName = GameManager.Instance.dropPotionDict[key1][0];
                         potion.SetNameBar(GameManager.Instance.dropPotionDict[key1][1]);
                         potion.transform.position = transform.position;
-                        AddItemToKnap(potion, data.Index);
+                        AddItemToKnap((KnapType)data.KnapType, potion, data.Index);
                     });
                     break;
                 case Proto.ItemData.Types.ItemType.Weapon:
@@ -397,7 +403,7 @@ namespace Control
                         weapon.ObjName = GameManager.Instance.dropWeaponDict[key2][0];
                         weapon.SetNameBar(GameManager.Instance.dropWeaponDict[key2][1]);
                         weapon.transform.position = transform.position;
-                        AddItemToKnap(weapon, data.Index);
+                        AddItemToKnap((KnapType)data.KnapType, weapon, data.Index);
                     });
                     break;
                 default:
@@ -410,16 +416,15 @@ namespace Control
             if (proto.Success)
             {
                 var tradePanel = UIManager.Instance.GetPanel<TradePanel>();
+                tradePanel.LocalRect.RemoveAllFromBag();
+                tradePanel.RemoteRect.AddAllToBag();
                 if (tradePanel.LocalRect.GoldField.text.Length > 0)
                     gold -= int.Parse(tradePanel.LocalRect.GoldField.text);
                 if (tradePanel.RemoteRect.GoldField.text.Length > 0)
                     gold += int.Parse(tradePanel.RemoteRect.GoldField.text);
                 UIManager.Instance.GetPanel<BagPanel>().UpdateGold(gold);
-                tradePanel.LocalRect.RemoveAll();
-                tradePanel.RemoteRect.AddAllUiToBag();
-                int count = _tradePoint.childCount;
-                for (int i = 0; i < count; i++)
-                    _tradePoint.GetChild(0).SetParent(_bagPoint);
+                Proto.UpdateKnapGold protoGold = new() { Gold = gold };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapGold, protoGold);
             }
         }
     }

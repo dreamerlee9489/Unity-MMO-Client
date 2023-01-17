@@ -122,12 +122,12 @@ namespace UI
                 case ChatType.Team:
                     text = PoolManager.Instance.Pop("ChatMsg", teamRect.content).GetComponent<Text>();
                     text.text = $"[团队] {msg}";
-                    text.color = Color.blue;
+                    text.color = Color.cyan;
                     break;
                 case ChatType.Private:
                     text = PoolManager.Instance.Pop("ChatMsg", privRect.content).GetComponent<Text>();
                     text.text = $"[私聊] {msg}";
-                    text.color = Color.cyan;
+                    text.color = Color.white;
                     break;
                 default:
                     break;

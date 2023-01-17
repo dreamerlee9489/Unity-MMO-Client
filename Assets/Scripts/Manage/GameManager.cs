@@ -1,6 +1,5 @@
 ﻿using Cinemachine;
 using Items;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using UI;
@@ -50,6 +49,8 @@ namespace Manage
             ParseItemPotionsCsv();
             ParseItemWeaponsCsv();
             ParseWorldCsv();
+            PoolManager.Instance.Load(PoolType.RoleToggle, "UI/RoleToggle", 20);
+            PoolManager.Instance.Load(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
@@ -77,8 +78,6 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CUpdateTradeItem, UpdateTradeItemHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CTradeOpen, TradeOpenHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CTradeClose, TradeCloseHandler);
-            PoolManager.Instance.Load(PoolType.RoleToggle, "UI/RoleToggle", 20);
-            PoolManager.Instance.Load(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
         }
 
         private void Start()

@@ -24,7 +24,7 @@ namespace Proto {
     static ProtoIdReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg5wcm90b19pZC5wcm90bxIFUHJvdG8qghYKBU1zZ0lkEggKBE5vbmUQABIV",
+            "Cg5wcm90b19pZC5wcm90bxIFUHJvdG8qnBYKBU1zZ0lkEggKBE5vbmUQABIV",
             "ChFNSV9OZXR3b3JrQ29ubmVjdBABEhcKE01JX05ldHdvcmtDb25uZWN0ZWQQ",
             "AhIUChBNSV9OZXR3b3JrTGlzdGVuEAMSFwoTTUlfTmV0d29ya0xpc3Rlbktl",
             "eRAEEhgKFE1JX05ldHdvcmtEaXNjb25uZWN0EAoSGgoWTUlfTmV0d29ya0Rp",
@@ -80,14 +80,14 @@ namespace Proto {
             "cUxpbmtQbGF5ZXIQveoBEhgKEkMyU19QbGF5ZXJBdGtFdmVudBC+6gESGAoS",
             "UzJDX1BsYXllckF0a0V2ZW50EL/qARIVCg9DMlNfTnBjQXRrRXZlbnQQwOoB",
             "EhUKD1MyQ19OcGNBdGtFdmVudBDB6gESFgoQUzJDX0Ryb3BJdGVtTGlzdBDC",
-            "6gESGAoSQzJTX1VwZGF0ZUtuYXBJdGVtEMG4AhIXChFDMlNfR2V0UGxheWVy",
-            "S25hcBDCuAISFwoRUzJDX0dldFBsYXllcktuYXAQw7gCEhUKD0MyQ19SZXFK",
-            "b2luVGVhbRDRhgMSFQoPQzJDX0pvaW5UZWFtUmVzENKGAxIZChNDMkNfUmVx",
-            "RW50ZXJEdW5nZW9uENOGAxIZChNDMkNfRW50ZXJEdW5nZW9uUmVzENSGAxIQ",
-            "CgpDMkNfUmVxUHZwENWGAxIQCgpDMkNfUHZwUmVzENaGAxISCgxDMkNfUmVx",
-            "VHJhZGUQ14YDEhIKDEMyQ19UcmFkZVJlcxDYhgMSGQoTQzJDX1VwZGF0ZVRy",
-            "YWRlSXRlbRDZhgMSEwoNUzJDX1RyYWRlT3BlbhDahgMSFAoOUzJDX1RyYWRl",
-            "Q2xvc2UQ24YDYgZwcm90bzM="));
+            "6gESGAoSQzJTX1VwZGF0ZUtuYXBJdGVtEMG4AhIYChJDMlNfVXBkYXRlS25h",
+            "cEdvbGQQwrgCEhcKEUMyU19HZXRQbGF5ZXJLbmFwEMO4AhIXChFTMkNfR2V0",
+            "UGxheWVyS25hcBDEuAISFQoPQzJDX1JlcUpvaW5UZWFtENGGAxIVCg9DMkNf",
+            "Sm9pblRlYW1SZXMQ0oYDEhkKE0MyQ19SZXFFbnRlckR1bmdlb24Q04YDEhkK",
+            "E0MyQ19FbnRlckR1bmdlb25SZXMQ1IYDEhAKCkMyQ19SZXFQdnAQ1YYDEhAK",
+            "CkMyQ19QdnBSZXMQ1oYDEhIKDEMyQ19SZXFUcmFkZRDXhgMSEgoMQzJDX1Ry",
+            "YWRlUmVzENiGAxIZChNDMkNfVXBkYXRlVHJhZGVJdGVtENmGAxITCg1TMkNf",
+            "VHJhZGVPcGVuENqGAxIUCg5TMkNfVHJhZGVDbG9zZRDbhgNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.MsgId), }, null, null));
@@ -400,8 +400,9 @@ namespace Proto {
     [pbr::OriginalName("S2C_NpcAtkEvent")] S2CNpcAtkEvent = 30017,
     [pbr::OriginalName("S2C_DropItemList")] S2CDropItemList = 30018,
     [pbr::OriginalName("C2S_UpdateKnapItem")] C2SUpdateKnapItem = 40001,
-    [pbr::OriginalName("C2S_GetPlayerKnap")] C2SGetPlayerKnap = 40002,
-    [pbr::OriginalName("S2C_GetPlayerKnap")] S2CGetPlayerKnap = 40003,
+    [pbr::OriginalName("C2S_UpdateKnapGold")] C2SUpdateKnapGold = 40002,
+    [pbr::OriginalName("C2S_GetPlayerKnap")] C2SGetPlayerKnap = 40003,
+    [pbr::OriginalName("S2C_GetPlayerKnap")] S2CGetPlayerKnap = 40004,
     [pbr::OriginalName("C2C_ReqJoinTeam")] C2CReqJoinTeam = 50001,
     [pbr::OriginalName("C2C_JoinTeamRes")] C2CJoinTeamRes = 50002,
     [pbr::OriginalName("C2C_ReqEnterDungeon")] C2CReqEnterDungeon = 50003,

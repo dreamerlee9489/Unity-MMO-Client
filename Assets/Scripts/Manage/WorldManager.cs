@@ -1,7 +1,6 @@
 ﻿using Control;
 using Control.FSM;
 using Items;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;

@@ -97,6 +97,19 @@ namespace UI
             }
         }
 
+        private void PutBackTempIcons()
+        {
+            int count = UIManager.Instance.tempSlot.childCount;
+            for (int i = 0; i < count; i++)
+            {
+                _currUI = UIManager.Instance.tempSlot.GetChild(0).GetComponent<ItemUI>();
+                _currUI.transform.SetParent(CurrSlot.Icons, true);
+                _currUI.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+                _currUI.GetComponent<Image>().raycastTarget = true;
+            }
+            CurrSlot.Count.text = count > 1 ? count.ToString() : "";
+        }
+
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (CurrSlot.Icons.childCount > 1)
@@ -164,19 +177,6 @@ namespace UI
 
         public void OnPointerExit(PointerEventData eventData)
         {
-        }
-
-        public void PutBackTempIcons()
-        {
-            int count = UIManager.Instance.tempSlot.childCount;
-            for (int i = 0; i < count; i++)
-            {
-                _currUI = UIManager.Instance.tempSlot.GetChild(0).GetComponent<ItemUI>();
-                _currUI.transform.SetParent(CurrSlot.Icons, true);
-                _currUI.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-                _currUI.GetComponent<Image>().raycastTarget = true;
-            }
-            CurrSlot.Count.text = count > 1 ? count.ToString() : "";
-        }
+        }        
     }
 }

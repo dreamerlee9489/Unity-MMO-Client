@@ -1,3 +1,4 @@
+using Items;
 using Manage;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,13 +27,10 @@ namespace UI
                 itemSlots[i] = UiRect.content.GetChild(i).GetComponent<ItemSlot>();
                 itemSlots[i].Index = i;
                 itemSlots[i].knapType = Items.KnapType.Trade;
-            }            
+            }
         }
 
-        public void SetLocalRect(Proto.AppearRole role)
-        {
-            SureBar.text = role.name;
-        }
+        public void SetLocalRect(Proto.AppearRole role) => SureBar.text = role.name;
 
         public void SetRemoteRect(Proto.AppearRole role)
         {
@@ -53,17 +51,34 @@ namespace UI
 
         public ItemSlot GetSlotByIndex(int index) => itemSlots[index];
 
-        public void AddAllUiToBag()
+        public void AddAllToBag()
         {
+            var player = GameManager.Instance.mainPlayer.Obj;
             foreach (var slot in itemSlots)
             {
                 int count = slot.Icons.childCount;
                 for (int i = 0; i < count; i++)
-                    slot.Icons.GetChild(0).GetComponent<ItemUI>().AddToBagUI();
+                {
+                    ItemUI itemUI = slot.Icons.GetChild(0).GetComponent<ItemUI>();
+                    Proto.UpdateKnapItem proto = new()
+                    {
+                        Item = new()
+                        {
+                            Sn = itemUI.Item.Sn,
+                            Id = itemUI.Item.id,
+                            Index = player.AddItemToKnap(KnapType.Bag, itemUI.Item),
+                            ItemType = (Proto.ItemData.Types.ItemType)itemUI.Item.itemType,
+                            KnapType = Proto.ItemData.Types.KnapType.Bag
+                        }
+                    };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
+                    itemUI.Item.transform.SetParent(player.BagPoint, false);
+                    itemUI.AddToBagUI();
+                }
             }
         }
 
-        public void RemoveAll()
+        public void RemoveAllFromBag()
         {
             foreach (var slot in itemSlots)
             {
@@ -71,6 +86,18 @@ namespace UI
                 for (int i = 0; i < count; i++)
                 {
                     ItemUI itemUI = slot.Icons.GetChild(0).GetComponent<ItemUI>();
+                    Proto.UpdateKnapItem proto = new()
+                    {
+                        Item = new()
+                        {
+                            Sn = itemUI.Item.Sn,
+                            Id = itemUI.Item.id,
+                            Index = -1,
+                            ItemType = (Proto.ItemData.Types.ItemType)itemUI.Item.itemType,
+                            KnapType = Proto.ItemData.Types.KnapType.World
+                        }
+                    };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
                     PoolManager.Instance.Push(itemUI.Item.ObjName, itemUI.gameObject);
                     Destroy(itemUI.Item.gameObject);
                 }
