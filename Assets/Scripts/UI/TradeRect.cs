@@ -80,8 +80,10 @@ namespace UI
         public void RemoveAllFromBag()
         {
             foreach (var slot in itemSlots)
-            {
+            {               
                 int count = slot.Icons.childCount;
+                if (count > 0)
+                    UIManager.Instance.GetPanel<BagPanel>().UiIndexDict.Remove(slot.Icons.GetChild(0).GetComponent<ItemUI>().Item.GetHashCode());
                 for (int i = 0; i < count; i++)
                 {
                     ItemUI itemUI = slot.Icons.GetChild(0).GetComponent<ItemUI>();
