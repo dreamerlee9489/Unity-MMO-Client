@@ -28,6 +28,7 @@ namespace UI
 
         public int AddToBagUI(int index = 0)
         {
+            GetComponent<Image>().raycastTarget = true;
             PoolManager.Instance.Push(Item.ObjName, gameObject);
             if (!_bagPanel.UiIndexDict.ContainsKey(Item.GetHashCode()))
             {
