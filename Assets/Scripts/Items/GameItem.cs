@@ -56,9 +56,9 @@ namespace Items
             Proto.UpdateKnapItem proto = new() { Item = new() };
             proto.Item.Sn = Sn;
             proto.Item.Id = id;
-            proto.Item.Index = player.AddItemToKnap(KnapType.Bag, this);
             proto.Item.ItemType = (Proto.ItemData.Types.ItemType)itemType;
-            proto.Item.KnapType = (Proto.ItemData.Types.KnapType)knapType;
+            proto.Item.Index = player.AddItemToKnap(KnapType.Bag, this);
+            proto.Item.KnapType = Proto.ItemData.Types.KnapType.Bag;
             NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
         }
 

@@ -22,6 +22,7 @@ namespace UI
             {
                 itemSlots[i] = Content.GetChild(i).GetComponent<ItemSlot>();
                 itemSlots[i].Index = i;
+                itemSlots[i].knapType = Items.KnapType.Bag;
             }
             Close();
         }

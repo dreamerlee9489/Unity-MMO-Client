@@ -28,6 +28,14 @@ namespace UI
             GlovesSlot = transform.GetChild(2).Find("Gloves").GetComponent<ItemSlot>();
             WeaponSlot = transform.GetChild(2).Find("Weapon").GetComponent<ItemSlot>();
             PantsSlot = transform.GetChild(2).Find("Pants").GetComponent<ItemSlot>();
+            HelmSlot.knapType = KnapType.Equip;
+            ChestSlot.knapType = KnapType.Equip;
+            ShieldSlot.knapType = KnapType.Equip;
+            BootsSlot.knapType = KnapType.Equip;
+            NeckSlot.knapType = KnapType.Equip;
+            GlovesSlot.knapType = KnapType.Equip;
+            WeaponSlot.knapType = KnapType.Equip;
+            PantsSlot.knapType = KnapType.Equip;
             _slotDict.Add(HelmSlot.Index = (int)ItemType.Helmet, HelmSlot);
             _slotDict.Add(ChestSlot.Index = (int)ItemType.Chest, ChestSlot);
             _slotDict.Add(ShieldSlot.Index = (int)ItemType.Shield, ShieldSlot);

@@ -264,16 +264,15 @@ namespace Control
 
         public int AddItemToKnap(KnapType knapType, GameItem item, int index = 0)
         {
-            item.knapType = knapType;
-            item.gameObject.SetActive(false);
             if (item.ItemUI == null)
             {
                 GameObject obj = ResourceManager.Instance.Load<GameObject>($"UI/ItemUI/{item.itemType}/{item.ObjName}");
                 ItemUI itemUI = Instantiate(obj).GetComponent<ItemUI>();
                 itemUI.Item = item;
                 item.ItemUI = itemUI;
-                item.gameObject.SetActive(false);
             }
+            item.knapType = knapType;
+            item.gameObject.SetActive(false);
             switch (item.knapType)
             {
                 case KnapType.Bag:
@@ -375,8 +374,6 @@ namespace Control
         {
             switch (data.ItemType)
             {
-                case Proto.ItemData.Types.ItemType.None:
-                    break;
                 case Proto.ItemData.Types.ItemType.Potion:
                     string key1 = new((int)ItemType.Potion + "@" + data.Id);
                     ResourceManager.Instance.LoadAsync<GameObject>($"Item/Potion/{GameManager.Instance.dropPotionDict[key1][0]}", (obj) =>
@@ -397,7 +394,6 @@ namespace Control
                     {
                         Weapon weapon = Instantiate(obj).GetComponent<Weapon>();
                         weapon.itemType = ItemType.Weapon;
-                        weapon.knapType = (KnapType)data.KnapType;
                         weapon.id = data.Id;
                         weapon.Sn = data.Sn;
                         weapon.ObjName = GameManager.Instance.dropWeaponDict[key2][0];

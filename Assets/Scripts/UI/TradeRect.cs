@@ -1,4 +1,3 @@
-using Items;
 using Manage;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,20 +59,20 @@ namespace UI
                 for (int i = 0; i < count; i++)
                 {
                     ItemUI itemUI = slot.Icons.GetChild(0).GetComponent<ItemUI>();
+                    itemUI.AddToBagUI();
+                    itemUI.Item.transform.SetParent(player.BagPoint);
                     Proto.UpdateKnapItem proto = new()
                     {
                         Item = new()
                         {
                             Sn = itemUI.Item.Sn,
                             Id = itemUI.Item.id,
-                            Index = player.AddItemToKnap(KnapType.Bag, itemUI.Item),
                             ItemType = (Proto.ItemData.Types.ItemType)itemUI.Item.itemType,
+                            Index = player.AddItemToKnap(Items.KnapType.Bag, itemUI.Item),
                             KnapType = Proto.ItemData.Types.KnapType.Bag
                         }
                     };
                     NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
-                    itemUI.Item.transform.SetParent(player.BagPoint, false);
-                    itemUI.AddToBagUI();
                 }
             }
         }
@@ -86,6 +85,7 @@ namespace UI
                 for (int i = 0; i < count; i++)
                 {
                     ItemUI itemUI = slot.Icons.GetChild(0).GetComponent<ItemUI>();
+                    PoolManager.Instance.Push(itemUI.Item.ObjName, itemUI.gameObject);
                     Proto.UpdateKnapItem proto = new()
                     {
                         Item = new()
@@ -98,7 +98,6 @@ namespace UI
                         }
                     };
                     NetManager.Instance.SendPacket(Proto.MsgId.C2SUpdateKnapItem, proto);
-                    PoolManager.Instance.Push(itemUI.Item.ObjName, itemUI.gameObject);
                     Destroy(itemUI.Item.gameObject);
                 }
             }

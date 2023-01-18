@@ -99,10 +99,10 @@ namespace UI
 
         private void PutBackTempIcons()
         {
-            int count = UIManager.Instance.tempSlot.childCount;
+            int count = UIManager.Instance.TempSlot.childCount;
             for (int i = 0; i < count; i++)
             {
-                _currUI = UIManager.Instance.tempSlot.GetChild(0).GetComponent<ItemUI>();
+                _currUI = UIManager.Instance.TempSlot.GetChild(0).GetComponent<ItemUI>();
                 _currUI.transform.SetParent(CurrSlot.Icons, true);
                 _currUI.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
                 _currUI.GetComponent<Image>().raycastTarget = true;
@@ -118,15 +118,15 @@ namespace UI
             for (int i = 0; i < count; i++)
             {
                 _currUI = CurrSlot.Icons.GetChild(0).GetComponent<ItemUI>();
-                _currUI.transform.SetParent(UIManager.Instance.tempSlot, true);
+                _currUI.transform.SetParent(UIManager.Instance.TempSlot, true);
                 _currUI.GetComponent<Image>().raycastTarget = false;
             }
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            for (int i = 0; i < UIManager.Instance.tempSlot.childCount; i++)
-                UIManager.Instance.tempSlot.GetChild(i).position = eventData.position;
+            for (int i = 0; i < UIManager.Instance.TempSlot.childCount; i++)
+                UIManager.Instance.TempSlot.GetChild(i).position = eventData.position;
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -147,20 +147,20 @@ namespace UI
                     {
                         _currUI = newSlot.Icons.GetChild(0).GetComponent<ItemUI>();
                         _currUI.CurrSlot = CurrSlot;
-                        _currUI.Item.UpdateUiLoc(CurrSlot.knapType, CurrSlot.Index);
                         _currUI.transform.SetParent(CurrSlot.Icons, true);
                         _currUI.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+                        _currUI.Item.UpdateUiLoc(CurrSlot.knapType, CurrSlot.Index);
                     }
                     CurrSlot.Count.text = count > 1 ? count.ToString() : "";
-                    count = UIManager.Instance.tempSlot.childCount;
+                    count = UIManager.Instance.TempSlot.childCount;
                     for (int i = 0; i < count; i++)
                     {
-                        _currUI = UIManager.Instance.tempSlot.GetChild(0).GetComponent<ItemUI>();
+                        _currUI = UIManager.Instance.TempSlot.GetChild(0).GetComponent<ItemUI>();
                         _currUI.CurrSlot = newSlot;
-                        _currUI.Item.UpdateUiLoc(newSlot.knapType, newSlot.Index);
                         _currUI.transform.SetParent(newSlot.Icons, true);
                         _currUI.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
                         _currUI.GetComponent<Image>().raycastTarget = true;
+                        _currUI.Item.UpdateUiLoc(newSlot.knapType, newSlot.Index);
                     }
                     newSlot.Count.text = count > 1 ? count.ToString() : "";
                 }

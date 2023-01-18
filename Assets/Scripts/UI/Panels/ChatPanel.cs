@@ -29,7 +29,6 @@ namespace UI
             teamRect = chatRects.Find("TeamRect").GetComponent<ScrollRect>();
             privRect = chatRects.Find("PrivateRect").GetComponent<ScrollRect>();
             inputField = transform.Find("InputField").GetComponent<InputField>();
-            sendBtn = transform.Find("SendBtn").GetComponent<Button>();
 
             chatToggles.allowSwitchOff = true;
             activeRect = globalRect;
@@ -77,31 +76,29 @@ namespace UI
                 else if (!chatToggles.AnyTogglesOn())
                     privTog.isOn = true;
             });
-            sendBtn.onClick.AddListener(SendMsg);
+            inputField.onSubmit.AddListener((str) =>
+            {
+                if (str.Length != 0)
+                {
+                    Proto.ChatMsg proto = new()
+                    {
+                        Sender = GameManager.Instance.mainPlayer.Sn,
+                        Name = GameManager.Instance.mainPlayer.Name,
+                        Content = inputField.text
+                    };
+                    inputField.text = "";
+                    if (globalTog.isOn)
+                        NetManager.Instance.SendPacket(Proto.MsgId.MiGlobalChat, proto);
+                    else if (worldTog.isOn)
+                        NetManager.Instance.SendPacket(Proto.MsgId.MiWorldChat, proto);
+                    else if (teamTog.isOn)
+                        NetManager.Instance.SendPacket(Proto.MsgId.MiTeamChat, proto);
+                    else if (privTog.isOn)
+                        NetManager.Instance.SendPacket(Proto.MsgId.MiPrivateChat, proto);
+                }
+            });
             PoolManager.Instance.Load("ChatMsg", "UI/ChatMsg", 40);
             Close();
-        }
-
-        private void SendMsg()
-        {
-            if(inputField.text.Length != 0)
-            {
-                Proto.ChatMsg proto = new()
-                {
-                    Sender = GameManager.Instance.mainPlayer.Sn,
-                    Name = GameManager.Instance.mainPlayer.Name,
-                    Content = inputField.text
-                };
-                inputField.text = "";
-                if (globalTog.isOn)
-                    NetManager.Instance.SendPacket(Proto.MsgId.MiGlobalChat, proto);
-                else if (worldTog.isOn)
-                    NetManager.Instance.SendPacket(Proto.MsgId.MiWorldChat, proto);
-                else if (teamTog.isOn)
-                    NetManager.Instance.SendPacket(Proto.MsgId.MiTeamChat, proto);
-                else if (privTog.isOn)
-                    NetManager.Instance.SendPacket(Proto.MsgId.MiPrivateChat, proto);
-            }
         }
 
         public void ShowMsg(ChatType type, string msg)

@@ -175,8 +175,7 @@ namespace Manage
             while ((line = reader.ReadLine()) != null)
             {
                 string[] strs = line.Split(',');
-                if (!strs[1].Equals("null"))
-                    worldDict.Add(int.Parse(strs[0]), strs[1]);
+                worldDict.Add(int.Parse(strs[0]), strs[1]);
             }
         }
 
@@ -192,6 +191,7 @@ namespace Manage
         {
             currWorld = FindObjectOfType<WorldManager>();
             canvas.GetPanel<ChatPanel>().Open();
+            canvas.WorldName.text = worldDict[scene.buildIndex + 2];
         }
 
         private void SyncPlayerHandler(Google.Protobuf.IMessage msg)

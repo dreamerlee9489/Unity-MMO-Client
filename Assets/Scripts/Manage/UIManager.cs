@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Manage
 {
@@ -11,14 +12,17 @@ namespace Manage
         private CanvasGroup _cutImage;
         private readonly Dictionary<string, BasePanel> _panelDict = new();
 
-        public Transform tempSlot, hudGroup;
+        public Text WorldName { get; private set; }
+        public Transform TempSlot { get; private set; }
+        public Transform HudGroup { get; private set; }
 
         protected override void Awake()
         {
             base.Awake();
             _cutImage = transform.Find("CutImage").GetComponent<CanvasGroup>();
-            tempSlot = transform.Find("TempSlot");
-            hudGroup = transform.Find("HUDGroup");
+            WorldName = transform.Find("WorldName").GetComponent<Text>();
+            TempSlot = transform.Find("TempSlot");
+            HudGroup = transform.Find("HUDGroup");
             EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
         }
 
