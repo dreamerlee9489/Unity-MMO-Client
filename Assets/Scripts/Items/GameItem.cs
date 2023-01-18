@@ -67,6 +67,7 @@ namespace Items
             this.knapType = knapType;
             if(knapType != KnapType.Trade)
             {
+                UIManager.Instance.GetPanel<BagPanel>().UiIndexDict[GetHashCode()] = index;
                 Proto.UpdateKnapItem proto = new()
                 {
                     Item = new()
