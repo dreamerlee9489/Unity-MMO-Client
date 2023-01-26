@@ -22,7 +22,7 @@ namespace Control
         {
             base.Awake();
             agent.speed = runSpeed;
-            EventManager.Instance.AddListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+            EventManager.Instance.AddListener(EventId.PlayerLoaded, PlayerLoadedCallback);
         }
 
         protected override void Update()
@@ -43,7 +43,7 @@ namespace Control
 
         private void OnDestroy()
         {
-            EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+            EventManager.Instance.RemoveListener(EventId.PlayerLoaded, PlayerLoadedCallback);
         }
 
         private void PlayerLoadedCallback()

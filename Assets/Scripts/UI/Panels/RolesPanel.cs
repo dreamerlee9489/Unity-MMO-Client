@@ -42,8 +42,8 @@ namespace UI
 
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CGameToken, GameTokenHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2GLoginByTokenRs, LoginByTokenRsHandler);
-            EventManager.Instance.AddListener<EAppType>(EEventType.Connected, ConnectedCallback);
-            EventManager.Instance.AddListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
+            EventManager.Instance.AddListener<EAppType>(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.AddListener<EAppType>(EventId.Disconnect, DisconnectCallback);
             Close();
         }
 
@@ -51,8 +51,8 @@ namespace UI
         {
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CGameToken, GameTokenHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2GLoginByTokenRs, GameTokenHandler);
-            EventManager.Instance.RemoveListener<EAppType>(EEventType.Connected, ConnectedCallback);
-            EventManager.Instance.RemoveListener<EAppType>(EEventType.Disconnect, DisconnectCallback);
+            EventManager.Instance.RemoveListener<EAppType>(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.RemoveListener<EAppType>(EventId.Disconnect, DisconnectCallback);
         }
 
         public override void Close()

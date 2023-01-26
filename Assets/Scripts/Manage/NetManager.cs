@@ -93,8 +93,9 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.C2CUpdateTradeItem, ParsePacket<Proto.UpdateTradeItem>);
             RegistParseFunc(Proto.MsgId.S2CTradeOpen, ParsePacket<Proto.TradeOpen>);
             RegistParseFunc(Proto.MsgId.S2CTradeClose, ParsePacket<Proto.TradeClose>);
+            RegistParseFunc(Proto.MsgId.S2CSyncBtAction, ParsePacket<Proto.SyncBtAction>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
-            EventManager.Instance.AddListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
+            EventManager.Instance.AddListener<bool>(EventId.HotUpdated, HotUpdatedCallback);
         }
 
         private void Update()
@@ -144,7 +145,7 @@ namespace Manage
 
         private void OnApplicationQuit()
         {
-            EventManager.Instance.RemoveListener<bool>(EEventType.HotUpdated, HotUpdatedCallback);
+            EventManager.Instance.RemoveListener<bool>(EventId.HotUpdated, HotUpdatedCallback);
             Disconnect();
         }
 
@@ -155,7 +156,7 @@ namespace Manage
             _sock.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
             _sock.Blocking = true;
             _sock.SendBufferSize = _recvBuf.Length;
-            EventManager.Instance.Invoke(EEventType.Connecting, appType);
+            EventManager.Instance.Invoke(EventId.Connecting, appType);
             _sock.BeginConnect(ip, port, (result) =>
             {
                 try
@@ -178,7 +179,7 @@ namespace Manage
             }, _sock);
             _state = ENetState.Connected;
             _appType = appType;
-            EventManager.Instance.Invoke(EEventType.Connected, _appType);
+            EventManager.Instance.Invoke(EventId.Connected, _appType);
         }
 
         public void Disconnect()
@@ -188,7 +189,7 @@ namespace Manage
                 _sock.Close();
                 _sock = null;
                 _state = ENetState.Disconnected;
-                EventManager.Instance.Invoke(EEventType.Disconnect, _appType);
+                EventManager.Instance.Invoke(EventId.Disconnect, _appType);
             }
         }
 

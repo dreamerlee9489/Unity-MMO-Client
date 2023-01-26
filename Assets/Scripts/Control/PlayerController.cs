@@ -29,7 +29,7 @@ namespace Control
         protected override void Awake()
         {
             base.Awake();
-            EventManager.Instance.AddListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+            EventManager.Instance.AddListener(EventId.PlayerLoaded, PlayerLoadedCallback);
         }
 
         private void OnEnable()
@@ -138,7 +138,7 @@ namespace Control
 
         private void OnDestroy()
         {
-            EventManager.Instance.RemoveListener(EEventType.PlayerLoaded, PlayerLoadedCallback);
+            EventManager.Instance.RemoveListener(EventId.PlayerLoaded, PlayerLoadedCallback);
         }
 
         private void PlayerLoadedCallback()

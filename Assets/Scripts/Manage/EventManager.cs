@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Manage
 {
-    public enum EEventType
+    public enum EventId
     {
         Connecting,
         Connected,
@@ -38,9 +38,9 @@ namespace Manage
 
     public class EventManager : BaseSingleton<EventManager>
     {
-        private readonly Dictionary<EEventType, List<IEventInfo>> _eventDict = new();
+        private readonly Dictionary<EventId, List<IEventInfo>> _eventDict = new();
 
-        public void AddListener(EEventType type, Action callback)
+        public void AddListener(EventId type, Action callback)
         {
             if (!_eventDict.ContainsKey(type))
                 _eventDict.Add(type, new List<IEventInfo>() { null, null, null });
@@ -49,7 +49,7 @@ namespace Manage
             (_eventDict[type][0] as EventInfo).onEvent += callback;
         }
 
-        public void AddListener<T>(EEventType type, Action<T> callback)
+        public void AddListener<T>(EventId type, Action<T> callback)
         {
             if (!_eventDict.ContainsKey(type))
                 _eventDict.Add(type, new List<IEventInfo>() { null, null, null });
@@ -58,7 +58,7 @@ namespace Manage
             (_eventDict[type][1] as EventInfo<T>).onEvent += callback;
         }
 
-        public void AddListener<T1, T2>(EEventType type, Action<T1, T2> callback)
+        public void AddListener<T1, T2>(EventId type, Action<T1, T2> callback)
         {
             if (!_eventDict.ContainsKey(type))
                 _eventDict.Add(type, new List<IEventInfo>() { null, null, null });
@@ -67,37 +67,37 @@ namespace Manage
             (_eventDict[type][2] as EventInfo<T1, T2>).onEvent += callback;
         }
 
-        public void RemoveListener(EEventType type, Action callback)
+        public void RemoveListener(EventId type, Action callback)
         {
             if (_eventDict.ContainsKey(type))
                 (_eventDict[type][0] as EventInfo).onEvent -= callback;
         }
 
-        public void RemoveListener<T>(EEventType type, Action<T> callback)
+        public void RemoveListener<T>(EventId type, Action<T> callback)
         {
             if (_eventDict.ContainsKey(type))
                 (_eventDict[type][1] as EventInfo<T>).onEvent -= callback;
         }
 
-        public void RemoveListener<T1, T2>(EEventType type, Action<T1, T2> callback)
+        public void RemoveListener<T1, T2>(EventId type, Action<T1, T2> callback)
         {
             if (_eventDict.ContainsKey(type))
                 (_eventDict[type][2] as EventInfo<T1, T2>).onEvent -= callback;
         }
 
-        public void Invoke(EEventType type)
+        public void Invoke(EventId type)
         {
             if (_eventDict.ContainsKey(type))
                 (_eventDict[type][0] as EventInfo).onEvent?.Invoke();
         }
 
-        public void Invoke<T>(EEventType type, T arg)
+        public void Invoke<T>(EventId type, T arg)
         {
             if (_eventDict.ContainsKey(type))
                 (_eventDict[type][1] as EventInfo<T>).onEvent?.Invoke(arg);
         }
 
-        public void Invoke<T1, T2>(EEventType type, T1 arg1, T2 arg2)
+        public void Invoke<T1, T2>(EventId type, T1 arg1, T2 arg2)
         {
             if (_eventDict.ContainsKey(type))
                 (_eventDict[type][2] as EventInfo<T1, T2>).onEvent?.Invoke(arg1, arg2);

@@ -1,5 +1,6 @@
 ﻿using Cinemachine;
 using Items;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UI;
@@ -78,6 +79,7 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2CUpdateTradeItem, UpdateTradeItemHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CTradeOpen, TradeOpenHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CTradeClose, TradeCloseHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncBtAction, SyncBtActionHandler);
         }
 
         private void Start()
@@ -117,6 +119,7 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2CUpdateTradeItem, UpdateTradeItemHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CTradeOpen, TradeOpenHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CTradeClose, TradeCloseHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncBtAction, SyncBtActionHandler);
         }
 
         private void ParsePlayerBaseCsv()
@@ -436,6 +439,14 @@ namespace Manage
             {
                 canvas.GetPanel<TradePanel>().Close();
                 mainPlayer.Obj.ParseTradeClose(proto);
+            }
+        }
+
+        private void SyncBtActionHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncBtAction proto)
+            {
+                Debug.Log("SyncBtAction " + proto.Id);
             }
         }
     }

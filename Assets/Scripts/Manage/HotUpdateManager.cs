@@ -183,7 +183,7 @@ namespace Manage
             GetRemoteInfoList((isOver) =>
             {
                 if (!isOver)
-                    EventManager.Instance.Invoke(EEventType.HotUpdated, isOver);
+                    EventManager.Instance.Invoke(EventId.HotUpdated, isOver);
                 else
                 {
                     string remoteInfoList = File.ReadAllText($"{Application.persistentDataPath}/AssetBundles/{_platform}/ABInfoList_TMP.txt");
@@ -213,7 +213,7 @@ namespace Manage
                                 _modalPanel.SetMsg("更新完成");
                                 File.WriteAllText($"{Application.persistentDataPath}/AssetBundles/{_platform}/ABInfoList.txt", remoteInfoList);
                             }
-                            EventManager.Instance.Invoke(EEventType.HotUpdated, isOver);
+                            EventManager.Instance.Invoke(EventId.HotUpdated, isOver);
                         });
                     });
                 }

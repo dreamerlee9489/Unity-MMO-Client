@@ -27,8 +27,8 @@ namespace UI
             _updateMsg = _update.Find("Msg").GetComponent<Text>();
             _updateCloseBtn = _update.Find("CloseBtn").GetComponent<Button>();
             _updateMsg.alignment = TextAnchor.UpperLeft;
-            EventManager.Instance.AddListener<EAppType>(EEventType.Connected, ConnectedCallback);
-            EventManager.Instance.AddListener<EAppType>(EEventType.Connecting, ConnectingCallback);
+            EventManager.Instance.AddListener<EAppType>(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.AddListener<EAppType>(EventId.Connecting, ConnectingCallback);
         }
 
         private void Start()
@@ -39,8 +39,8 @@ namespace UI
 
         private void OnApplicationQuit()
         {
-            EventManager.Instance.RemoveListener<EAppType>(EEventType.Connected, ConnectedCallback);
-            EventManager.Instance.RemoveListener<EAppType>(EEventType.Connecting, ConnectingCallback);
+            EventManager.Instance.RemoveListener<EAppType>(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.RemoveListener<EAppType>(EventId.Connecting, ConnectingCallback);
         }
 
         private void ConnectingCallback(EAppType appType)
@@ -72,7 +72,7 @@ namespace UI
                     _updateCloseBtn.onClick.AddListener(() => { Close(ModalPanelType.Notice); });
                     _update.gameObject.SetActive(true);
                     if (!HotUpdateManager.Instance.DownloadFile("AssetBundles/UpdateNotice.txt", $"{Application.persistentDataPath}/UpdateNotice.txt"))
-                        EventManager.Instance.Invoke(EEventType.HotUpdated, false);
+                        EventManager.Instance.Invoke(EventId.HotUpdated, false);
                     else
                     {
                         _updateMsg.text = File.ReadAllText($"{Application.persistentDataPath}/UpdateNotice.txt");
