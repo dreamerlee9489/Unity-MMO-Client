@@ -17,18 +17,18 @@ namespace Control
 
         public void AtkAnimEvent()
         {
-            if (_player && _player.target && _player.Sn == GameManager.Instance.mainPlayer.Sn)
+            if (_player && _player.Target && _player.Sn == GameManager.Instance.mainPlayer.Sn)
             {
                 Proto.PlayerAtkEvent proto = new() { PlayerSn = GameManager.Instance.mainPlayer.Sn };
-                if (_player.target.GetComponent<FsmController>() != null)
-                    proto.TargetSn = _player.target.GetComponent<FsmController>().Sn;
+                if (_player.Target.GetComponent<FsmController>() != null)
+                    proto.TargetSn = _player.Target.GetComponent<FsmController>().Sn;
                 else
-                    proto.TargetSn = _player.target.GetComponent<PlayerController>().Sn;
+                    proto.TargetSn = _player.Target.GetComponent<PlayerController>().Sn;
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);
             }
             else if (_npc)
             {
-                if (_npc.target && _npc.target.GetComponent<PlayerController>().Sn == GameManager.Instance.mainPlayer.Sn)
+                if (_npc.Target && _npc.Target.GetComponent<PlayerController>().Sn == GameManager.Instance.mainPlayer.Sn)
                 {
                     Proto.NpcAtkEvent proto = new()
                     {
@@ -42,10 +42,10 @@ namespace Control
 
         public void PickupEvent()
         {
-            if (_player.target)
+            if (_player.Target)
             {
-                _player.target.GetComponent<GameItem>().RequestPickup(_player);
-                _player.target = null;
+                _player.Target.GetComponent<GameItem>().RequestPickup(_player);
+                _player.Target = null;
             }
         }
     }

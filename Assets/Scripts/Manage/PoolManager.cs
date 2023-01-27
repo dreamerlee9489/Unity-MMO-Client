@@ -6,7 +6,7 @@ namespace Manage
     public class PoolType
     {
         public const string RoleToggle = "RoleToggle";
-        public const string PatrolPath = "PatrolPath";
+        public const string PatrolPath = "patrolPath";
         public const string HUDPanel = "HUDPanel";
     }
 

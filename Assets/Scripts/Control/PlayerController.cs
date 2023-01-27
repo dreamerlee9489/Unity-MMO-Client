@@ -40,7 +40,7 @@ namespace Control
 
         private void Start()
         {
-            agent.speed = runSpeed * 1.5f;
+            Agent.speed = runSpeed * 1.5f;
             baseData ??= GameManager.Instance.playerBaseDatas[lv];
             if (Sn == GameManager.Instance.mainPlayer.Sn)
             {
@@ -48,7 +48,7 @@ namespace Control
                 HandPoint = transform.Find("HandPoint");
                 ActPoint = transform.Find("ActPoint");
                 TradePoint = transform.Find("TradePoint");
-                nameBar.HpBar.gameObject.SetActive(false);
+                NameBar.HpBar.gameObject.SetActive(false);
                 gameObject.layer = 2;
                 TeamManager.Instance.Initial();
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SGetPlayerKnap, null);
@@ -165,8 +165,8 @@ namespace Control
 
         public void Move(Vector3 point)
         {
-            agent.destination = point;
-            if(Vector3.Distance(transform.position, point) <= agent.stoppingDistance)
+            Agent.destination = point;
+            if(Vector3.Distance(transform.position, point) <= Agent.stoppingDistance)
                 _cmd = null;
         }
 
@@ -178,26 +178,26 @@ namespace Control
         {
             transform.LookAt(target);
             if (Vector3.Distance(transform.position, target.position) <= attackRadius)
-                anim.SetBool(attack, true);
+                Anim.SetBool(attack, true);
             else
             {
-                anim.SetBool(attack, false);
-                agent.destination = target.position;
+                Anim.SetBool(attack, false);
+                Agent.destination = target.position;
             }
         }
 
         public void UnAttack()
         {
-            anim.SetBool(attack, false);
+            Anim.SetBool(attack, false);
             _cmd = null;
         }
 
         public void Pickup(Transform item)
         {
-            agent.destination = item.position;
-            if (Vector3.Distance(transform.position, item.position) <= agent.stoppingDistance)
+            Agent.destination = item.position;
+            if (Vector3.Distance(transform.position, item.position) <= Agent.stoppingDistance)
             {
-                anim.SetTrigger(pickup);
+                Anim.SetTrigger(pickup);
                 _cmd = null;
             }
         }
@@ -208,8 +208,8 @@ namespace Control
 
         public void Teleport(Transform portal)
         {
-            agent.destination = portal.position;
-            if (Sn == GameManager.Instance.mainPlayer.Sn && Vector3.Distance(transform.position, portal.position) <= agent.stoppingDistance)
+            Agent.destination = portal.position;
+            if (Sn == GameManager.Instance.mainPlayer.Sn && Vector3.Distance(transform.position, portal.position) <= Agent.stoppingDistance)
             {
                 portal.GetComponent<Portal>().OpenDoor(this);
                 _cmd = null;
@@ -222,11 +222,11 @@ namespace Control
 
         public void Observe(Transform target)
         {
-            agent.destination = target.position;
-            if (Vector3.Distance(transform.position, target.position) <= agent.stoppingDistance)
+            Agent.destination = target.position;
+            if (Vector3.Distance(transform.position, target.position) <= Agent.stoppingDistance)
             {
                 _cmd = null;
-                agent.destination = transform.position;
+                Agent.destination = transform.position;
                 if (Sn == GameManager.Instance.mainPlayer.Sn)
                 {
                     ObservePanel panel = UIManager.Instance.GetPanel<ObservePanel>();
@@ -243,10 +243,10 @@ namespace Control
         public void Die(string atkName)
         {
             _cmd = null;
-            agent.radius = 0;
-            agent.isStopped = true;
-            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
-            anim.SetBool(death, true);
+            Agent.radius = 0;
+            Agent.isStopped = true;
+            Agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+            Anim.SetBool(death, true);
             GetComponent<CapsuleCollider>().enabled = false;
             if (Sn == GameManager.Instance.mainPlayer.Sn)
                 UIManager.Instance.GetPanel<PopupPanel>().Open($"你被[{atkName}]击杀了。", null, null);
@@ -254,10 +254,10 @@ namespace Control
 
         public void Rebirth()
         {
-            agent.radius = 0.3f;
-            agent.isStopped = false;
-            agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
-            anim.SetBool(death, false);
+            Agent.radius = 0.3f;
+            Agent.isStopped = false;
+            Agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+            Anim.SetBool(death, false);
             GetComponent<CapsuleCollider>().enabled = true;
             _cmd = null;
         }
@@ -303,48 +303,48 @@ namespace Control
                     _cmd?.Undo();
                     break;
                 case CommandType.Move:
-                    target = null;
+                    Target = null;
                     _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
                     break;
                 case CommandType.Attack:
                     if (GameManager.currWorld.npcDict.ContainsKey(proto.TargetSn))
-                        target = GameManager.currWorld.npcDict[proto.TargetSn].transform;
+                        Target = GameManager.currWorld.npcDict[proto.TargetSn].transform;
                     else
-                        target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
-                    _cmd = new AttackCommand(this, target);
+                        Target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
+                    _cmd = new AttackCommand(this, Target);
                     break;
                 case CommandType.Pickup:
                     if (!GameManager.currWorld.itemDict.ContainsKey(proto.TargetSn))
                         _cmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
                     else
                     {
-                        target = GameManager.currWorld.itemDict[proto.TargetSn].transform;
-                        _cmd = new PickupCommand(this, target);
+                        Target = GameManager.currWorld.itemDict[proto.TargetSn].transform;
+                        _cmd = new PickupCommand(this, Target);
                     }
                     break;
                 case CommandType.Teleport:
-                    target = GameManager.currWorld.itemDict[proto.TargetSn].transform;
-                    _cmd = new TeleportCommand(this, target);
+                    Target = GameManager.currWorld.itemDict[proto.TargetSn].transform;
+                    _cmd = new TeleportCommand(this, Target);
                     break;
                 case CommandType.Dialog:
-                    target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
-                    _cmd = new ObserveCommand(this, target);
+                    Target = GameManager.currWorld.roleDict[proto.TargetSn].obj.transform;
+                    _cmd = new ObserveCommand(this, Target);
                     break;
                 case CommandType.Death:
                     string atkName;
                     if (GameManager.currWorld.roleDict.ContainsKey(proto.TargetSn))
                     {
                         var tmp = GameManager.currWorld.roleDict[proto.TargetSn].obj;
-                        target = tmp.transform;
+                        Target = tmp.transform;
                         atkName = tmp.GetNameBar();
                     }
                     else
                     {
                         var tmp = GameManager.currWorld.npcDict[proto.TargetSn];
-                        target = tmp.transform;
+                        Target = tmp.transform;
                         atkName = tmp.GetNameBar();
                     }
-                    _cmd = new DeathCommand(this, target, atkName);
+                    _cmd = new DeathCommand(this, Target, atkName);
                     break;
                 default:
                     break;
@@ -355,7 +355,7 @@ namespace Control
         {
             hp = proto.Hp;
             if (CompareTag("Enemy"))
-                nameBar.HpBar.UpdateHp(hp, baseData.hp);
+                NameBar.HpBar.UpdateHp(hp, baseData.hp);
             if (GameManager.Instance.mainPlayer.Sn == Sn)
                 UIManager.Instance.GetPanel<PropPanel>().UpdateHp(hp);
             if (TeamManager.Instance.teamDict.ContainsKey(Sn))

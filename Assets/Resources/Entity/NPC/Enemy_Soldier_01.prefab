@@ -3487,8 +3487,8 @@ GameObject:
   - component: {fileID: 1925265049308933368}
   - component: {fileID: 8607052839809616090}
   - component: {fileID: 8607052839809616084}
-  - component: {fileID: 5485855464918483882}
   - component: {fileID: 6022326218753083479}
+  - component: {fileID: -876603564125310863}
   m_Layer: 0
   m_Name: Enemy_Soldier_01
   m_TagString: Enemy
@@ -3569,30 +3569,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &5485855464918483882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8607052839809616088}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3db06bccddbbd94fb77d005afa0f434, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  anim: {fileID: 0}
-  agent: {fileID: 0}
-  nameBar: {fileID: 0}
-  lv: 1
-  hp: 1000
-  mp: 1000
-  atk: 10
-  def: 0
-  target: {fileID: 0}
-  id: 0
-  initHp: 0
-  patrolPath: {fileID: 0}
 --- !u!114 &6022326218753083479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3605,3 +3581,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39eae0a70cdc07f42a7d88f72f4f22d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-876603564125310863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8607052839809616088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cdfb2903493dfc468e795b7ebeb16d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lv: 1
+  hp: 1000
+  mp: 1000
+  atk: 10
+  def: 0
+  id: 0
+  initHp: 0
+  patrolPath: {fileID: 0}

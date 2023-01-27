@@ -21,7 +21,7 @@ namespace Control
         protected override void Awake()
         {
             base.Awake();
-            agent.speed = runSpeed;
+            Agent.speed = runSpeed;
             EventManager.Instance.AddListener(EventId.PlayerLoaded, PlayerLoadedCallback);
         }
 
@@ -153,7 +153,7 @@ namespace Control
         public void ParseStatus(Proto.SyncEntityStatus proto)
         {
             hp = proto.Hp;
-            nameBar.HpBar.UpdateHp(hp, initHp);
+            NameBar.HpBar.UpdateHp(hp, initHp);
         }
     }
 }

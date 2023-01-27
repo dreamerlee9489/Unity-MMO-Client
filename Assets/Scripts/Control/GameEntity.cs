@@ -18,30 +18,30 @@ namespace Control
         public readonly float pursuitRadius = 4f;
         public readonly float viewRadius = 6f;
 
-        public Animator anim;
-        public NavMeshAgent agent;
-        public EntityNameBar nameBar;     
+        public Animator Anim { get; private set; }
+        public NavMeshAgent Agent { get; private set; }
+        public EntityNameBar NameBar { get; private set; }    
 
         public ulong Sn { get; set; }
+        public Transform Target { get; set; }
 
         public int lv = 1, hp = 1000, mp = 1000, atk = 10, def = 0;
-        public Transform target;
 
         protected virtual void Awake()
         {
-            agent = GetComponent<NavMeshAgent>();
-            anim = GetComponent<Animator>();
-            nameBar = transform.Find("EntityNameBar").GetComponent<EntityNameBar>();           
+            Agent = GetComponent<NavMeshAgent>();
+            Anim = GetComponent<Animator>();
+            NameBar = transform.Find("EntityNameBar").GetComponent<EntityNameBar>();           
         }
 
         protected virtual void Update()
         {
-            anim.SetFloat(moveSpeed, transform.InverseTransformVector(agent.velocity).z);
+            Anim.SetFloat(moveSpeed, transform.InverseTransformVector(Agent.velocity).z);
         }
 
-        public void SetNameBar(string name) => nameBar.Name.text = name;
+        public void SetNameBar(string name) => NameBar.Name.text = name;
 
-        public string GetNameBar() => nameBar.Name.text;
+        public string GetNameBar() => NameBar.Name.text;
 
         public bool CanSee(GameEntity target)
         {

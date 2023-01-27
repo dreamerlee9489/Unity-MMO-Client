@@ -7,6 +7,7 @@ namespace Control
     {
         private List<Transform> _path = new();
 
+        public int index = 0;
         public List<Transform> Path => _path;
 
         private void Awake()
@@ -14,5 +15,7 @@ namespace Control
             for (int i = 0; i < transform.childCount; i++)
                 _path.Add(transform.GetChild(i));
         }
+
+        public Vector3 GetCurrPoint() => _path[index].position;
     }
 }

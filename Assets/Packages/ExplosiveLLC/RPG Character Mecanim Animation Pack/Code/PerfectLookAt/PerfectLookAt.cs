@@ -301,7 +301,7 @@ public class PerfectLookAt:MonoBehaviour
 	private void LateUpdate()
 	{
 		if (m_TargetObject == null) {
-			Debug.LogWarning("No target object set for PerfectLookAt component. Component won't work without a target object", this);
+			Debug.LogWarning("No Target object set for PerfectLookAt component. Component won't work without a Target object", this);
 			return;
 		}
 

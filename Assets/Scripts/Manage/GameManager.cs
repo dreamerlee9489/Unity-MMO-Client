@@ -1,6 +1,5 @@
 ﻿using Cinemachine;
 using Items;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using UI;
@@ -51,7 +50,7 @@ namespace Manage
             ParseItemWeaponsCsv();
             ParseWorldCsv();
             PoolManager.Instance.Load(PoolType.RoleToggle, "UI/RoleToggle", 20);
-            PoolManager.Instance.Load(PoolType.PatrolPath, "Entity/NPC/PatrolPath");
+            PoolManager.Instance.Load(PoolType.PatrolPath, "Entity/NPC/patrolPath");
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
@@ -385,13 +384,13 @@ namespace Manage
                 {
                     var defer = currWorld.roleDict[proto.Responder].obj;
                     defer.tag = "Enemy";
-                    defer.nameBar.ChangeCamp();
+                    defer.NameBar.ChangeCamp();
                 }
                 else if (mainPlayer.Sn == proto.Responder)
                 {
                     var atker = currWorld.roleDict[proto.Applicant].obj;
                     atker.tag = "Enemy";
-                    atker.nameBar.ChangeCamp();
+                    atker.NameBar.ChangeCamp();
                 }
             }
         }
@@ -445,9 +444,7 @@ namespace Manage
         private void SyncBtActionHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.SyncBtAction proto)
-            {
-                Debug.Log("SyncBtAction " + proto.Id);
-            }
+                currWorld.ParseSyncBtAction(proto);
         }
     }
 }
