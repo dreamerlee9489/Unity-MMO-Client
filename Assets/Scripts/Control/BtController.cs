@@ -49,8 +49,6 @@ namespace Control
         private void OnDisable()
         {
             _tokenSource.Cancel();
-            if (patrolPath != null)
-                PoolManager.Instance.Push(PoolType.PatrolPath, patrolPath.gameObject);
         }
 
         private void OnDestroy()

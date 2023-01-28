@@ -1,4 +1,5 @@
 ﻿using Cinemachine;
+using Control;
 using Items;
 using System.Collections.Generic;
 using System.IO;
@@ -183,6 +184,11 @@ namespace Manage
 
         private void OnSceneUnloaded(Scene scene)
         {
+            if (currWorld != null)
+            {
+                foreach (var npc in currWorld.npcDict.Values)
+                    PoolManager.Instance.Push(PoolType.PatrolPath, npc.patrolPath.gameObject);
+            }
             currWorld = null;
             mainPlayer.Obj.ResetCmd();
             canvas.GetPanel<ChatPanel>().Close();
@@ -240,62 +246,68 @@ namespace Manage
 
         private void AllRoleAppearHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.AllRoleAppear proto)
+            if (msg is Proto.AllRoleAppear proto && currWorld)
                 currWorld.ParseAllRoleAppear(proto);
         }
 
         private void RoleDisappearHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.RoleDisappear proto)
+            if (msg is Proto.RoleDisappear proto && currWorld)
                 currWorld.ParseRoleDisappear(proto);
+        }
+
+        private void DropItemListHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.DropItemList proto && currWorld)
+                currWorld.ParseDropItemList(proto);
+        }
+
+        private void ReqLinkPlayerHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.ReqLinkPlayer proto && currWorld)
+                currWorld.ParseReqLinkPlayer(proto);
+        }
+
+        private void SyncPlayerCmdHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncPlayerCmd proto && currWorld)
+                currWorld.ParseSyncPlayerCmd(proto);
+        }
+
+        private void SyncBtActionHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncBtAction proto && currWorld)
+                currWorld.ParseSyncBtAction(proto);
+        }
+
+        private void SyncFsmStateHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncFsmState proto && currWorld)
+                currWorld.ParseSyncFsmState(proto);
+        }
+
+        private void SyncNpcPosHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncNpcPos proto && currWorld)
+                currWorld.ParseSyncNpcPos(proto);
+        }
+
+        private void ReqSyncNpcHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.ReqSyncNpc proto && currWorld)
+                currWorld.ParseReqSyncNpc(proto);
+        }
+
+        private void SyncEntityStatusHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncEntityStatus proto && currWorld)
+                currWorld.ParseSyncEntityStatus(proto);
         }
 
         private void PlayerKnapHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.PlayerKnap proto)
                 mainPlayer.Obj.ParsePlayerKnap(proto);
-        }
-
-        private void DropItemListHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.DropItemList proto)
-                currWorld.ParseDropItemList(proto);
-        }
-
-        private void ReqLinkPlayerHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.ReqLinkPlayer proto)
-                currWorld.ParseReqLinkPlayer(proto);
-        }
-
-        private void SyncPlayerCmdHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.SyncPlayerCmd proto)
-                currWorld.ParseSyncPlayerCmd(proto);
-        }
-
-        private void SyncFsmStateHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.SyncFsmState proto)
-                currWorld.ParseSyncFsmState(proto);
-        }
-
-        private void SyncNpcPosHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.SyncNpcPos proto)
-                currWorld.ParseSyncNpcPos(proto);
-        }
-
-        private void ReqSyncNpcHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.ReqSyncNpc proto)
-                currWorld.ParseReqSyncNpc(proto);
-        }
-
-        private void SyncEntityStatusHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.SyncEntityStatus proto)
-                currWorld.ParseSyncEntityStatus(proto);
         }
 
         private void GlobalChatHandler(Google.Protobuf.IMessage msg)
@@ -439,12 +451,6 @@ namespace Manage
                 canvas.GetPanel<TradePanel>().Close();
                 mainPlayer.Obj.ParseTradeClose(proto);
             }
-        }
-
-        private void SyncBtActionHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.SyncBtAction proto)
-                currWorld.ParseSyncBtAction(proto);
         }
     }
 }
