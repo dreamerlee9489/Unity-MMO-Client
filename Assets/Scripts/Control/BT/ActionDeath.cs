@@ -13,6 +13,7 @@ namespace Control.BT
 
         protected override void Enter()
         {
+            npc.Agent.isStopped = true;
             npc.Agent.radius = 0;
             npc.Agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
             npc.Anim.SetBool(GameEntity.death, true);
@@ -34,6 +35,7 @@ namespace Control.BT
         private IEnumerator CleanUp()
         {
             yield return new WaitForSeconds(3);
+            npc.Agent.isStopped = false;
             npc.gameObject.SetActive(false);
             npc.transform.position = npc.initPos;
             npc.netPos.X = npc.initPos.x;

@@ -1,6 +1,5 @@
 ﻿using Control;
 using Control.BT;
-using Control.FSM;
 using Items;
 using System.Collections.Generic;
 using System.IO;
@@ -10,12 +9,10 @@ namespace Manage
 {
     public class WorldManager : MonoBehaviour
     {
-        //private readonly List<FsmController> _npcs = new();
         private readonly List<BtController> _npcs = new();
 
         public string fileName = "";
         public Dictionary<ulong, GameItem> itemDict = new();
-        //public Dictionary<ulong, FsmController> npcDict = new();
         public Dictionary<ulong, BtController> npcDict = new();
         public Dictionary<ulong, Proto.AppearRole> roleDict = new();
 
@@ -43,6 +40,7 @@ namespace Manage
                     npcObj.SetNameBar(strs[6]);
                     npcObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
                     npcObj.patrolPath.transform.position = npcObj.transform.position;
+                    npcObj.gameObject.SetActive(true);
                     _npcs.Add(npcObj);
                 });
             }
@@ -78,9 +76,6 @@ namespace Manage
             ulong playSn = proto.Sn;
             if (roleDict.ContainsKey(playSn) && roleDict[playSn] != null)
             {
-                //foreach (var enemy in _npcs)
-                //    if (enemy.currState.Target == roleDict[playSn].obj)
-                //        enemy.ResetState();
                 Destroy(roleDict[playSn].obj.gameObject);
                 roleDict.Remove(playSn);
             }

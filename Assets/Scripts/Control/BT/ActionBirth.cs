@@ -21,7 +21,7 @@ namespace Control.BT
         protected override void Exit()
         {
             npc.hp = npc.initHp;
-            npc.NameBar.HpBar.UpdateHp(npc.hp, npc.initHp, false);
+            npc.NameBar.HpBar.UpdateHp(npc.hp, npc.initHp, false);            
             npc.Agent.radius = 0.3f;
             npc.Agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
             npc.Anim.SetBool(GameEntity.death, false);

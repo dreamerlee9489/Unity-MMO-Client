@@ -1,6 +1,6 @@
 namespace Control.BT
 {
-    public enum BtEventId { Birth, Alive, Death, Idle, Patrol, Pursue, Attack, Flee };
+    public enum BtEventId { Unknow, Birth, Alive, Death, Idle, Patrol, Pursue, Attack, Flee };
     public enum BtStatus { Invalid, Running, Success, Failure, Suspend, Aborted };
 
     public abstract class Node
