@@ -24,12 +24,12 @@ namespace UI
             }
         }
 
-        public void UpdateHp(int curHp, int maxHp)
+        public void UpdateHp(int curHp, int maxHp, bool showBar = true)
         {
             if(curHp <= maxHp)
             {
                 timeSpan = 0;
-                gameObject.SetActive(true);
+                gameObject.SetActive(showBar);
                 _fore.transform.localScale = new Vector3(curHp * 1.0f / maxHp, 1, 1);
             }
         }

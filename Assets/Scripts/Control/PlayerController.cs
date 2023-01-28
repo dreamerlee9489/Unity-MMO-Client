@@ -40,7 +40,6 @@ namespace Control
 
         private void Start()
         {
-            Agent.speed = runSpeed * 1.5f;
             baseData ??= GameManager.Instance.playerBaseDatas[lv];
             if (Sn == GameManager.Instance.mainPlayer.Sn)
             {
@@ -85,8 +84,8 @@ namespace Control
                     case "Enemy":
                         syncCmd.Type = 2;
                         syncCmd.PlayerSn = Sn;
-                        if (_hit.transform.GetComponent<FsmController>() != null)
-                            syncCmd.TargetSn = _hit.transform.GetComponent<FsmController>().Sn;
+                        if (_hit.transform.GetComponent<BtController>() != null)
+                            syncCmd.TargetSn = _hit.transform.GetComponent<BtController>().Sn;
                         else
                             syncCmd.TargetSn = _hit.transform.GetComponent<PlayerController>().Sn;
                         syncCmd.Point = null;
@@ -122,12 +121,6 @@ namespace Control
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);
             }
-        }
-
-        private void OnApplicationQuit()
-        {
-            if (Sn == GameManager.Instance.mainPlayer.Sn)
-                TeamManager.Instance.Destroy();
         }
 
         private void OnDisable()

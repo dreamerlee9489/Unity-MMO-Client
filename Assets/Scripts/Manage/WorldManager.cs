@@ -32,14 +32,13 @@ namespace Manage
                 string[] strs = line.Split(',');
                 ResourceManager.Instance.LoadAsync<GameObject>("Entity/NPC/" + strs[1], (obj) =>
                 {
-                    //var npcObj = Instantiate(obj).GetComponent<FsmController>();
                     var npcObj = Instantiate(obj).GetComponent<BtController>();
                     npcObj.gameObject.SetActive(false);
                     npcObj.id = id++;
                     npcObj.lv = int.Parse(strs[2]);
                     npcObj.hp = int.Parse(strs[3]);
                     npcObj.atk = int.Parse(strs[4]);
-                    npcObj.transform.position = pos.Parse(strs[5]);
+                    npcObj.initPos = npcObj.transform.position = pos.Parse(strs[5]);
                     npcObj.initHp = npcObj.hp;
                     npcObj.SetNameBar(strs[6]);
                     npcObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
@@ -154,7 +153,7 @@ namespace Manage
                 npc.Target = roleDict.ContainsKey(proto.PlayerSn) ? roleDict[proto.PlayerSn].obj.transform : null;
                 if ((BtEventId)proto.Id == BtEventId.Patrol)
                     npc.patrolPath.index = proto.Code;
-                npc.root?.SyncAction(proto.Id);
+                npc.root?.SyncAction((BtEventId)proto.Id);
             }
         }
     }

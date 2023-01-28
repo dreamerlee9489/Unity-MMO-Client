@@ -17,14 +17,6 @@ namespace Manage
             teamDict.Add(_mainSn, panel);
         }
 
-        public void Destroy()
-        {
-            teamDict.Clear();
-            int count = UIManager.Instance.HudGroup.childCount;
-            for (int i = 0; i < count; i++)
-                PoolManager.Instance.Push(PoolType.HUDPanel, UIManager.Instance.HudGroup.GetChild(0).gameObject);
-        }
-
         public void ParseReqJoinTeam(Proto.PlayerReq proto)
         {
             string text = $"玩家[{GameManager.currWorld.roleDict[proto.Applicant].name}]申请入队，是否同意？";

@@ -7,12 +7,12 @@ namespace Control
     public class AnimHandler : MonoBehaviour
     {
         private PlayerController _player;
-        private FsmController _npc;
+        private BtController _npc;
 
         private void Awake()
         {
             _player = GetComponent<PlayerController>();
-            _npc = GetComponent<FsmController>();
+            _npc = GetComponent<BtController>();
         }
 
         public void AtkAnimEvent()
@@ -20,8 +20,8 @@ namespace Control
             if (_player && _player.Target && _player.Sn == GameManager.Instance.mainPlayer.Sn)
             {
                 Proto.PlayerAtkEvent proto = new() { PlayerSn = GameManager.Instance.mainPlayer.Sn };
-                if (_player.Target.GetComponent<FsmController>() != null)
-                    proto.TargetSn = _player.Target.GetComponent<FsmController>().Sn;
+                if (_player.Target.GetComponent<BtController>() != null)
+                    proto.TargetSn = _player.Target.GetComponent<BtController>().Sn;
                 else
                     proto.TargetSn = _player.Target.GetComponent<PlayerController>().Sn;
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);

@@ -1,3 +1,6 @@
+using UnityEngine;
+using UnityEngine.AI;
+
 namespace Control.BT
 {
     public class ActionBirth : Action
@@ -8,17 +11,22 @@ namespace Control.BT
 
         protected override void Enter()
         {
-            throw new System.NotImplementedException();
         }
 
         protected override BtStatus Execute()
         {
-            throw new System.NotImplementedException();
+            return BtStatus.Running;
         }
 
         protected override void Exit()
         {
-            throw new System.NotImplementedException();
+            npc.hp = npc.initHp;
+            npc.NameBar.HpBar.UpdateHp(npc.hp, npc.initHp, false);
+            npc.Agent.radius = 0.3f;
+            npc.Agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+            npc.Anim.SetBool(GameEntity.death, false);
+            npc.GetComponent<CapsuleCollider>().enabled = true;
+            npc.gameObject.SetActive(true);
         }
     }
 }

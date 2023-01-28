@@ -20,7 +20,7 @@ namespace Control.BT
         }
 
         protected override void Exit()
-        {
+        {           
             npc.Anim.SetBool(GameEntity.attack, false);
         }
     }

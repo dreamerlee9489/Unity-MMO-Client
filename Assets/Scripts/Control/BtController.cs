@@ -11,12 +11,12 @@ namespace Control
     public class BtController : GameEntity
     {
         private CancellationTokenSource _tokenSource = new();
-        private readonly Proto.Vector3D _pos = new();
 
-        public int id = 0;
-        public int initHp = 0;
+        public int id = 0, initHp = 0;
+        public Vector3 initPos = Vector3.zero;
         public PatrolPath patrolPath = null;
         public Selector root = null;
+        public Proto.Vector3D netPos = new();
 
         protected override void Awake()
         {
@@ -34,15 +34,16 @@ namespace Control
             root.AddChild(new ActionPatrol(this));
             root.AddChild(new ActionPursue(this));
             root.AddChild(new ActionAttack(this));
+            root.AddChild(new ActionFlee(this));
         }
 
         protected override void Update()
         {
             base.Update();
             root.Tick();
-            _pos.X = transform.position.x;
-            _pos.Y = transform.position.y;
-            _pos.Z = transform.position.z;
+            netPos.X = transform.position.x;
+            netPos.Y = transform.position.y;
+            netPos.Z = transform.position.z;
         }
 
         private void OnDisable()
@@ -74,10 +75,10 @@ namespace Control
                 Proto.SyncNpcPos proto = new()
                 {
                     NpcSn = Sn,
-                    Pos = _pos
+                    Pos = netPos
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncNpcPos, proto);
-                Thread.Sleep(500);
+                Thread.Sleep(200);
             }
         }
 
