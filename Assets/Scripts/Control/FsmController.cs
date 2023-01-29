@@ -46,12 +46,12 @@ namespace Control
 
         private void PlayerLoadedCallback()
         {
-            Proto.ReqSyncNpc proto = new()
+            Proto.ReqNpcInfo proto = new()
             {
                 NpcId = id,
                 NpcSn = Sn
             };
-            NetManager.Instance.SendPacket(Proto.MsgId.C2SReqSyncNpc, proto);
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SReqNpcInfo, proto);
         }
 
         private void PushPosTask()

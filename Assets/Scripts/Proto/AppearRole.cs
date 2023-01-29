@@ -48,7 +48,9 @@ namespace Proto
                     obj.name = "Sync_" + name;
                     obj.gameObject.SetActive(false);
                     obj.transform.position = position;
-                    obj.gameObject.SetActive(true);                   
+                    obj.gameObject.SetActive(true);
+                    ReqSyncPlayer proto = new() { PlayerSn = sn };
+                    NetManager.Instance.SendPacket(MsgId.C2SReqSyncPlayer, proto);
                 });
             }
             else

@@ -13,7 +13,8 @@ namespace Control.BT
 
         protected override BtStatus Execute()
         {
-            npc.Agent.destination = npc.Target.position;
+            if (npc.Target != null)
+                npc.Agent.destination = npc.Target.position;
             return BtStatus.Running;
         }
 

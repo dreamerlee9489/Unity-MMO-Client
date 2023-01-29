@@ -9,13 +9,16 @@ namespace Control.BT
         protected override void Enter()
         {
             npc.Agent.speed = npc.walkSpeed;
-            npc.Agent.destination = npc.Target.position;
             npc.Anim.SetBool(GameEntity.attack, true);
         }
 
         protected override BtStatus Execute()
         {
-            npc.transform.LookAt(npc.Target);
+            if (npc.Target != null)
+            {
+                npc.transform.LookAt(npc.Target);
+                npc.Agent.destination = npc.Target.position;
+            }
             return BtStatus.Running;
         }
 

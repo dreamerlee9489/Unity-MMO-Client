@@ -1,6 +1,7 @@
 ﻿using Control;
 using Control.BT;
 using Items;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -42,6 +43,12 @@ namespace Manage
                     npcObj.patrolPath.transform.position = npcObj.transform.position;
                     npcObj.gameObject.SetActive(true);
                     _npcs.Add(npcObj);
+                    Proto.ReqNpcInfo proto = new()
+                    {
+                        NpcId = npcObj.id,
+                        NpcSn = 0
+                    };
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SReqNpcInfo, proto);
                 });
             }
         }
@@ -83,7 +90,7 @@ namespace Manage
 
         public void ParseSyncEntityStatus(Proto.SyncEntityStatus proto)
         {
-            if (npcDict.ContainsKey(proto.Sn) && npcDict[proto.Sn] != null)
+            if (npcDict.ContainsKey(proto.Sn))
                 npcDict[proto.Sn].ParseStatus(proto);
             else if (roleDict.ContainsKey(proto.Sn))
                 roleDict[proto.Sn].obj.ParseStatus(proto);
@@ -101,20 +108,14 @@ namespace Manage
             }
         }
 
-        public void ParseReqSyncNpc(Proto.ReqSyncNpc proto)
+        public void ParseReqNpcInfo(Proto.ReqNpcInfo proto)
         {
-            if (_npcs.Count > 0)
-            {
-                _npcs[proto.NpcId].Sn = proto.NpcSn;
-                if (_npcs[proto.NpcId] != null)
-                    npcDict.TryAdd(proto.NpcSn, _npcs[proto.NpcId]);
-            }
-        }
-
-        public void ParseSyncNpcPos(Proto.SyncNpcPos proto)
-        {
-            if (npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
-                npcDict[proto.NpcSn].ParsePos(proto.Pos);
+            var npc = _npcs[proto.NpcId];
+            npc.Sn = proto.NpcSn;
+            npc.gameObject.SetActive(false);
+            npc.transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
+            npcDict.TryAdd(proto.NpcSn, npc);
+            npc.gameObject.SetActive(true);
         }
 
         public void ParseSyncFsmState(Proto.SyncFsmState proto)
@@ -122,7 +123,7 @@ namespace Manage
             PlayerController target = null;
             if (roleDict.ContainsKey(proto.PlayerSn))
                 target = roleDict[proto.PlayerSn].obj;
-            //if (npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
+            //if (npcDict.ContainsKey(proto.NpcSn))
             //    npcDict[proto.NpcSn].ParseFsmState((StateType)proto.State, proto.Code, target);
         }
 
@@ -136,20 +137,30 @@ namespace Manage
 
         public void ParseDropItemList(Proto.DropItemList proto)
         {
-            if (npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
+            if (npcDict.ContainsKey(proto.NpcSn))
                 npcDict[proto.NpcSn].DropItems(proto);
         }
 
         public void ParseSyncBtAction(Proto.SyncBtAction proto)
         {
-            if (npcDict.ContainsKey(proto.NpcSn) && npcDict[proto.NpcSn] != null)
+            if (npcDict.ContainsKey(proto.NpcSn))
             {
                 BtController npc = npcDict[proto.NpcSn];
-                npc.Target = roleDict.ContainsKey(proto.PlayerSn) ? roleDict[proto.PlayerSn].obj.transform : null;
                 if ((BtEventId)proto.Id == BtEventId.Patrol)
                     npc.patrolPath.index = proto.Code;
-                npc.root?.SyncAction((BtEventId)proto.Id);
+                npc.Target = roleDict.ContainsKey(proto.PlayerSn) ? roleDict[proto.PlayerSn].obj.transform : null;
+                if (proto.PlayerSn != 0 && npc.Target == null)
+                    MonoManager.Instance.StartCoroutine(WaitPlayerLoaded(proto));
+                else
+                    npc.root.SyncAction((BtEventId)proto.Id);
             }
+        }
+
+        private IEnumerator WaitPlayerLoaded(Proto.SyncBtAction proto)
+        {
+            yield return new WaitForSeconds(1.5f);
+            npcDict[proto.NpcSn].Target = roleDict[proto.PlayerSn].obj.transform;
+            npcDict[proto.NpcSn].root.SyncAction((BtEventId)proto.Id);
         }
     }
 }

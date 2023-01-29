@@ -58,12 +58,12 @@ namespace Control
 
         private void PlayerLoadedCallback()
         {
-            Proto.ReqSyncNpc proto = new()
+            Proto.SyncBtAction proto = new()
             {
-                NpcId = id,
+                Id = id,
                 NpcSn = Sn
             };
-            NetManager.Instance.SendPacket(Proto.MsgId.C2SReqSyncNpc, proto);
+            NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncBtAction, proto);
         }
 
         private void PushPosTask()
@@ -78,13 +78,6 @@ namespace Control
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncNpcPos, proto);
                 Thread.Sleep(200);
             }
-        }
-
-        public void ParsePos(Proto.Vector3D pos)
-        {
-            gameObject.SetActive(false);
-            transform.position = new Vector3(pos.X, pos.Y, pos.Z);
-            gameObject.SetActive(true);
         }
 
         public void ParseStatus(Proto.SyncEntityStatus proto)

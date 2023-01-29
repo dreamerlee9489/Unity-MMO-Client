@@ -26,12 +26,6 @@ namespace Control
         public Transform ActPoint { get; set; }
         public Transform TradePoint { get; set; }
 
-        protected override void Awake()
-        {
-            base.Awake();
-            EventManager.Instance.AddListener(EventId.PlayerLoaded, PlayerLoadedCallback);
-        }
-
         private void OnEnable()
         {
             if (Sn == GameManager.Instance.mainPlayer.Sn)
@@ -127,20 +121,6 @@ namespace Control
         {
             if (Sn == GameManager.Instance.mainPlayer.Sn)
                 tokenSource.Cancel();
-        }
-
-        private void OnDestroy()
-        {
-            EventManager.Instance.RemoveListener(EventId.PlayerLoaded, PlayerLoadedCallback);
-        }
-
-        private void PlayerLoadedCallback()
-        {
-            if (Sn != GameManager.Instance.mainPlayer.Sn)
-            {
-                Proto.ReqSyncPlayer proto = new() { PlayerSn = Sn };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SReqSyncPlayer, proto);
-            }
         }
 
         private void SyncPosTask()

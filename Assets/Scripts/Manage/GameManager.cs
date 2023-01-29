@@ -58,8 +58,7 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqSyncNpc, ReqSyncNpcHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncNpcPos, SyncNpcPosHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqNpcInfo, ReqNpcInfoHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
@@ -98,8 +97,7 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqSyncNpc, ReqSyncNpcHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncNpcPos, SyncNpcPosHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqNpcInfo, ReqNpcInfoHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqLinkPlayer, ReqLinkPlayerHandler);
@@ -286,16 +284,10 @@ namespace Manage
                 currWorld.ParseSyncFsmState(proto);
         }
 
-        private void SyncNpcPosHandler(Google.Protobuf.IMessage msg)
+        private void ReqNpcInfoHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.SyncNpcPos proto && currWorld)
-                currWorld.ParseSyncNpcPos(proto);
-        }
-
-        private void ReqSyncNpcHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.ReqSyncNpc proto && currWorld)
-                currWorld.ParseReqSyncNpc(proto);
+            if (msg is Proto.ReqNpcInfo proto && currWorld)
+                currWorld.ParseReqNpcInfo(proto);
         }
 
         private void SyncEntityStatusHandler(Google.Protobuf.IMessage msg)
