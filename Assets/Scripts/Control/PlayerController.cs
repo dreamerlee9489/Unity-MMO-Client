@@ -130,7 +130,7 @@ namespace Control
             {
                 Proto.SyncPlayerPos syncPos = new() { Pos = _curPos };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerPos, syncPos);
-                Thread.Sleep(1000);
+                Thread.Sleep(200);
             }
         }
 

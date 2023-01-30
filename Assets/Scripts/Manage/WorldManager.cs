@@ -10,14 +10,13 @@ namespace Manage
 {
     public class WorldManager : MonoBehaviour
     {
-        private readonly List<BtController> _npcs = new();
-
         public string fileName = "";
+        public readonly List<BtController> npcs = new();
         public Dictionary<ulong, GameItem> itemDict = new();
         public Dictionary<ulong, BtController> npcDict = new();
         public Dictionary<ulong, Proto.AppearRole> roleDict = new();
 
-        private void Start()
+        private void Awake()
         {
             fileName = $"{Application.streamingAssetsPath}/CSV/{fileName}.csv";
             using StreamReader reader = File.OpenText(fileName);
@@ -39,10 +38,10 @@ namespace Manage
                     npcObj.initPos = npcObj.transform.position = pos.Parse(strs[5]);
                     npcObj.initHp = npcObj.hp;
                     npcObj.SetNameBar(strs[6]);
-                    npcObj.patrolPath = PoolManager.Instance.Pop(PoolType.PatrolPath).GetComponent<PatrolPath>();
+                    npcObj.patrolPath = Instantiate(ResourceManager.Instance.Load<PatrolPath>("Entity/NPC/patrolPath"));
                     npcObj.patrolPath.transform.position = npcObj.transform.position;
                     npcObj.gameObject.SetActive(true);
-                    _npcs.Add(npcObj);
+                    npcs.Add(npcObj);
                     Proto.ReqNpcInfo proto = new()
                     {
                         NpcId = npcObj.id,
@@ -51,14 +50,6 @@ namespace Manage
                     NetManager.Instance.SendPacket(Proto.MsgId.C2SReqNpcInfo, proto);
                 });
             }
-        }
-
-        private void OnDestroy()
-        {
-            _npcs.Clear();
-            npcDict.Clear();
-            itemDict.Clear();
-            roleDict.Clear();
         }
 
         public void ParseAllRoleAppear(Proto.AllRoleAppear proto)
@@ -110,7 +101,7 @@ namespace Manage
 
         public void ParseReqNpcInfo(Proto.ReqNpcInfo proto)
         {
-            var npc = _npcs[proto.NpcId];
+            var npc = npcs[proto.NpcId];
             npc.Sn = proto.NpcSn;
             npc.gameObject.SetActive(false);
             npc.transform.position = new Vector3(proto.Pos.X, proto.Pos.Y, proto.Pos.Z);
@@ -129,8 +120,6 @@ namespace Manage
 
         public void ParseReqLinkPlayer(Proto.ReqLinkPlayer proto)
         {
-            if (!npcDict.ContainsKey(proto.NpcSn) && _npcs.Count > 0)
-                npcDict.TryAdd(proto.NpcSn, _npcs[proto.NpcId]);
             if (npcDict.ContainsKey(proto.NpcSn))
                 npcDict[proto.NpcSn].LinkPlayer(proto.Linker);
         }
@@ -141,26 +130,34 @@ namespace Manage
                 npcDict[proto.NpcSn].DropItems(proto);
         }
 
-        public void ParseSyncBtAction(Proto.SyncBtAction proto)
+        public IEnumerator ParseSyncBtAction(Proto.SyncBtAction proto)
         {
+            if (!npcDict.ContainsKey(proto.NpcSn))
+                yield return new WaitForSeconds(1.5f);
             if (npcDict.ContainsKey(proto.NpcSn))
             {
                 BtController npc = npcDict[proto.NpcSn];
                 if ((BtEventId)proto.Id == BtEventId.Patrol)
                     npc.patrolPath.index = proto.Code;
                 npc.Target = roleDict.ContainsKey(proto.PlayerSn) ? roleDict[proto.PlayerSn].obj.transform : null;
-                if (proto.PlayerSn != 0 && npc.Target == null)
-                    MonoManager.Instance.StartCoroutine(WaitPlayerLoaded(proto));
-                else
-                    npc.root.SyncAction((BtEventId)proto.Id);
+                npc.root.SyncAction((BtEventId)proto.Id);
             }
         }
 
-        private IEnumerator WaitPlayerLoaded(Proto.SyncBtAction proto)
+        public IEnumerator ParseNpcMove(Proto.EntityMove proto)
         {
-            yield return new WaitForSeconds(1.5f);
-            npcDict[proto.NpcSn].Target = roleDict[proto.PlayerSn].obj.transform;
-            npcDict[proto.NpcSn].root.SyncAction((BtEventId)proto.Id);
+            if (!npcDict.ContainsKey(proto.Sn))
+                yield return new WaitForSeconds(1.5f);
+            if (npcDict.ContainsKey(proto.Sn))
+                npcDict[proto.Sn].cornerPoints.AddRange(proto.Points);
+        }
+
+        public IEnumerator ParsePlayerMove(Proto.EntityMove proto)
+        {
+            if (!roleDict.ContainsKey(proto.Sn))
+                yield return new WaitForSeconds(1.5f);
+            if (npcDict.ContainsKey(proto.Sn))
+                roleDict[proto.Sn].obj.cornerPoints.AddRange(proto.Points);
         }
     }
 }

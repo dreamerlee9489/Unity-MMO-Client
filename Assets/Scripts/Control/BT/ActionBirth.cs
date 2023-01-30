@@ -9,6 +9,8 @@ namespace Control.BT
         {
         }
 
+        public override BtEventId GetEventId() => BtEventId.Birth;
+
         protected override void Enter()
         {
         }
@@ -21,11 +23,12 @@ namespace Control.BT
         protected override void Exit()
         {
             npc.hp = npc.initHp;
-            npc.NameBar.HpBar.UpdateHp(npc.hp, npc.initHp, false);            
+            npc.NameBar.HpBar.UpdateHp(npc.hp, npc.initHp, false);
             npc.Agent.radius = 0.3f;
             npc.Agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
             npc.Anim.SetBool(GameEntity.death, false);
             npc.GetComponent<CapsuleCollider>().enabled = true;
+            npc.transform.position = npc.initPos;
             npc.gameObject.SetActive(true);
         }
     }

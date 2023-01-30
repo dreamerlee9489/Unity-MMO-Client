@@ -1,20 +1,16 @@
 ﻿using Control.FSM;
 using Items;
 using Manage;
-using System.Threading;
-using System.Threading.Tasks;
 using UI;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Control
 {
     public class FsmController : GameEntity
     {
-        private CancellationTokenSource _tokenSource = new();
-        private readonly Proto.Vector3D _pos = new();
-
-        public int id = 0;
-        public int initHp = 0;
+        public int id = 0 , initHp = 0;
+        public bool isLinker = false;
         public State currState;
         public PatrolPath patrolPath;
 
@@ -29,14 +25,6 @@ namespace Control
         {
             base.Update();
             currState?.Execute();
-            _pos.X = transform.position.x;
-            _pos.Y = transform.position.y;
-            _pos.Z = transform.position.z;
-        }
-
-        private void OnDisable()
-        {
-            _tokenSource.Cancel();
         }
 
         private void OnDestroy()
@@ -54,19 +42,26 @@ namespace Control
             NetManager.Instance.SendPacket(Proto.MsgId.C2SReqNpcInfo, proto);
         }
 
-        private void PushPosTask()
+        public void ReqMoveTo(Vector3 hitPoint, bool isRun)
         {
-            while (!_tokenSource.IsCancellationRequested)
+            if (isLinker)
             {
-                Proto.SyncNpcPos proto = new()
+                Vector3 dstPoint = hitPoint;
+                if (NavMesh.SamplePosition(hitPoint, out var meshHit, 100, 1 << NavMesh.GetAreaFromName("Walkable")))
+                    dstPoint = meshHit.position;
+                NavMeshPath path = new();
+                Agent.CalculatePath(dstPoint, path);
+                if (path.status != NavMeshPathStatus.PathPartial)
                 {
-                    NpcSn = Sn,
-                    Pos = _pos
-                };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncNpcPos, proto);
-                Thread.Sleep(200);
+                    Proto.EntityMove proto = new() { Sn = Sn, Running = isRun };
+                    foreach (Vector3 point in path.corners)
+                        proto.Points.Add(new Proto.Vector3D() { X = point.x, Y = point.y, Z = point.z });
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SNpcMove, proto);
+                }
             }
         }
+
+        public void LinkPlayer(bool linker) => isLinker = linker;
 
         public void ParseFsmState(StateType type, int code, PlayerController target)
         {
@@ -80,14 +75,6 @@ namespace Control
             gameObject.SetActive(false);
             transform.position = new Vector3(pos.X, pos.Y, pos.Z);
             gameObject.SetActive(true);
-        }
-
-        public void LinkPlayer(bool linker)
-        {
-            if (linker)
-                Task.Run(PushPosTask, (_tokenSource = new()).Token);
-            else
-                _tokenSource.Cancel();
         }
 
         public void ResetState()

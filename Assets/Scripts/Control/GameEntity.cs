@@ -1,4 +1,5 @@
-﻿using UI;
+﻿using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,25 +19,25 @@ namespace Control
         public readonly float pursuitRadius = 4f;
         public readonly float viewRadius = 6f;
 
-        public Animator Anim { get; private set; }
-        public NavMeshAgent Agent { get; private set; }
-        public EntityNameBar NameBar { get; private set; }    
+        public int lv = 1, hp = 1000, mp = 1000, atk = 10, def = 0;
+        public List<Proto.Vector3D> cornerPoints = new();
 
         public ulong Sn { get; set; }
         public Transform Target { get; set; }
-
-        public int lv = 1, hp = 1000, mp = 1000, atk = 10, def = 0;
+        public Animator Anim { get; private set; }
+        public NavMeshAgent Agent { get; private set; }
+        public EntityNameBar NameBar { get; private set; }
 
         protected virtual void Awake()
         {
             Agent = GetComponent<NavMeshAgent>();
             Anim = GetComponent<Animator>();
-            NameBar = transform.Find("EntityNameBar").GetComponent<EntityNameBar>();           
+            NameBar = transform.Find("EntityNameBar").GetComponent<EntityNameBar>();
         }
 
         protected virtual void Update()
         {
-            Anim.SetFloat(moveSpeed, transform.InverseTransformVector(Agent.velocity).z);
+            Anim.SetFloat(moveSpeed, transform.InverseTransformVector(Agent.velocity).z);           
         }
 
         public void SetNameBar(string name) => NameBar.Name.text = name;
@@ -57,6 +58,6 @@ namespace Control
             if (direction.magnitude <= attackRadius)
                 return true;
             return false;
-        }      
+        }    
     }
 }

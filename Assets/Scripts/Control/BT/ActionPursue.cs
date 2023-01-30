@@ -6,6 +6,8 @@ namespace Control.BT
         {
         }
 
+        public override BtEventId GetEventId() => BtEventId.Pursue;
+
         protected override void Enter()
         {
             npc.Agent.speed = npc.runSpeed;
@@ -13,8 +15,8 @@ namespace Control.BT
 
         protected override BtStatus Execute()
         {
-            if (npc.Target != null)
-                npc.Agent.destination = npc.Target.position;
+            //npc.Agent.destination = npc.Target.position;
+            npc.ReqMoveTo(npc.Target.position, true);
             return BtStatus.Running;
         }
 

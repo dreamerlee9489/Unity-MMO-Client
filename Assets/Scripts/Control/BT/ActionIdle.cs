@@ -8,6 +8,8 @@ namespace Control.BT
         {
         }
 
+        public override BtEventId GetEventId() => BtEventId.Idle;
+
         protected override void Enter()
         {
             npc.Agent.speed = npc.walkSpeed;

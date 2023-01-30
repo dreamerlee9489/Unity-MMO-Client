@@ -1,5 +1,4 @@
 ﻿using Cinemachine;
-using Control;
 using Items;
 using System.Collections.Generic;
 using System.IO;
@@ -51,7 +50,6 @@ namespace Manage
             ParseItemWeaponsCsv();
             ParseWorldCsv();
             PoolManager.Instance.Load(PoolType.RoleToggle, "UI/RoleToggle", 20);
-            PoolManager.Instance.Load(PoolType.PatrolPath, "Entity/NPC/patrolPath");
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
@@ -79,6 +77,8 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CTradeOpen, TradeOpenHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CTradeClose, TradeCloseHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncBtAction, SyncBtActionHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CPlayerMove, PlayerMoveHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CNpcMove, NpcMoveHandler);
         }
 
         private void Start()
@@ -91,6 +91,7 @@ namespace Manage
         {
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            MonoManager.Instance.StopAllCoroutines();
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
@@ -118,6 +119,8 @@ namespace Manage
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CTradeOpen, TradeOpenHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CTradeClose, TradeCloseHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncBtAction, SyncBtActionHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CPlayerMove, PlayerMoveHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CNpcMove, NpcMoveHandler);
         }
 
         private void ParsePlayerBaseCsv()
@@ -182,11 +185,6 @@ namespace Manage
 
         private void OnSceneUnloaded(Scene scene)
         {
-            if (currWorld != null)
-            {
-                foreach (var npc in currWorld.npcDict.Values)
-                    PoolManager.Instance.Push(PoolType.PatrolPath, npc.patrolPath.gameObject);
-            }
             currWorld = null;
             mainPlayer.Obj.ResetCmd();
             canvas.GetPanel<ChatPanel>().Close();
@@ -272,12 +270,6 @@ namespace Manage
                 currWorld.ParseSyncPlayerCmd(proto);
         }
 
-        private void SyncBtActionHandler(Google.Protobuf.IMessage msg)
-        {
-            if (msg is Proto.SyncBtAction proto && currWorld)
-                currWorld.ParseSyncBtAction(proto);
-        }
-
         private void SyncFsmStateHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.SyncFsmState proto && currWorld)
@@ -294,6 +286,24 @@ namespace Manage
         {
             if (msg is Proto.SyncEntityStatus proto && currWorld)
                 currWorld.ParseSyncEntityStatus(proto);
+        }
+
+        private void SyncBtActionHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncBtAction proto && currWorld)
+                MonoManager.Instance.StartCoroutine(currWorld.ParseSyncBtAction(proto));
+        }
+
+        private void NpcMoveHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.EntityMove proto && currWorld)
+                MonoManager.Instance.StartCoroutine(currWorld.ParseNpcMove(proto));
+        }
+
+        private void PlayerMoveHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.EntityMove proto && currWorld)
+                MonoManager.Instance.StartCoroutine(currWorld.ParsePlayerMove(proto));
         }
 
         private void PlayerKnapHandler(Google.Protobuf.IMessage msg)

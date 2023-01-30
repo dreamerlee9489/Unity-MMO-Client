@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Control.BT
 {
     public enum BtEventId { Unknow, Birth, Alive, Death, Idle, Patrol, Pursue, Attack, Flee };

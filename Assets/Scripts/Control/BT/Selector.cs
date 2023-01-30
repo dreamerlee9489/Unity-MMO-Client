@@ -4,13 +4,13 @@ namespace Control.BT
 {
     public class Selector : Composite
     {       
-        private readonly Dictionary<BtEventId, Node> _nodeDict = new();
+        private readonly Dictionary<BtEventId, Action> _nodeDict = new();
 
         public Selector(BtController npc) : base(npc)
         {
         }
 
-        public override void AddChild(Node child)
+        public override void AddChild(Action child)
         {
             base.AddChild(child);
             switch (child)
@@ -41,7 +41,7 @@ namespace Control.BT
             }
         }
 
-        public override void RemoveChild(Node child)
+        public override void RemoveChild(Action child)
         {
             base.RemoveChild(child);
             foreach (var pair in _nodeDict)
@@ -60,23 +60,23 @@ namespace Control.BT
 
         protected override BtStatus Execute()
         {
-            return status = curr == null ? BtStatus.Running : curr.Tick();
+            return status = curNode == null ? BtStatus.Running : curNode.Tick();
         }
 
         protected override void Exit()
         {
         }
 
-        public void TickNode(BtEventId id)
+        public void SwitchNode(BtEventId id)
         {
-            curr?.ForceExit(BtStatus.Invalid);
-            curr = _nodeDict[id];
+            curNode?.ForceExit(BtStatus.Invalid);
+            curNode = _nodeDict[id];
         }
 
         public void SyncAction(BtEventId id)
         {
-            curr?.ForceExit(BtStatus.Suspend);
-            curr = _nodeDict[id];
+            curNode?.ForceExit(BtStatus.Suspend);
+            curNode = _nodeDict[id];
         }
     }
 }

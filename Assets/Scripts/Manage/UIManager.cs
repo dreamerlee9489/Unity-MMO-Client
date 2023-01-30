@@ -66,9 +66,9 @@ namespace Manage
         public IEnumerator FadeAlpha()
         {
             _cutImage.alpha = 1f;
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1f);
             EventManager.Instance.Invoke(EventId.PlayerLoaded);
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1f);
             _cutImage.alpha = 0f;
         }
     }

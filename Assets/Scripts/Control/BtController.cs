@@ -1,22 +1,22 @@
 using Control.BT;
 using Items;
 using Manage;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Collections;
 using UI;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Control
 {
     public class BtController : GameEntity
     {
-        private CancellationTokenSource _tokenSource = new();
+        private readonly WaitForSeconds _sleep = new(0.1f);
 
         public int id = 0, initHp = 0;
+        public bool isLinker = false;
         public Vector3 initPos = Vector3.zero;
         public PatrolPath patrolPath = null;
         public Selector root = null;
-        public Proto.Vector3D netPos = new();
 
         protected override void Awake()
         {
@@ -35,25 +35,36 @@ namespace Control
             root.AddChild(new ActionPursue(this));
             root.AddChild(new ActionAttack(this));
             root.AddChild(new ActionFlee(this));
+            MonoManager.Instance.StartCoroutine(TickRoot());
         }
 
         protected override void Update()
         {
             base.Update();
-            root.Tick();
-            netPos.X = transform.position.x;
-            netPos.Y = transform.position.y;
-            netPos.Z = transform.position.z;
-        }
-
-        private void OnDisable()
-        {
-            _tokenSource.Cancel();
+            if (cornerPoints.Count > 0)
+            {
+                Agent.destination = new()
+                {
+                    x = cornerPoints[^1].X,
+                    y = cornerPoints[^1].Y,
+                    z = cornerPoints[^1].Z
+                };
+                cornerPoints.Clear();
+            }
         }
 
         private void OnDestroy()
         {
             EventManager.Instance.RemoveListener(EventId.PlayerLoaded, PlayerLoadedCallback);
+        }
+
+        private IEnumerator TickRoot()
+        {
+            while (true)
+            {
+                root.Tick();
+                yield return _sleep;
+            }
         }
 
         private void PlayerLoadedCallback()
@@ -66,17 +77,24 @@ namespace Control
             NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncBtAction, proto);
         }
 
-        private void PushPosTask()
+        public void LinkPlayer(bool linker) => isLinker = linker;
+
+        public void ReqMoveTo(Vector3 hitPoint, bool isRun)
         {
-            while (!_tokenSource.IsCancellationRequested)
+            if (isLinker)
             {
-                Proto.SyncNpcPos proto = new()
+                Vector3 dstPoint = hitPoint;
+                if (NavMesh.SamplePosition(hitPoint, out var meshHit, 100, 1 << NavMesh.GetAreaFromName("Walkable")))
+                    dstPoint = meshHit.position;
+                NavMeshPath path = new();
+                Agent.CalculatePath(dstPoint, path);
+                if (path.status != NavMeshPathStatus.PathPartial)
                 {
-                    NpcSn = Sn,
-                    Pos = netPos
-                };
-                NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncNpcPos, proto);
-                Thread.Sleep(200);
+                    Proto.EntityMove proto = new() { Sn = Sn, Running = isRun };
+                    foreach (Vector3 point in path.corners)
+                        proto.Points.Add(new Proto.Vector3D() { X = point.x, Y = point.y, Z = point.z });
+                    NetManager.Instance.SendPacket(Proto.MsgId.C2SNpcMove, proto);
+                }
             }
         }
 
@@ -84,15 +102,7 @@ namespace Control
         {
             hp = proto.Hp;
             NameBar.HpBar.UpdateHp(hp, initHp);
-        }
-
-        public void LinkPlayer(bool linker)
-        {
-            if (linker)
-                Task.Run(PushPosTask, (_tokenSource = new()).Token);
-            else
-                _tokenSource.Cancel();
-        }
+        }       
 
         public void DropItems(Proto.DropItemList itemList)
         {

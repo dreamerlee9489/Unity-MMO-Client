@@ -5,5 +5,7 @@ namespace Control.BT
         public Action(BtController npc) : base(npc)
         {
         }
+
+        public abstract BtEventId GetEventId();
     }
 }

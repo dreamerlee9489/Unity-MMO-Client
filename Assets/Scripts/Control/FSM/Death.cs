@@ -14,7 +14,6 @@ namespace Control.FSM
         {
             _owner.Agent.radius = 0;
             _owner.Agent.isStopped = true;
-            _owner.Agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
             _owner.Anim.SetBool(GameEntity.death, true);
             _owner.GetComponent<CapsuleCollider>().enabled = false;
         }
@@ -28,7 +27,6 @@ namespace Control.FSM
             _owner.currState = null;
             _owner.Agent.radius = 0.3f;
             _owner.Agent.isStopped = false;
-            _owner.Agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
             _owner.Anim.SetBool(GameEntity.death, false);
             _owner.GetComponent<CapsuleCollider>().enabled = true;
         }

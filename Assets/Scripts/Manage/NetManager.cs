@@ -93,6 +93,8 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.S2CTradeOpen, ParsePacket<Proto.TradeOpen>);
             RegistParseFunc(Proto.MsgId.S2CTradeClose, ParsePacket<Proto.TradeClose>);
             RegistParseFunc(Proto.MsgId.S2CSyncBtAction, ParsePacket<Proto.SyncBtAction>);
+            RegistParseFunc(Proto.MsgId.S2CPlayerMove, ParsePacket<Proto.EntityMove>);
+            RegistParseFunc(Proto.MsgId.S2CNpcMove, ParsePacket<Proto.EntityMove>);
             InvokeRepeating(nameof(SendPingMsg), 10, 10);
             EventManager.Instance.AddListener<bool>(EventId.HotUpdated, HotUpdatedCallback);
         }

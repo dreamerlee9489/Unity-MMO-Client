@@ -11,6 +11,8 @@ namespace Control.BT
         {
         }
 
+        public override BtEventId GetEventId() => BtEventId.Death;
+
         protected override void Enter()
         {
             npc.Agent.isStopped = true;
@@ -36,12 +38,8 @@ namespace Control.BT
         {
             yield return new WaitForSeconds(3);
             npc.Agent.isStopped = false;
-            npc.gameObject.SetActive(false);
-            npc.transform.position = npc.initPos;
-            npc.netPos.X = npc.initPos.x;
-            npc.netPos.Y = npc.initPos.y;
-            npc.netPos.Z = npc.initPos.z;
-            npc.root.TickNode(BtEventId.Birth);
+            npc.gameObject.SetActive(false);          
+            npc.root.SwitchNode(BtEventId.Birth);
         }
     }
 }
