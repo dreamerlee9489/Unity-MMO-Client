@@ -19,7 +19,6 @@ namespace Control.BT
             if (npc.Target != null)
             {
                 npc.transform.LookAt(npc.Target);
-                //npc.Agent.destination = npc.Target.position;
                 npc.ReqMoveTo(npc.Target.position, false);
             }
             return BtStatus.Running;

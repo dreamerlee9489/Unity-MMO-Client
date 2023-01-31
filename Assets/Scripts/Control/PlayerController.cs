@@ -16,10 +16,10 @@ namespace Control
         private ICommand _cmd;
         private readonly Proto.Vector3D _curPos = new();
         private readonly Proto.Vector3D _hitPos = new();
+        private CancellationTokenSource _tokenSource = new();
 
         public int xp = 0, gold = 0;
         public static PlayerBaseData baseData;
-        public static CancellationTokenSource tokenSource = new();
         
         public Transform BagPoint { get; set; }
         public Transform HandPoint { get; set; }
@@ -29,7 +29,7 @@ namespace Control
         private void OnEnable()
         {
             if (Sn == GameManager.Instance.mainPlayer.Sn)
-                Task.Run(SyncPosTask, (tokenSource = new()).Token);
+                Task.Run(SyncPosTask, (_tokenSource = new()).Token);
         }
 
         private void Start()
@@ -120,13 +120,13 @@ namespace Control
         private void OnDisable()
         {
             if (Sn == GameManager.Instance.mainPlayer.Sn)
-                tokenSource.Cancel();
+                _tokenSource.Cancel();
         }
 
         private void SyncPosTask()
         {
             Thread.Sleep(1000);
-            while (!tokenSource.IsCancellationRequested)
+            while (!_tokenSource.IsCancellationRequested)
             {
                 Proto.SyncPlayerPos syncPos = new() { Pos = _curPos };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerPos, syncPos);

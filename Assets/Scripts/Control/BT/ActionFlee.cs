@@ -11,7 +11,6 @@ namespace Control.BT
         protected override void Enter()
         {
             npc.Agent.speed = npc.runSpeed;
-            //npc.Agent.destination = npc.initPos;
             npc.ReqMoveTo(npc.initPos, true);
         }
 

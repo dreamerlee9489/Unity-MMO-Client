@@ -12,12 +12,11 @@ namespace Control.BT
         {
             npc.Agent.isStopped = false;
             npc.Agent.speed = npc.walkSpeed;
-            //npc.Agent.destination = npc.patrolPath.GetCurrPoint();
-            npc.ReqMoveTo(npc.patrolPath.GetCurrPoint(), false);
         }
 
         protected override BtStatus Execute()
         {
+            npc.ReqMoveTo(npc.patrolPath.CurrPoint, false);
             return BtStatus.Running;
         }
 

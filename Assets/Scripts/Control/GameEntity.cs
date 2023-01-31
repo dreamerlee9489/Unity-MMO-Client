@@ -20,7 +20,7 @@ namespace Control
         public readonly float viewRadius = 6f;
 
         public int lv = 1, hp = 1000, mp = 1000, atk = 10, def = 0;
-        public List<Proto.Vector3D> cornerPoints = new();
+        public List<Proto.Vector3D> cornerPoints = new();     
 
         public ulong Sn { get; set; }
         public Transform Target { get; set; }

@@ -132,16 +132,19 @@ namespace Manage
 
         public IEnumerator ParseSyncBtAction(Proto.SyncBtAction proto)
         {
-            if (!npcDict.ContainsKey(proto.NpcSn))
-                yield return new WaitForSeconds(1.5f);
-            if (npcDict.ContainsKey(proto.NpcSn))
+            BtController npc = npcDict[proto.NpcSn];
+            if ((BtEventId)proto.Id == BtEventId.Patrol)
+                npc.patrolPath.index = proto.Code;
+            if (proto.PlayerSn == 0)
+                npc.Target = null;
+            else 
             {
-                BtController npc = npcDict[proto.NpcSn];
-                if ((BtEventId)proto.Id == BtEventId.Patrol)
-                    npc.patrolPath.index = proto.Code;
-                npc.Target = roleDict.ContainsKey(proto.PlayerSn) ? roleDict[proto.PlayerSn].obj.transform : null;
-                npc.root.SyncAction((BtEventId)proto.Id);
+                if (!roleDict.ContainsKey(proto.PlayerSn))
+                    yield return new WaitForSeconds(1.5f);
+                if (roleDict.ContainsKey(proto.PlayerSn))
+                    npc.Target = roleDict[proto.PlayerSn].obj.transform;
             }
+            npc.root.SyncAction((BtEventId)proto.Id);
         }
 
         public IEnumerator ParseNpcMove(Proto.EntityMove proto)

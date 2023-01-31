@@ -15,7 +15,6 @@ namespace Control.BT
 
         protected override BtStatus Execute()
         {
-            //npc.Agent.destination = npc.Target.position;
             npc.ReqMoveTo(npc.Target.position, true);
             return BtStatus.Running;
         }
