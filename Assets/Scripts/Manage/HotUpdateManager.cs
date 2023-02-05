@@ -91,7 +91,7 @@ namespace Manage
             }
             catch (Exception ex)
             {
-                Debug.LogError(remotePath + " 下载失败 " + ex.Message);
+                Debug.LogError($"{_ftpIp}/{remotePath}" + " 下载失败 " + ex.Message);
                 return false;
             }
         }
