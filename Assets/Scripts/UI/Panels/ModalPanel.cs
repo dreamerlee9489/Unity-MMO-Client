@@ -27,8 +27,8 @@ namespace UI
             _updateMsg = _update.Find("Msg").GetComponent<Text>();
             _updateCloseBtn = _update.Find("CloseBtn").GetComponent<Button>();
             _updateMsg.alignment = TextAnchor.UpperLeft;
-            EventManager.Instance.AddListener<EAppType>(EventId.Connected, ConnectedCallback);
-            EventManager.Instance.AddListener<EAppType>(EventId.Connecting, ConnectingCallback);
+            EventManager.Instance.AddListener(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.AddListener(EventId.Connecting, ConnectingCallback);
         }
 
         private void Start()
@@ -39,20 +39,18 @@ namespace UI
 
         private void OnApplicationQuit()
         {
-            EventManager.Instance.RemoveListener<EAppType>(EventId.Connected, ConnectedCallback);
-            EventManager.Instance.RemoveListener<EAppType>(EventId.Connecting, ConnectingCallback);
+            EventManager.Instance.RemoveListener(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.RemoveListener(EventId.Connecting, ConnectingCallback);
         }
 
-        private void ConnectingCallback(EAppType appType)
+        private void ConnectingCallback()
         {
-            switch (appType)
+            switch (NetManager.Instance.CurApp)
             {
-                case EAppType.Client:
-                    break;
-                case EAppType.Login:
+                case AppType.Client:
                     Open("网络消息", "正在连接登录服务器...", ModalPanelType.Hint);
                     break;
-                case EAppType.Game:
+                case AppType.Login:
                     Open("网络消息", "正在连接游戏服务器...", ModalPanelType.Hint);
                     break;
                 default:
@@ -60,7 +58,7 @@ namespace UI
             }
         }
 
-        private void ConnectedCallback(EAppType appType) => Close();
+        private void ConnectedCallback() => Close();
 
         public void Open(string title, string msg, ModalPanelType type)
         {

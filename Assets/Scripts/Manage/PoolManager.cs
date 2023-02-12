@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Manage
 {
-    public class PoolType
+    public struct PoolName
     {
         public const string RoleToggle = "RoleToggle";
         public const string PatrolPath = "patrolPath";

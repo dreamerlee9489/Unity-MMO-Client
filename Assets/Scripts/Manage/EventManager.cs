@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Manage
 {
@@ -102,5 +104,32 @@ namespace Manage
             if (_eventDict.ContainsKey(type))
                 (_eventDict[type][2] as EventInfo<T1, T2>).onEvent?.Invoke(arg1, arg2);
         }
+
+        private IEnumerator RealInvokeDelay(EventId type, float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            if (_eventDict.ContainsKey(type))
+                (_eventDict[type][0] as EventInfo).onEvent?.Invoke();
+        }
+
+        private IEnumerator RealInvokeDelay<T>(EventId type, T arg, float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            if (_eventDict.ContainsKey(type))
+                (_eventDict[type][1] as EventInfo<T>).onEvent?.Invoke(arg);
+        }
+
+        private IEnumerator RealInvokeDelay<T1, T2>(EventId type, T1 arg1, T2 arg2, float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            if (_eventDict.ContainsKey(type))
+                (_eventDict[type][2] as EventInfo<T1, T2>).onEvent?.Invoke(arg1, arg2);
+        }
+
+        public void InvokeDelay(EventId type, float seconds = 1) => MonoManager.Instance.StartCoroutine(RealInvokeDelay(type, seconds));
+
+        public void InvokeDelay<T>(EventId type, T arg, float seconds = 1) => MonoManager.Instance.StartCoroutine(RealInvokeDelay(type, arg, seconds));
+
+        public void InvokeDelay<T1, T2>(EventId type, T1 arg1, T2 arg2, float seconds = 1) => MonoManager.Instance.StartCoroutine(RealInvokeDelay(type, arg1, arg2, seconds));
     }
 }

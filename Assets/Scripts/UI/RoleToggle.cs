@@ -8,7 +8,7 @@ namespace UI
     {
         public Text Name { get; set; }
         public Text Level { get; set; }
-        public ulong Id { get; set; }
+        public ulong Sn { get; set; }
 
         private void Awake()
         {

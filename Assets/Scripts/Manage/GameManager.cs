@@ -28,7 +28,7 @@ namespace Manage
     {
         public UIManager canvas;
         public Proto.AccountInfo accountInfo;
-        public Proto.PlayerInfo mainPlayer;
+        public Proto.MainPlayer mainPlayer;
         public CinemachineVirtualCamera virtualCam;
         public List<PlayerBaseData> playerBaseDatas;
         public Dictionary<int, string> worldDict;
@@ -49,7 +49,7 @@ namespace Manage
             ParseItemPotionsCsv();
             ParseItemWeaponsCsv();
             ParseWorldCsv();
-            PoolManager.Instance.Load(PoolType.RoleToggle, "UI/RoleToggle", 20);
+            PoolManager.Instance.Load(PoolName.RoleToggle, "UI/RoleToggle", 20);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
@@ -195,15 +195,15 @@ namespace Manage
         {
             currWorld = FindObjectOfType<WorldManager>();
             canvas.GetPanel<ChatPanel>().Open();
-            canvas.WorldName.text = worldDict[scene.buildIndex + 2];
+            canvas.WorldName.text = worldDict[scene.buildIndex];
         }
 
         private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.SyncPlayer proto)
             {
-                mainPlayer ??= new Proto.PlayerInfo();
-                mainPlayer.LoadMainPlayer(proto.Player);
+                mainPlayer ??= new Proto.MainPlayer();
+                mainPlayer.Parse(proto.Player);
             }
         }
 
@@ -220,10 +220,10 @@ namespace Manage
                     Transform content = canvas.GetPanel<RolesPanel>().RolesRect.content;
                     for (int i = 0; i < accountInfo.Roles.Count; i++)
                     {
-                        RoleToggle roleToggle = PoolManager.Instance.Pop(PoolType.RoleToggle, content).GetComponent<RoleToggle>();
+                        RoleToggle roleToggle = PoolManager.Instance.Pop(PoolName.RoleToggle, content).GetComponent<RoleToggle>();
                         roleToggle.Name.text = accountInfo.Roles[i].Name;
                         roleToggle.Level.text = "Lv " + accountInfo.Roles[i].Level;
-                        roleToggle.Id = accountInfo.Roles[i].Id;
+                        roleToggle.Sn = accountInfo.Roles[i].Sn;
                     }
                     canvas.GetPanel<RolesPanel>().Open();
                 }
@@ -232,10 +232,10 @@ namespace Manage
 
         private void EnterWorldHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.EnterWorld proto && proto.WorldId > 2)
+            if (msg is Proto.EnterWorld proto)
             {
                 canvas.GetPanel<StartPanel>().Close();
-                SceneManager.LoadSceneAsync(proto.WorldId - 2, LoadSceneMode.Single);
+                SceneManager.LoadSceneAsync(proto.WorldId, LoadSceneMode.Single);
                 mainPlayer.Obj.transform.position = new(proto.Position.X, proto.Position.Y, proto.Position.Z);
             }
         }

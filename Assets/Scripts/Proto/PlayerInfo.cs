@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Proto
 {
-    public class PlayerInfo
+    public class MainPlayer
     {
         protected ulong _sn;
         protected string _name;
@@ -15,7 +15,7 @@ namespace Proto
         public string Name => _name;
         public PlayerController Obj => _obj;
 
-        public void LoadMainPlayer(Player proto)
+        public void Parse(Player proto)
         {
             _sn = proto.Sn;
             _name = proto.Name;

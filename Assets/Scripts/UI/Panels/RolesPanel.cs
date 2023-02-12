@@ -32,7 +32,7 @@ namespace UI
                     {
                         Proto.SelectPlayer proto = new()
                         {
-                            PlayerSn = RolesRect.content.GetChild(i).GetComponent<RoleToggle>().Id
+                            PlayerSn = RolesRect.content.GetChild(i).GetComponent<RoleToggle>().Sn
                         };
                         NetManager.Instance.SendPacket(Proto.MsgId.C2LSelectPlayer, proto);
                         break;
@@ -42,8 +42,8 @@ namespace UI
 
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CGameToken, GameTokenHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2GLoginByTokenRs, LoginByTokenRsHandler);
-            EventManager.Instance.AddListener<EAppType>(EventId.Connected, ConnectedCallback);
-            EventManager.Instance.AddListener<EAppType>(EventId.Disconnect, DisconnectCallback);
+            EventManager.Instance.AddListener(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.AddListener(EventId.Disconnect, DisconnectCallback);
             Close();
         }
 
@@ -51,26 +51,26 @@ namespace UI
         {
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CGameToken, GameTokenHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2GLoginByTokenRs, GameTokenHandler);
-            EventManager.Instance.RemoveListener<EAppType>(EventId.Connected, ConnectedCallback);
-            EventManager.Instance.RemoveListener<EAppType>(EventId.Disconnect, DisconnectCallback);
+            EventManager.Instance.RemoveListener(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.RemoveListener(EventId.Disconnect, DisconnectCallback);
         }
 
         public override void Close()
         {
             int childCount = RolesRect.content.childCount;
             for (int i = 0; i < childCount; ++i)
-                PoolManager.Instance.Push(PoolType.RoleToggle, RolesRect.content.GetChild(0).gameObject);
+                PoolManager.Instance.Push(PoolName.RoleToggle, RolesRect.content.GetChild(0).gameObject);
             base.Close();
         }
 
         private void GameTokenHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.GameToken proto && NetManager.Instance.AppType == EAppType.Login)
+            if (msg is Proto.GameToken proto && NetManager.Instance.CurApp == AppType.Login)
             {
                 _token = proto.Token;
                 _account = GameManager.Instance.accountInfo.Account;
                 NetManager.Instance.Disconnect();
-                NetManager.Instance.Connect(proto.Ip, proto.Port, EAppType.Game);
+                NetManager.Instance.Connect(proto.Ip, proto.Port, AppType.Game);
             }
         }
 
@@ -94,25 +94,21 @@ namespace UI
             }
         }
 
-        private void ConnectedCallback(EAppType appType)
+        private void ConnectedCallback()
         {
-            if (appType == EAppType.Game)
-                MonoManager.Instance.StartCoroutine(SendTokenDelay());
-        }
-
-        private void DisconnectCallback(EAppType appType)
-        {
-        }
-
-        private IEnumerator SendTokenDelay()
-        {
-            yield return new WaitForSeconds(1);
-            Proto.LoginByToken proto = new()
+            if (NetManager.Instance.CurApp == AppType.Game)
             {
-                Token = _token,
-                Account = _account
-            };
-            NetManager.Instance.SendPacket(Proto.MsgId.C2GLoginByToken, proto);
+                Proto.LoginByToken proto = new()
+                {
+                    Token = _token,
+                    Account = _account
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2GLoginByToken, proto);
+            }
+        }
+
+        private void DisconnectCallback()
+        {
         }
     }
 }

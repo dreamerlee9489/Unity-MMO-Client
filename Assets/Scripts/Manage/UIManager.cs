@@ -23,7 +23,7 @@ namespace Manage
             WorldName = transform.Find("WorldName").GetComponent<Text>();
             TempSlot = transform.Find("TempSlot");
             HudGroup = transform.Find("HUDGroup");
-            EventManager.Instance.AddListener<EAppType>(EventId.Disconnect, DisconnectCallback);
+            EventManager.Instance.AddListener(EventId.Disconnect, DisconnectCallback);
         }
 
         private void Update()
@@ -43,10 +43,10 @@ namespace Manage
 
         private void OnApplicationQuit()
         {
-            EventManager.Instance.RemoveListener<EAppType>(EventId.Disconnect, DisconnectCallback);
+            EventManager.Instance.RemoveListener(EventId.Disconnect, DisconnectCallback);
         }
 
-        private void DisconnectCallback(EAppType appType)
+        private void DisconnectCallback()
         {
         }
 

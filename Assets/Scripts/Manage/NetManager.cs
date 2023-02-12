@@ -11,14 +11,14 @@ using UnityEngine.Networking;
 
 namespace Manage
 {
-    public enum EAppType
+    public enum AppType
     {
         Client,
         Login,
         Game
     }
 
-    public enum ENetState
+    public enum NetState
     {
         NoConnect,
         Connecting,
@@ -44,16 +44,15 @@ namespace Manage
         public delegate Google.Protobuf.IMessage ParseFunc(byte[] bytes, int offset, int length);
 
         private Socket _sock = null;
-        private EAppType _appType = EAppType.Client;
-        private ENetState _state = ENetState.NoConnect;
+        private NetState _state = NetState.NoConnect;
         private int _recvIdx = 0;
         private readonly byte[] _recvBuf = new byte[512 * 1024];
         private readonly Dictionary<Proto.MsgId, ParseFunc> _funcDict = new();
 
-        public EAppType AppType => _appType;
-
         public string remoteIp;
         public int remotePort;
+
+        public AppType CurApp { get; private set; } = AppType.Client;
 
         protected override void Awake()
         {
@@ -101,7 +100,7 @@ namespace Manage
 
         private void Update()
         {
-            if (_sock == null || _state != ENetState.Connected)
+            if (_sock == null || _state != NetState.Connected)
                 return;
 
             try
@@ -135,7 +134,7 @@ namespace Manage
                     if (totalLen > _recvIdx)
                         break;
                     UnPacket(head, _recvBuf, (int)ms.Position, totalLen - PacketHead.SIZE);
-                    if (_state != ENetState.Connected)
+                    if (_state != NetState.Connected)
                         return;
                     _recvIdx -= totalLen;
                     if (_recvIdx > 0)
@@ -150,14 +149,14 @@ namespace Manage
             Disconnect();
         }
 
-        public void Connect(string ip, int port, EAppType appType)
+        public void Connect(string ip, int port, AppType appType)
         {
-            _state = ENetState.Connecting;
+            _state = NetState.Connecting;
             _sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _sock.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
             _sock.Blocking = true;
             _sock.SendBufferSize = _recvBuf.Length;
-            EventManager.Instance.Invoke(EventId.Connecting, appType);
+            EventManager.Instance.Invoke(EventId.Connecting);
             _sock.BeginConnect(ip, port, (result) =>
             {
                 try
@@ -169,6 +168,8 @@ namespace Manage
                         {
                             _sock.EndConnect(result);
                             _sock.Blocking = false;
+                            _state = NetState.Connected;
+                            CurApp = appType;
                         }
                     }
                 }
@@ -178,9 +179,7 @@ namespace Manage
                     Disconnect();
                 }
             }, _sock);
-            _state = ENetState.Connected;
-            _appType = appType;
-            EventManager.Instance.Invoke(EventId.Connected, _appType);
+            EventManager.Instance.InvokeDelay(EventId.Connected);
         }
 
         public void Disconnect()
@@ -189,8 +188,8 @@ namespace Manage
             {
                 _sock.Close();
                 _sock = null;
-                _state = ENetState.Disconnected;
-                EventManager.Instance.Invoke(EventId.Disconnect, _appType);
+                _state = NetState.Disconnected;
+                EventManager.Instance.Invoke(EventId.Disconnect);
             }
         }
 
@@ -262,7 +261,7 @@ namespace Manage
 
         private void SendPingMsg()
         {
-            if (_state == ENetState.Connected)
+            if (_state == NetState.Connected)
                 SendPacket(Proto.MsgId.MiPing, null);
         }
 
@@ -296,7 +295,7 @@ namespace Manage
                 string result = request.downloadHandler.text;
                 HttpJson data = JsonMapper.ToObject<HttpJson>(result);
                 if (data.returncode == 0)
-                    Connect(data.ip, data.port, EAppType.Login);
+                    Connect(data.ip, data.port, AppType.Login);
                 else
                     Debug.Log("ConnectServer error: " + request.error);
             }

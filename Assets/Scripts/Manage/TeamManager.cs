@@ -11,8 +11,8 @@ namespace Manage
         public void Initial()
 		{
             _mainSn = GameManager.Instance.mainPlayer.Sn;
-            PoolManager.Instance.Load(PoolType.HUDPanel, "UI/Panel/HUDPanel", 4);
-            HUDPanel panel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.HudGroup).GetComponent<HUDPanel>();
+            PoolManager.Instance.Load(PoolName.HUDPanel, "UI/Panel/HUDPanel", 4);
+            HUDPanel panel = PoolManager.Instance.Pop(PoolName.HUDPanel, UIManager.Instance.HudGroup).GetComponent<HUDPanel>();
             panel.InitPanel(GameManager.currWorld.roleDict[_mainSn]);
             teamDict.Add(_mainSn, panel);
         }
@@ -55,10 +55,10 @@ namespace Manage
             teamDict.Clear();
             int count = UIManager.Instance.HudGroup.childCount;
             for (int i = 0; i < count; i++)
-                PoolManager.Instance.Push(PoolType.HUDPanel, UIManager.Instance.HudGroup.GetChild(0).gameObject);
+                PoolManager.Instance.Push(PoolName.HUDPanel, UIManager.Instance.HudGroup.GetChild(0).gameObject);
             for (int i = 0; i < proto.Members.Count; i++)
             {
-                HUDPanel panel = PoolManager.Instance.Pop(PoolType.HUDPanel, UIManager.Instance.HudGroup).GetComponent<HUDPanel>();
+                HUDPanel panel = PoolManager.Instance.Pop(PoolName.HUDPanel, UIManager.Instance.HudGroup).GetComponent<HUDPanel>();
                 panel.InitPanel(GameManager.currWorld.roleDict[proto.Members[i]], proto.Members[i] == proto.Captain ? "队长" : "队员");
                 teamDict.Add(proto.Members[i], panel);
             }

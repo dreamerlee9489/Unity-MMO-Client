@@ -27,16 +27,16 @@ namespace UI
             });
 
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.C2LAccountCheckRs, AccountCheckRsHandler);
-            EventManager.Instance.AddListener<EAppType>(EventId.Connected, ConnectedCallback);
-            EventManager.Instance.AddListener<EAppType>(EventId.Disconnect, DisconnectCallback);
+            EventManager.Instance.AddListener(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.AddListener(EventId.Disconnect, DisconnectCallback);
             Close();
         }
 
         private void OnApplicationQuit()
         {
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.C2LAccountCheckRs, AccountCheckRsHandler);
-            EventManager.Instance.RemoveListener<EAppType>(EventId.Connected, ConnectedCallback);
-            EventManager.Instance.RemoveListener<EAppType>(EventId.Disconnect, DisconnectCallback);
+            EventManager.Instance.RemoveListener(EventId.Connected, ConnectedCallback);
+            EventManager.Instance.RemoveListener(EventId.Disconnect, DisconnectCallback);
         }
 
         private void AccountCheckRsHandler(Google.Protobuf.IMessage msg)
@@ -67,13 +67,13 @@ namespace UI
             Close();
         }
 
-        private void ConnectedCallback(EAppType appType)
+        private void ConnectedCallback()
         {
-            if (appType == EAppType.Login)
+            if (NetManager.Instance.CurApp == AppType.Login)
                 Open();
         }
 
-        private void DisconnectCallback(EAppType appType)
+        private void DisconnectCallback()
         {
         }
     }

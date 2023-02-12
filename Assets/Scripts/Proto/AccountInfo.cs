@@ -15,7 +15,7 @@ namespace Proto
             _account = proto.Account;
             _roles.Clear();
 
-            foreach (PlayerLittle roleProto in proto.Player)
+            foreach (PlayerLittle roleProto in proto.Players)
             {
                 RoleInfo role = new();
                 role.ParseProto(roleProto);
