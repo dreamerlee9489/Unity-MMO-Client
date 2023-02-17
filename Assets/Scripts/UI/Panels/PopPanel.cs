@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class PopupPanel : BasePanel
+    public class PopPanel : BasePanel
 	{
 		private Text _text;
 		private Button _yesBtn, _noBtn;

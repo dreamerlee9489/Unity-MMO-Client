@@ -20,7 +20,7 @@ namespace Manage
         public void ParseReqJoinTeam(Proto.PlayerReq proto)
         {
             string text = $"玩家[{GameManager.currWorld.roleDict[proto.Applicant].name}]申请入队，是否同意？";
-            UIManager.Instance.GetPanel<PopupPanel>().Open(text, () =>
+            UIManager.Instance.GetPanel<PopPanel>().Open(text, () =>
             {
                 Proto.PlayerReq joinRes = new()
                 {
@@ -46,7 +46,7 @@ namespace Manage
             if (!proto.Agree)
             {
                 string text = $"玩家[{GameManager.currWorld.roleDict[proto.Responder].name}]拒绝了你的入队请求。";
-                UIManager.Instance.GetPanel<PopupPanel>().Open(text, null, null);
+                UIManager.Instance.GetPanel<PopPanel>().Open(text, null, null);
             }
         }
 

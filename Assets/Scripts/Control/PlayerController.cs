@@ -222,7 +222,7 @@ namespace Control
             Anim.SetBool(death, true);
             GetComponent<CapsuleCollider>().enabled = false;
             if (Sn == GameManager.Instance.mainPlayer.Sn)
-                UIManager.Instance.GetPanel<PopupPanel>().Open($"你被[{atkName}]击杀了。", null, null);
+                UIManager.Instance.GetPanel<PopPanel>().Open($"你被[{atkName}]击杀了。", null, null);
         }
 
         public void Rebirth()

@@ -359,7 +359,7 @@ namespace Manage
             if(msg is Proto.EnterDungeon proto)
             {
                 string text = $"玩家[{proto.Sender}]邀请你进入副本[{worldDict[proto.WorldId]}]，是否同意？";
-                canvas.GetPanel<PopupPanel>().Open(text, () =>
+                canvas.GetPanel<PopPanel>().Open(text, () =>
                 {
                     Proto.EnterDungeon protoRes = new()
                     {
@@ -377,7 +377,7 @@ namespace Manage
             if (msg is Proto.PlayerReq proto)
             {
                 string text = $"玩家[{currWorld.roleDict[proto.Applicant].name}]向你发起挑战，是否同意？";
-                canvas.GetPanel<PopupPanel>().Open(text, () =>
+                canvas.GetPanel<PopPanel>().Open(text, () =>
                 {
                     Proto.PlayerReq protoRes = new()
                     {
@@ -414,7 +414,7 @@ namespace Manage
             if(msg is Proto.PlayerReq proto) 
             {
                 string text = $"玩家[{currWorld.roleDict[proto.Applicant].name}]邀请你交易，是否同意？";
-                canvas.GetPanel<PopupPanel>().Open(text, () =>
+                canvas.GetPanel<PopPanel>().Open(text, () =>
                 {
                     Proto.PlayerReq protoRes = new()
                     {
