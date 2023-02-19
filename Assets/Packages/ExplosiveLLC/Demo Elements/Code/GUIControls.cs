@@ -354,7 +354,7 @@ namespace RPGCharacterAnims
 			if (rpgCharacterController.HandlerExists("EmoteCombat")) {
 				if (rpgCharacterController.CanStartAction("EmoteCombat")) {
 					string emote = "";
-					if (GUI.Button(new Rect(130, 175, 100, 30), "Pickup")) { emote = "Pickup"; }
+					if (GUI.Button(new Rect(130, 175, 100, 30), "Pick")) { emote = "Pick"; }
 					if (GUI.Button(new Rect(235, 175, 100, 30), "Activate")) { emote = "Activate"; }
 					if (GUI.Button(new Rect(480, 650, 100, 30), "Boost")) { emote = "Boost"; }
 

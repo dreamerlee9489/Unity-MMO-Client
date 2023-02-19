@@ -42,7 +42,7 @@ namespace Control
             NetManager.Instance.SendPacket(Proto.MsgId.C2SReqNpcInfo, proto);
         }
 
-        public void ReqMoveTo(Vector3 hitPoint, bool isRun)
+        public override void ReqMoveTo(Vector3 hitPoint, bool isRun)
         {
             if (isLinker)
             {

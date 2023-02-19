@@ -30,6 +30,7 @@ namespace UI
                         Name.color = Color.yellow;
                         break;
                     case "Enemy":
+                    case "PvpTarget":
                         Name.color = Color.red;
                         break;
                     default:
@@ -52,6 +53,7 @@ namespace UI
                     Name.color = Color.yellow;
                     break;
                 case "Enemy":
+                case "PvpTarget":
                     Name.color = Color.red;
                     break;
                 default:

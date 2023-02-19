@@ -28,6 +28,8 @@ namespace Control
         public NavMeshAgent Agent { get; private set; }
         public EntityNameBar NameBar { get; private set; }
 
+        public abstract void ReqMoveTo(Vector3 hitPoint, bool isRun);
+
         protected virtual void Awake()
         {
             Agent = GetComponent<NavMeshAgent>();
@@ -37,7 +39,17 @@ namespace Control
 
         protected virtual void Update()
         {
-            Anim.SetFloat(moveSpeed, transform.InverseTransformVector(Agent.velocity).z);           
+            if (cornerPoints.Count > 0)
+            {
+                Agent.destination = new()
+                {
+                    x = cornerPoints[^1].X,
+                    y = cornerPoints[^1].Y,
+                    z = cornerPoints[^1].Z
+                };
+                cornerPoints.Clear();
+            }
+            Anim.SetFloat(moveSpeed, transform.InverseTransformVector(Agent.velocity).z);   
         }
 
         public void SetNameBar(string name) => NameBar.Name.text = name;

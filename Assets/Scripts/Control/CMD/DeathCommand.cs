@@ -17,17 +17,19 @@ namespace Control.CMD
         {
             _atkName = atkName;
             _target = target;
+            (_executor as GameEntity).Target = target;
+            (_executor as ILiver).Die(_atkName);
         }
 
         public override CommandType GetCommandType() => CommandType.Death;
 
         public override void Execute()
         {
-            (_executor as ILiver).Die(_atkName);
         }
 
         public override void Undo()
         {
+            base.Undo();
             (_executor as ILiver).Rebirth();
         }
     }

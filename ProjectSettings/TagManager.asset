@@ -8,7 +8,7 @@ TagManager:
   - Enemy
   - Item
   - Portal
-  - MainPlayer
+  - PvpTarget
   layers:
   - Default
   - TransparentFX

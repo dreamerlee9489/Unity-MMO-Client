@@ -10,7 +10,7 @@ namespace Control
 {
     public class BtController : GameEntity
     {
-        private readonly WaitForSeconds _sleep = new(0.1f);
+        private readonly WaitForSeconds _sleep = new(0.2f);
 
         public int id = 0, initHp = 0;
         public bool isLinker = false;
@@ -36,21 +36,6 @@ namespace Control
             root.AddChild(new ActionAttack(this));
             root.AddChild(new ActionFlee(this));
             MonoManager.Instance.StartCoroutine(TickRoot());
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-            if (cornerPoints.Count > 0)
-            {
-                Agent.destination = new()
-                {
-                    x = cornerPoints[^1].X,
-                    y = cornerPoints[^1].Y,
-                    z = cornerPoints[^1].Z
-                };
-                cornerPoints.Clear();
-            }
         }
 
         private void OnDestroy()
@@ -79,7 +64,7 @@ namespace Control
 
         public void LinkPlayer(bool linker) => isLinker = linker;
 
-        public void ReqMoveTo(Vector3 hitPoint, bool isRun)
+        public override void ReqMoveTo(Vector3 hitPoint, bool isRun)
         {
             if (isLinker)
             {

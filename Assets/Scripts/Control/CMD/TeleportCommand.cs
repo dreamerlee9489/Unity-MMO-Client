@@ -1,20 +1,22 @@
-using UnityEngine;
+using Items;
 
 namespace Control.CMD
 {
     public interface ITeleporter : IExecutor
     {
-        void Teleport(Transform portal);
+        void Teleport(GameItem portal);
         void UnTeleport();
     }
 
     public class TeleportCommand : ICommand
     {
-        private readonly Transform _portal;
+        private readonly GameItem _portal;
 
-        public TeleportCommand(IExecutor executor, Transform portal) : base(executor)
+        public TeleportCommand(IExecutor executor, GameItem portal) : base(executor)
         {
             _portal = portal;
+            (_executor as GameEntity).Target = portal.transform;
+            (_executor as ITeleporter).Teleport(_portal);
         }
 
         public override void Execute()
@@ -24,6 +26,7 @@ namespace Control.CMD
 
         public override void Undo()
         {
+            base.Undo();
             (_executor as ITeleporter).UnTeleport();
         }
 

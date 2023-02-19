@@ -397,13 +397,13 @@ namespace Manage
                 if (mainPlayer.Sn == proto.Applicant)
                 {
                     var defer = currWorld.roleDict[proto.Responder].obj;
-                    defer.tag = "Enemy";
+                    defer.tag = "PvpTarget";
                     defer.NameBar.ChangeCamp();
                 }
                 else if (mainPlayer.Sn == proto.Responder)
                 {
                     var atker = currWorld.roleDict[proto.Applicant].obj;
-                    atker.tag = "Enemy";
+                    atker.tag = "PvpTarget";
                     atker.NameBar.ChangeCamp();
                 }
             }

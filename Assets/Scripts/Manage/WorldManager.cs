@@ -159,7 +159,7 @@ namespace Manage
         {
             if (!roleDict.ContainsKey(proto.Sn))
                 yield return new WaitForSeconds(1.5f);
-            if (npcDict.ContainsKey(proto.Sn))
+            if (roleDict.ContainsKey(proto.Sn))
                 roleDict[proto.Sn].obj.cornerPoints.AddRange(proto.Points);
         }
     }

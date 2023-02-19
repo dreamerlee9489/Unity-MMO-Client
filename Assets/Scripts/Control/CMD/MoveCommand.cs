@@ -15,6 +15,8 @@ namespace Control.CMD
         public MoveCommand(IMover executor, Vector3 point) : base(executor)
         {
             _point = point;
+            (_executor as GameEntity).Target = null;
+            (_executor as IMover).Move(_point);
         }
 
         public override CommandType GetCommandType() => CommandType.Move;
@@ -26,6 +28,7 @@ namespace Control.CMD
 
         public override void Undo()
         {
+            base.Undo();
             (_executor as IMover).UnMove();
         }
     } 

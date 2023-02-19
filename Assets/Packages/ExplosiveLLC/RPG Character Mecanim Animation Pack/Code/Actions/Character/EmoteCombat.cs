@@ -10,7 +10,7 @@ namespace RPGCharacterAnims.Actions
         protected override void _StartAction(RPGCharacterController controller, string context)
         {
             switch (context) {
-                case "Pickup":
+                case "Pick":
                     controller.Pickup();
                     break;
                 case "Activate":
