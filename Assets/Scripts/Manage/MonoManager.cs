@@ -19,6 +19,11 @@ namespace Manage
             UpdateEvent?.Invoke();
         }
 
+        private void OnDestroy()
+        {
+            StopAllCoroutines();
+        }
+
         public void AddUpdateAction(Action update)
         {
             UpdateEvent += update;
@@ -66,22 +71,26 @@ namespace Manage
 
         public void StopCoroutine(IEnumerator enumerator)
         {
-            _processor.StopCoroutine(enumerator);
+            if (_processor)
+                _processor.StopCoroutine(enumerator);
         }
 
         public void StopCoroutine(Coroutine routine)
         {
-            _processor.StopCoroutine(routine);
+            if (_processor)
+                _processor.StopCoroutine(routine);
         }
 
         public void StopCoroutine(string methodName)
         {
-            _processor.StopCoroutine(methodName);
+            if (_processor)
+                _processor.StopCoroutine(methodName);
         }
 
         public void StopAllCoroutines()
         {
-            _processor.StopAllCoroutines();
+            if (_processor)
+                _processor.StopAllCoroutines();
         }
     }
 }

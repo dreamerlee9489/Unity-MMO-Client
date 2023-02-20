@@ -29,14 +29,14 @@ namespace Proto
             position.z = proto.Position.Z;
         }
 
-        public void LoadRole(Role proto)
+        public void LoadRole()
         {
             if (sn != GameManager.Instance.mainPlayer.Sn)
             {
                 string path = gender == Gender.Male ? "Entity/Player/Player_Knight" : "Entity/Player/Player_Warrior";
-                ResourceManager.Instance.LoadAsync<GameObject>(path, (objec) =>
+                ResourceManager.Instance.LoadAsync<GameObject>(path, (res) =>
                 {
-                    obj = Object.Instantiate(objec).GetComponent<PlayerController>();
+                    obj = Object.Instantiate(res).GetComponent<PlayerController>();
                     obj.Sn = sn;
                     obj.lv = lv;
                     obj.xp = xp;

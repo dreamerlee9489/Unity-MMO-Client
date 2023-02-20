@@ -67,7 +67,8 @@ namespace Manage
             RegistParseFunc(Proto.MsgId.G2CSyncPlayer, ParsePacket<Proto.SyncPlayer>);
             RegistParseFunc(Proto.MsgId.S2CAllRoleAppear, ParsePacket<Proto.AllRoleAppear>);
             RegistParseFunc(Proto.MsgId.S2CReqNpcInfo, ParsePacket<Proto.ReqNpcInfo>);
-            RegistParseFunc(Proto.MsgId.S2CSyncEntityStatus, ParsePacket<Proto.SyncEntityStatus>);
+            RegistParseFunc(Proto.MsgId.S2CSyncPlayerProps, ParsePacket<Proto.SyncPlayerProps>);
+            RegistParseFunc(Proto.MsgId.S2CSyncNpcProps, ParsePacket<Proto.SyncNpcProps>);
             RegistParseFunc(Proto.MsgId.S2CSyncFsmState, ParsePacket<Proto.SyncFsmState>);
             RegistParseFunc(Proto.MsgId.S2CSyncPlayerPos, ParsePacket<Proto.SyncPlayerPos>);
             RegistParseFunc(Proto.MsgId.S2CSyncPlayerCmd, ParsePacket<Proto.SyncPlayerCmd>);

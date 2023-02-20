@@ -40,6 +40,8 @@ namespace Control
 
         private void OnDestroy()
         {
+            root.ForceExit(BtStatus.Invalid);
+            MonoManager.Instance.StopCoroutine(TickRoot());
             EventManager.Instance.RemoveListener(EventId.PlayerLoaded, PlayerLoadedCallback);
         }
 
@@ -83,7 +85,7 @@ namespace Control
             }
         }
 
-        public void ParseStatus(Proto.SyncEntityStatus proto)
+        public void ParseProps(Proto.SyncNpcProps proto)
         {
             hp = proto.Hp;
             NameBar.HpBar.UpdateHp(hp, initHp);

@@ -17,6 +17,8 @@ namespace Control.CMD
             (_executor as IObserver).Observe(_target);
         }
 
+        public override CommandType GetCmdType() => CommandType.Observe;
+
         public override void Execute()
         {
             (_executor as IObserver).Observe(_target);
@@ -24,10 +26,7 @@ namespace Control.CMD
 
         public override void Undo()
         {
-            base.Undo();
             (_executor as IObserver).UnObserve();
         }
-
-        public override CommandType GetCommandType() => CommandType.Observe;
     }
 }

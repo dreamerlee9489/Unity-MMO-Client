@@ -63,7 +63,7 @@ namespace Manage
                 {
                     Proto.AppearRole appearRole = new();
                     appearRole.Parse(role);
-                    appearRole.LoadRole(role);
+                    appearRole.LoadRole();
                     roleDict.Add(sn, appearRole);
                 }
             }
@@ -79,14 +79,18 @@ namespace Manage
             }
         }
 
-        public void ParseSyncEntityStatus(Proto.SyncEntityStatus proto)
+        public void ParseSyncPlayerProps(Proto.SyncPlayerProps proto)
         {
-            if (npcDict.ContainsKey(proto.Sn))
-                npcDict[proto.Sn].ParseStatus(proto);
-            else if (roleDict.ContainsKey(proto.Sn))
-                roleDict[proto.Sn].obj.ParseStatus(proto);
+            if (roleDict.ContainsKey(proto.Sn))
+                roleDict[proto.Sn].obj.ParseProps(proto);
             else if (TeamManager.Instance.teamDict.ContainsKey(proto.Sn))
                 TeamManager.Instance.teamDict[proto.Sn].UpdateHp(proto.Hp);
+        }
+
+        public void ParseSyncNpcProps(Proto.SyncNpcProps proto)
+        {
+            if (npcDict.ContainsKey(proto.Sn))
+                npcDict[proto.Sn].ParseProps(proto);
         }
 
         public void ParseSyncPlayerCmd(Proto.SyncPlayerCmd proto)

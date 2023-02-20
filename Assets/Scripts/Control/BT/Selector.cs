@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Control.BT
 {
@@ -65,6 +66,7 @@ namespace Control.BT
 
         protected override void Exit()
         {
+            curNode = null;
         }
 
         public void SwitchNode(BtEventId id)

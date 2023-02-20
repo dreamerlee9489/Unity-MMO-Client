@@ -55,7 +55,8 @@ namespace Manage
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncPlayerProps, SyncPlayerPropsHandler);
+            MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncNpcProps, SyncNpcPropsHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CReqNpcInfo, ReqNpcInfoHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
@@ -87,17 +88,17 @@ namespace Manage
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        private void OnApplicationQuit()
+        private void OnDestroy()
         {
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            MonoManager.Instance.StopAllCoroutines();
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CAllRoleAppear, AllRoleAppearHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CRoleDisappear, RoleDisappearHandler);
-            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncEntityStatus, SyncEntityStatusHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncPlayerProps, SyncPlayerPropsHandler);
+            MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncNpcProps, SyncNpcPropsHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CReqNpcInfo, ReqNpcInfoHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncFsmState, SyncFsmStateHandler);
             MsgManager.Instance.RemoveMsgHandler(Proto.MsgId.S2CSyncPlayerCmd, SyncPlayerCmdHandler);
@@ -188,7 +189,6 @@ namespace Manage
             currWorld = null;
             mainPlayer.Obj.ResetCmd();
             canvas.GetPanel<ChatPanel>().Close();
-            MonoManager.Instance.StartCoroutine(canvas.FadeAlpha());
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -235,6 +235,7 @@ namespace Manage
             if (msg is Proto.EnterWorld proto)
             {
                 canvas.GetPanel<StartPanel>().Close();
+                MonoManager.Instance.StartCoroutine(canvas.FadeAlpha());
                 SceneManager.LoadSceneAsync(proto.WorldId, LoadSceneMode.Single);
                 mainPlayer.Obj.transform.position = new(proto.Position.X, proto.Position.Y, proto.Position.Z);
             }
@@ -282,10 +283,16 @@ namespace Manage
                 currWorld.ParseReqNpcInfo(proto);
         }
 
-        private void SyncEntityStatusHandler(Google.Protobuf.IMessage msg)
+        private void SyncPlayerPropsHandler(Google.Protobuf.IMessage msg)
         {
-            if (msg is Proto.SyncEntityStatus proto && currWorld)
-                currWorld.ParseSyncEntityStatus(proto);
+            if (msg is Proto.SyncPlayerProps proto && currWorld)
+                currWorld.ParseSyncPlayerProps(proto);
+        }
+
+        private void SyncNpcPropsHandler(Google.Protobuf.IMessage msg)
+        {
+            if (msg is Proto.SyncNpcProps proto && currWorld)
+                currWorld.ParseSyncNpcProps(proto);
         }
 
         private void SyncBtActionHandler(Google.Protobuf.IMessage msg)

@@ -17,7 +17,7 @@ namespace Control.CMD
             (_executor as IAttacker).Attack(_target);
         }
 
-        public override CommandType GetCommandType() => CommandType.Attack;
+        public override CommandType GetCmdType() => CommandType.Attack;
 
         public override void Execute()
         {
@@ -26,7 +26,6 @@ namespace Control.CMD
 
         public override void Undo()
         {
-            base.Undo();
             (_executor as IAttacker).UnAttack();
         }
     }

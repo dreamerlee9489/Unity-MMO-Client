@@ -691,7 +691,7 @@ MonoBehaviour:
   id: 0
   itemType: 0
   knapType: 0
-  worldId: 3
+  worldId: 1
 --- !u!114 &5523583047936911638
 MonoBehaviour:
   m_ObjectHideFlags: 0

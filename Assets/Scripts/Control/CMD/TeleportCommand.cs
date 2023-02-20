@@ -19,6 +19,8 @@ namespace Control.CMD
             (_executor as ITeleporter).Teleport(_portal);
         }
 
+        public override CommandType GetCmdType() => CommandType.Teleport;
+
         public override void Execute()
         {
             (_executor as ITeleporter).Teleport(_portal);
@@ -26,10 +28,7 @@ namespace Control.CMD
 
         public override void Undo()
         {
-            base.Undo();
             (_executor as ITeleporter).UnTeleport();
         }
-
-        public override CommandType GetCommandType() => CommandType.Teleport;
     }
 }

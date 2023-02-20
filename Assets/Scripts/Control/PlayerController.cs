@@ -2,7 +2,6 @@
 using Items;
 using Manage;
 using System.Collections;
-using System.Collections.Generic;
 using UI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -10,11 +9,11 @@ using UnityEngine.EventSystems;
 
 namespace Control
 {
-    public partial class PlayerController : GameEntity, IMover, IAttacker, IPicker, ITeleporter, IObserver, ILiver
+    public partial class PlayerController : GameEntity, IMover, IAttacker, IPicker, ITeleporter, IObserver, ILiver, IFighter
     {
         private RaycastHit _hit;
         private ICommand _curCmd;
-        private readonly WaitForSeconds _sleep = new(0.1f);
+        private readonly WaitForSeconds _sleep = new(0.2f);
 
         public int xp = 0, gold = 0;
         public static PlayerBaseData baseData;
@@ -47,7 +46,7 @@ namespace Control
             if (Sn != GameManager.Instance.mainPlayer.Sn || EventSystem.current.IsPointerOverGameObject())
                 return;
 
-            if (Input.GetMouseButtonDown(0) && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out _hit))
+            if (Input.GetMouseButtonDown(0) && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out _hit) && hp != 0)
             {
                 Proto.SyncPlayerCmd syncCmd = new();
                 switch (_hit.collider.tag)
@@ -62,7 +61,6 @@ namespace Control
                         syncCmd.Type = (int)CommandType.Attack;
                         syncCmd.PlayerSn = Sn;
                         syncCmd.TargetSn = _hit.transform.GetComponent<BtController>().Sn;
-                        syncCmd.Point = new() { X = _hit.transform.position.x, Y = _hit.transform.position.y, Z = _hit.transform.position.z };
                         ReqMoveTo(_hit.transform.position);
                         break;
                     case "Item":
@@ -76,25 +74,32 @@ namespace Control
                         syncCmd.Type = (int)CommandType.Teleport;
                         syncCmd.PlayerSn = Sn;
                         syncCmd.TargetSn = _hit.transform.GetComponent<GameItem>().Sn;
-                        syncCmd.Point = new() { X = _hit.transform.position.x, Y = _hit.transform.position.y, Z = _hit.transform.position.z };
                         ReqMoveTo(_hit.transform.position);
                         break;
                     case "Player":
                         syncCmd.Type = (int)CommandType.Observe;
                         syncCmd.PlayerSn = Sn;
                         syncCmd.TargetSn = _hit.transform.GetComponent<PlayerController>().Sn;
-                        syncCmd.Point = new() { X = _hit.transform.position.x, Y = _hit.transform.position.y, Z = _hit.transform.position.z };
                         ReqMoveTo(_hit.transform.position);
                         break;
                     case "PvpTarget":
                         syncCmd.Type = (int)CommandType.Pvp;
                         syncCmd.PlayerSn = Sn;
                         syncCmd.TargetSn = _hit.transform.GetComponent<PlayerController>().Sn;
-                        syncCmd.Point = new() { X = _hit.transform.position.x, Y = _hit.transform.position.y, Z = _hit.transform.position.z };
                         ReqMoveTo(_hit.transform.position);
                         break;
                 }
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerCmd, syncCmd);
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                Proto.SyncPlayerCmd proto = new()
+                { 
+                    Type = 0,
+                    PlayerSn = Sn,
+                };
+                NetManager.Instance.SendPacket(Proto.MsgId.C2SSyncPlayerCmd, proto);
             }
 
             if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -106,11 +111,6 @@ namespace Control
                 };
                 NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerAtkEvent, proto);
             }
-        }
-
-        private void OnDestroy()
-        {
-            MonoManager.Instance.StopCoroutine(CmdRunner());
         }
 
         private IEnumerator CmdRunner()
@@ -138,7 +138,6 @@ namespace Control
                         proto.Points.Add(new Proto.Vector3D() { X = point.x, Y = point.y, Z = point.z });
                     NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerMove, proto);
                 }
-                Debug.Log("req move");
             }
         }
 
@@ -146,17 +145,20 @@ namespace Control
 
         public void Move(Vector3 point)
         {
-            if(Vector3.Distance(transform.position, point) <= Agent.stoppingDistance)
+            Agent.isStopped = false;
+            if (Vector3.Distance(transform.position, point) <= Agent.stoppingDistance)
                 _curCmd = null;
         }
 
         public void UnMove()
         {
             _curCmd = null;
+            Agent.isStopped = true;
         }
 
         public void Attack(BtController target)
         {
+            Agent.isStopped = false;
             transform.LookAt(target.transform);
             if (Vector3.Distance(transform.position, target.transform.position) <= attackRadius)
                 Anim.SetBool(attack, true);
@@ -169,49 +171,55 @@ namespace Control
 
         public void UnAttack()
         {
-            Anim.SetBool(attack, false);
             _curCmd = null;
+            Agent.isStopped = true;
+            Anim.SetBool(attack, false);
         }
 
-        public void Pickup(GameItem item)
+        public void Pick(GameItem item)
         {
+            Agent.isStopped = false;
             Agent.destination = item.transform.position;
             if (Vector3.Distance(transform.position, item.transform.position) <= Agent.stoppingDistance)
             {
-                Anim.SetTrigger(pickup);
                 _curCmd = null;
+                Anim.SetTrigger(pickup);
             }
         }
 
-        public void UnPickup()
+        public void UnPick()
         {
             _curCmd = null;
+            Agent.isStopped = true;
         }
 
         public void Teleport(GameItem portal)
         {
+            Agent.isStopped = false;
             Agent.destination = portal.transform.position;
             if (Sn == GameManager.Instance.mainPlayer.Sn && Vector3.Distance(transform.position, portal.transform.position) <= Agent.stoppingDistance)
             {
-                portal.GetComponent<Portal>().OpenDoor(this);
                 _curCmd = null;
+                portal.GetComponent<Portal>().OpenDoor(this);
             }
         }
 
         public void UnTeleport()
         {
             _curCmd = null;
+            Agent.isStopped = true;
         }
 
         public void Observe(PlayerController target)
         {
+            Agent.isStopped = false;
             transform.LookAt(target.transform);
             if (Vector3.Distance(transform.position, target.transform.position) > Agent.stoppingDistance)
                 ReqMoveTo(target.transform.position);
             else
             {
                 _curCmd = null;
-                Agent.destination = transform.position + transform.forward;
+                Agent.isStopped = true;
                 if (Sn == GameManager.Instance.mainPlayer.Sn)
                 {
                     ObservePanel panel = UIManager.Instance.GetPanel<ObservePanel>();
@@ -224,6 +232,27 @@ namespace Control
         public void UnObserve()
         {
             _curCmd = null;
+            Agent.isStopped = true;
+        }
+
+        public void Pvp(PlayerController target)
+        {
+            Agent.isStopped = false;
+            transform.LookAt(target.transform);
+            if (Vector3.Distance(transform.position, target.transform.position) <= attackRadius)
+                Anim.SetBool(attack, true);
+            else
+            {
+                Anim.SetBool(attack, false);
+                ReqMoveTo(target.transform.position);
+            }
+        }
+
+        public void UnPvp()
+        {
+            _curCmd = null;
+            Agent.isStopped = true;
+            Anim.SetBool(attack, false);
         }
 
         public void Die(string atkName)
@@ -251,7 +280,7 @@ namespace Control
         public void ParseCmd(Proto.SyncPlayerCmd proto)
         {
             CommandType newType = (CommandType)proto.Type;
-            if (_curCmd != null && _curCmd.GetCommandType() != newType)
+            if (_curCmd != null && _curCmd.GetCmdType() != newType)
                 _curCmd.Undo();
             switch (newType)
             {
@@ -268,13 +297,16 @@ namespace Control
                     if (Sn != GameManager.Instance.mainPlayer.Sn)
                         _curCmd = new MoveCommand(this, new(proto.Point.X, proto.Point.Y, proto.Point.Z));
                     else
-                        _curCmd = new PickupCommand(this, GameManager.currWorld.itemDict[proto.TargetSn]);
+                        _curCmd = new PickCommand(this, GameManager.currWorld.itemDict[proto.TargetSn]);
                     break;
                 case CommandType.Teleport:
                     _curCmd = new TeleportCommand(this, GameManager.currWorld.itemDict[proto.TargetSn]);
                     break;
                 case CommandType.Observe:
                     _curCmd = new ObserveCommand(this, GameManager.currWorld.roleDict[proto.TargetSn].obj);
+                    break;
+                case CommandType.Pvp:
+                    _curCmd = new PvpCommand(this, GameManager.currWorld.roleDict[proto.TargetSn].obj);
                     break;
                 case CommandType.Death:
                     string atkName;
@@ -327,15 +359,15 @@ namespace Control
             }
         }
 
-        public void ParseStatus(Proto.SyncEntityStatus proto)
+        public void ParseProps(Proto.SyncPlayerProps proto)
         {
             hp = proto.Hp;
-            if (CompareTag("Enemy"))
-                NameBar.HpBar.UpdateHp(hp, baseData.hp);
+            if (TeamManager.Instance.teamDict.ContainsKey(Sn))
+                TeamManager.Instance.teamDict[Sn].UpdateHp(hp);            
             if (GameManager.Instance.mainPlayer.Sn == Sn)
                 UIManager.Instance.GetPanel<PropPanel>().UpdateHp(hp);
-            if (TeamManager.Instance.teamDict.ContainsKey(Sn))
-                TeamManager.Instance.teamDict[Sn].UpdateHp(hp);
+            else if (CompareTag("PvpTarget"))
+                NameBar.HpBar.UpdateHp(hp, baseData.hp);
         }
 
         public void ParsePlayerKnap(Proto.PlayerKnap proto)

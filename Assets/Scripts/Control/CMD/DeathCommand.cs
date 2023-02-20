@@ -21,7 +21,7 @@ namespace Control.CMD
             (_executor as ILiver).Die(_atkName);
         }
 
-        public override CommandType GetCommandType() => CommandType.Death;
+        public override CommandType GetCmdType() => CommandType.Death;
 
         public override void Execute()
         {
@@ -29,7 +29,6 @@ namespace Control.CMD
 
         public override void Undo()
         {
-            base.Undo();
             (_executor as ILiver).Rebirth();
         }
     }

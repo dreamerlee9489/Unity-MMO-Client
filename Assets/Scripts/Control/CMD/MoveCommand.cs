@@ -19,7 +19,7 @@ namespace Control.CMD
             (_executor as IMover).Move(_point);
         }
 
-        public override CommandType GetCommandType() => CommandType.Move;
+        public override CommandType GetCmdType() => CommandType.Move;
 
         public override void Execute()
         {
@@ -28,7 +28,6 @@ namespace Control.CMD
 
         public override void Undo()
         {
-            base.Undo();
             (_executor as IMover).UnMove();
         }
     } 

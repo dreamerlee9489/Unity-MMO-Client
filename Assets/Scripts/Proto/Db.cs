@@ -58,7 +58,7 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.LastWorld), global::Proto.LastWorld.Parser, new[]{ "WorldId", "WorldSn", "Position" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerMisc), global::Proto.PlayerMisc.Parser, new[]{ "LastWorld", "LastDungeon", "OnlineVersion" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.Player), global::Proto.Player.Parser, new[]{ "Sn", "Name", "Base", "Knap", "Misc" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Sn", "ItemType", "Sn", "KnapType", "Index" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType), typeof(global::Proto.ItemData.Types.KnapType) }, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.ItemData), global::Proto.ItemData.Parser, new[]{ "Sn", "ItemType", "Id", "KnapType", "Index" }, null, new[]{ typeof(global::Proto.ItemData.Types.ItemType), typeof(global::Proto.ItemData.Types.KnapType) }, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.PlayerKnap), global::Proto.PlayerKnap.Parser, new[]{ "Gold", "Items" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.UpdateKnapGold), global::Proto.UpdateKnapGold.Parser, new[]{ "Gold" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.UpdateKnapItem), global::Proto.UpdateKnapItem.Parser, new[]{ "Item" }, null, null, null, null),
