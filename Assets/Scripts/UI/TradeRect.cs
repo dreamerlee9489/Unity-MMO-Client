@@ -29,15 +29,32 @@ namespace UI
             }
         }
 
-        public void SetLocalRect(Proto.AppearRole role) => SureBar.text = role.name;
-
-        public void SetRemoteRect(Proto.AppearRole role)
+        public void InitLocalRect(Proto.AppearRole role)
         {
             SureBar.text = role.name;
+            SureTog.isOn = false;
+            SureTog.interactable = true;
+            GoldField.interactable = true;
+            GoldField.text = "";
             for (int i = 0; i < UiRect.content.childCount; i++)
-                UiRect.content.GetChild(i).GetChild(0).GetComponent<Image>().raycastTarget = false;
-            GoldField.interactable = false;
+            {
+                UiRect.content.GetChild(i).GetChild(0).GetComponent<Image>().raycastTarget = true;
+                UiRect.content.GetChild(i).GetChild(1).GetComponent<Text>().text = "";
+            }
+        }
+
+        public void InitRemoteRect(Proto.AppearRole role)
+        {
+            SureBar.text = role.name;
+            SureTog.isOn = false;
             SureTog.interactable = false;
+            GoldField.interactable = false;
+            GoldField.text = "";
+            for (int i = 0; i < UiRect.content.childCount; i++)
+            {
+                UiRect.content.GetChild(i).GetChild(0).GetComponent<Image>().raycastTarget = false;
+                UiRect.content.GetChild(i).GetChild(1).GetComponent<Text>().text = "";
+            }
         }
 
         public ItemSlot GetFirstEmptySlot()
@@ -50,7 +67,7 @@ namespace UI
 
         public ItemSlot GetSlotByIndex(int index) => itemSlots[index];
 
-        public void AddAllToBag()
+        public void AddRemoteItems()
         {
             var player = GameManager.Instance.mainPlayer.Obj;
             foreach (var slot in itemSlots)
@@ -77,7 +94,7 @@ namespace UI
             }
         }
 
-        public void RemoveAllFromBag()
+        public void RemoveLocalItems()
         {
             foreach (var slot in itemSlots)
             {               

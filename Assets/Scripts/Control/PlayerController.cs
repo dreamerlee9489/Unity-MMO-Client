@@ -129,14 +129,17 @@ namespace Control
                 Vector3 dstPoint = hitPoint;
                 if (NavMesh.SamplePosition(hitPoint, out var meshHit, 100, 1 << NavMesh.GetAreaFromName("Walkable")))
                     dstPoint = meshHit.position;
-                NavMeshPath path = new();
-                Agent.CalculatePath(dstPoint, path);
-                if (path.status != NavMeshPathStatus.PathPartial)
+                if (dstPoint != Agent.destination)
                 {
-                    Proto.EntityMove proto = new() { Sn = Sn, Running = isRun };
-                    foreach (Vector3 point in path.corners)
-                        proto.Points.Add(new Proto.Vector3D() { X = point.x, Y = point.y, Z = point.z });
-                    NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerMove, proto);
+                    NavMeshPath path = new();
+                    Agent.CalculatePath(dstPoint, path);
+                    if (path.status != NavMeshPathStatus.PathPartial)
+                    {
+                        Proto.EntityMove proto = new() { Sn = Sn, Running = isRun };
+                        foreach (Vector3 point in path.corners)
+                            proto.Points.Add(new Proto.Vector3D() { X = point.x, Y = point.y, Z = point.z });
+                        NetManager.Instance.SendPacket(Proto.MsgId.C2SPlayerMove, proto);
+                    }
                 }
             }
         }
@@ -420,8 +423,8 @@ namespace Control
             if (proto.Success)
             {
                 var tradePanel = UIManager.Instance.GetPanel<TradePanel>();
-                tradePanel.LocalRect.RemoveAllFromBag();
-                tradePanel.RemoteRect.AddAllToBag();
+                tradePanel.LocalRect.RemoveLocalItems();
+                tradePanel.RemoteRect.AddRemoteItems();
                 if (tradePanel.LocalRect.GoldField.text.Length > 0)
                     gold -= int.Parse(tradePanel.LocalRect.GoldField.text);
                 if (tradePanel.RemoteRect.GoldField.text.Length > 0)

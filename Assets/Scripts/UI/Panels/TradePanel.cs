@@ -25,8 +25,8 @@ namespace UI
             {
                 localSn = applicant.sn;
                 remoteSn = responder.sn;
-                _tradeRectA.SetLocalRect(applicant);
-                _tradeRectR.SetRemoteRect(responder);
+                _tradeRectA.InitLocalRect(applicant);
+                _tradeRectR.InitRemoteRect(responder);
                 LocalRect = _tradeRectA;
                 RemoteRect = _tradeRectR;
             }
@@ -34,8 +34,8 @@ namespace UI
             {
                 localSn = responder.sn;
                 remoteSn = applicant.sn;
-                _tradeRectA.SetRemoteRect(applicant);
-                _tradeRectR.SetLocalRect(responder);
+                _tradeRectA.InitRemoteRect(applicant);
+                _tradeRectR.InitLocalRect(responder);
                 LocalRect = _tradeRectR;
                 RemoteRect = _tradeRectA;
             }
