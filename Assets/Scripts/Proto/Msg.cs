@@ -155,16 +155,17 @@ namespace Proto {
             "AyABKAkiLgoKQ3JlYXRlVGVhbRIPCgdjYXB0YWluGAEgASgEEg8KB21lbWJl",
             "cnMYAiADKAQiUQoMRW50ZXJEdW5nZW9uEhAKCHdvcmxkX2lkGAEgASgFEhAK",
             "CHdvcmxkX3NuGAIgASgEEg0KBWFncmVlGAMgASgIEg4KBnNlbmRlchgEIAEo",
-            "CSp4CgdUYWdUeXBlEg8KC1RhZ1R5cGVOb25lEAASEgoOVGFnVHlwZUFjY291",
-            "bnQQARIOCgpUYWdUeXBlQXBwEAISEQoNVGFnVHlwZUVudGl0eRADEhIKDlRh",
-            "Z1R5cGVUb1dvcmxkEAQSEQoNVGFnVHlwZVBsYXllchAFKpoBChZBY2NvdW50",
-            "Q2hlY2tSZXR1cm5Db2RlEgoKBkFSQ19PSxAAEg8KC0FSQ19VTktPTldOEAES",
-            "GQoVQVJDX05PVF9GT1VORF9BQ0NPVU5UEAISFgoSQVJDX1BBU1NXT1JEX1dS",
-            "T05HEAMSDwoLQVJDX0xPR0dJTkcQBBIPCgtBUkNfVElNRU9VVBAFEg4KCkFS",
-            "Q19PTkxJTkUQBipHChNMb2dpbkh0dHBSZXR1cm5Db2RlEgsKB0xIUkNfT0sQ",
-            "ABIQCgxMSFJDX1RJTUVPVVQQARIRCg1MSFJDX05PVEZPVU5EEAIqTAoWQ3Jl",
-            "YXRlUGxheWVyUmV0dXJuQ29kZRIRCg1DUFJfQ3JlYXRlX09LEAASDwoLQ1BS",
-            "X1Vua29ud24QARIOCgpDUFJfUmVuYW1lEAJiBnByb3RvMw=="));
+            "CSqLAQoHVGFnVHlwZRIPCgtUYWdUeXBlTm9uZRAAEhIKDlRhZ1R5cGVBY2Nv",
+            "dW50EAESDgoKVGFnVHlwZUFwcBACEhEKDVRhZ1R5cGVFbnRpdHkQAxISCg5U",
+            "YWdUeXBlVG9Xb3JsZBAEEhEKDVRhZ1R5cGVQbGF5ZXIQBRIRCg1UYWdUeXBl",
+            "U29ja2V0EAYqmgEKFkFjY291bnRDaGVja1JldHVybkNvZGUSCgoGQVJDX09L",
+            "EAASDwoLQVJDX1VOS09OV04QARIZChVBUkNfTk9UX0ZPVU5EX0FDQ09VTlQQ",
+            "AhIWChJBUkNfUEFTU1dPUkRfV1JPTkcQAxIPCgtBUkNfTE9HR0lORxAEEg8K",
+            "C0FSQ19USU1FT1VUEAUSDgoKQVJDX09OTElORRAGKkcKE0xvZ2luSHR0cFJl",
+            "dHVybkNvZGUSCwoHTEhSQ19PSxAAEhAKDExIUkNfVElNRU9VVBABEhEKDUxI",
+            "UkNfTk9URk9VTkQQAipMChZDcmVhdGVQbGF5ZXJSZXR1cm5Db2RlEhEKDUNQ",
+            "Ul9DcmVhdGVfT0sQABIPCgtDUFJfVW5rb253bhABEg4KCkNQUl9SZW5hbWUQ",
+            "AmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Proto.DbReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Proto.TagType), typeof(global::Proto.AccountCheckReturnCode), typeof(global::Proto.LoginHttpReturnCode), typeof(global::Proto.CreatePlayerReturnCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -267,6 +268,7 @@ namespace Proto {
     /// </summary>
     [pbr::OriginalName("TagTypeToWorld")] ToWorld = 4,
     [pbr::OriginalName("TagTypePlayer")] Player = 5,
+    [pbr::OriginalName("TagTypeSocket")] Socket = 6,
   }
 
   public enum AccountCheckReturnCode {
