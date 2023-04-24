@@ -97,7 +97,7 @@ namespace UI
                         NetManager.Instance.SendPacket(Proto.MsgId.MiPrivateChat, proto);
                 }
             });
-            PoolManager.Instance.Load("ChatMsg", "UI/ChatMsg", 40);
+            PoolManager.Instance.PreLoad("ChatMsg", "UI/ChatMsg", 40);
             Close();
         }
 

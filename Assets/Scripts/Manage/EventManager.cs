@@ -105,6 +105,21 @@ namespace Manage
                 (_eventDict[type][2] as EventInfo<T1, T2>).onEvent?.Invoke(arg1, arg2);
         }
 
+        public void InvokeDelay(EventId type, float seconds = 1)
+        {
+            MonoManager.Instance.StartCoroutine(RealInvokeDelay(type, seconds));
+        }
+
+        public void InvokeDelay<T>(EventId type, T arg, float seconds = 1)
+        {
+            MonoManager.Instance.StartCoroutine(RealInvokeDelay(type, arg, seconds));
+        }
+
+        public void InvokeDelay<T1, T2>(EventId type, T1 arg1, T2 arg2, float seconds = 1)
+        {
+            MonoManager.Instance.StartCoroutine(RealInvokeDelay(type, arg1, arg2, seconds));
+        }
+
         private IEnumerator RealInvokeDelay(EventId type, float seconds)
         {
             yield return new WaitForSeconds(seconds);
@@ -124,12 +139,6 @@ namespace Manage
             yield return new WaitForSeconds(seconds);
             if (_eventDict.ContainsKey(type))
                 (_eventDict[type][2] as EventInfo<T1, T2>).onEvent?.Invoke(arg1, arg2);
-        }
-
-        public void InvokeDelay(EventId type, float seconds = 1) => MonoManager.Instance.StartCoroutine(RealInvokeDelay(type, seconds));
-
-        public void InvokeDelay<T>(EventId type, T arg, float seconds = 1) => MonoManager.Instance.StartCoroutine(RealInvokeDelay(type, arg, seconds));
-
-        public void InvokeDelay<T1, T2>(EventId type, T1 arg1, T2 arg2, float seconds = 1) => MonoManager.Instance.StartCoroutine(RealInvokeDelay(type, arg1, arg2, seconds));
+        }      
     }
 }

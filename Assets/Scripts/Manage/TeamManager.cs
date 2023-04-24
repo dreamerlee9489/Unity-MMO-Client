@@ -11,7 +11,7 @@ namespace Manage
         public void Initial()
 		{
             _mainSn = GameManager.Instance.mainPlayer.Sn;
-            PoolManager.Instance.Load(PoolName.HUDPanel, "UI/Panel/HUDPanel", 4);
+            PoolManager.Instance.PreLoad(PoolName.HUDPanel, "UI/Panel/HUDPanel", 4);
             HUDPanel panel = PoolManager.Instance.Pop(PoolName.HUDPanel, UIManager.Instance.HudGroup).GetComponent<HUDPanel>();
             panel.InitPanel(GameManager.currWorld.roleDict[_mainSn]);
             teamDict.Add(_mainSn, panel);

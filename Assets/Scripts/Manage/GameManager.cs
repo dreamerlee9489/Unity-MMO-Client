@@ -49,7 +49,7 @@ namespace Manage
             ParseItemPotionsCsv();
             ParseItemWeaponsCsv();
             ParseWorldCsv();
-            PoolManager.Instance.Load(PoolName.RoleToggle, "UI/RoleToggle", 20);
+            PoolManager.Instance.PreLoad(PoolName.RoleToggle, "UI/RoleToggle", 20);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.L2CPlayerList, PlayerListHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.G2CSyncPlayer, SyncPlayerHandler);
             MsgManager.Instance.RegistMsgHandler(Proto.MsgId.S2CEnterWorld, EnterWorldHandler);

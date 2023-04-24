@@ -17,7 +17,7 @@ namespace Manage
             MonoManager.Instance.StartCoroutine(RealLoadAsync<T>(path, func));
         }
 
-        IEnumerator RealLoadAsync<T>(string path, UnityAction<T> func) where T : Object
+        private IEnumerator RealLoadAsync<T>(string path, UnityAction<T> func) where T : Object
         {
             ResourceRequest request = Resources.LoadAsync<T>(path);
             yield return request;
