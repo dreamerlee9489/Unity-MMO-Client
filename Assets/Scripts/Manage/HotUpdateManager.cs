@@ -44,7 +44,7 @@ namespace Manage
 #else
     "Windows";
 #endif
-        private readonly string _ftpIp = "ftp://8.130.45.1";
+        private readonly string _ftpIp = "ftp://192.168.120.129";
         private readonly Dictionary<string, ABInfo> _remoteInfoDict = new();
         private readonly Dictionary<string, ABInfo> _localInfoDict = new();
         private readonly List<string> _downloadList = new();

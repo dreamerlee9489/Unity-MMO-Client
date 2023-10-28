@@ -69,9 +69,9 @@ namespace Proto
                 obj.transform.position = position;
                 obj.gameObject.SetActive(true);
                 UIManager.Instance.GetPanel<PropPanel>().InitPanel();
-                GameManager.Instance.virtualCam.transform.position = position + new Vector3(0, 6, -8);
-                GameManager.Instance.virtualCam.transform.rotation = Quaternion.AngleAxis(-50, Vector3.left);
-                GameManager.Instance.virtualCam.Follow = obj.transform;
+                GameManager.Instance.VirtualCam.transform.position = position + new Vector3(0, 6, -8);
+                GameManager.Instance.VirtualCam.transform.rotation = Quaternion.AngleAxis(-50, Vector3.left);
+                GameManager.Instance.VirtualCam.Follow = obj.transform;
             }
         }
     }

@@ -26,24 +26,24 @@ namespace Manage
 
     public class GameManager : MonoBehaviour
     {
-        public UIManager canvas;
         public Proto.AccountInfo accountInfo;
         public Proto.MainPlayer mainPlayer;
-        public CinemachineVirtualCamera virtualCam;
         public List<PlayerBaseData> playerBaseDatas;
         public Dictionary<int, string> worldDict;
         public Dictionary<string, List<string>> dropPotionDict;
         public Dictionary<string, List<string>> dropWeaponDict;
         public static WorldManager currWorld;
-
         private static GameManager _instance;
+
         public static GameManager Instance => _instance;
+        public UIManager Canvas { get; private set; }
+        public CinemachineVirtualCamera VirtualCam { get; private set; }
 
         protected void Awake()
         {
             _instance = this;
-            canvas = GameObject.Find("UIManager").GetComponent<UIManager>();
-            virtualCam = transform.GetChild(1).GetComponent<CinemachineVirtualCamera>();
+            Canvas = GameObject.Find("UIManager").GetComponent<UIManager>();
+            VirtualCam = transform.GetChild(1).GetComponent<CinemachineVirtualCamera>();
             DontDestroyOnLoad(gameObject);
             ParsePlayerBaseCsv();
             ParseItemPotionsCsv();
@@ -188,14 +188,14 @@ namespace Manage
         {
             currWorld = null;
             mainPlayer.Obj.ResetCmd();
-            canvas.GetPanel<ChatPanel>().Close();
+            Canvas.GetPanel<ChatPanel>().Close();
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             currWorld = FindObjectOfType<WorldManager>();
-            canvas.GetPanel<ChatPanel>().Open();
-            canvas.WorldName.text = worldDict[scene.buildIndex];
+            Canvas.GetPanel<ChatPanel>().Open();
+            Canvas.WorldName.text = worldDict[scene.buildIndex];
         }
 
         private void SyncPlayerHandler(Google.Protobuf.IMessage msg)
@@ -214,10 +214,10 @@ namespace Manage
                 accountInfo ??= new Proto.AccountInfo();
                 accountInfo.ParseProto(proto);
                 if (accountInfo.Roles.Count == 0)
-                    canvas.GetPanel<CreatePanel>().Open();
+                    Canvas.GetPanel<CreatePanel>().Open();
                 else
                 {
-                    Transform content = canvas.GetPanel<RolesPanel>().RolesRect.content;
+                    Transform content = Canvas.GetPanel<RolesPanel>().RolesRect.content;
                     for (int i = 0; i < accountInfo.Roles.Count; i++)
                     {
                         RoleToggle roleToggle = PoolManager.Instance.Pop(PoolName.RoleToggle, content).GetComponent<RoleToggle>();
@@ -225,7 +225,7 @@ namespace Manage
                         roleToggle.Level.text = "Lv " + accountInfo.Roles[i].Level;
                         roleToggle.Sn = accountInfo.Roles[i].Sn;
                     }
-                    canvas.GetPanel<RolesPanel>().Open();
+                    Canvas.GetPanel<RolesPanel>().Open();
                 }
             }
         }
@@ -234,8 +234,8 @@ namespace Manage
         {
             if (msg is Proto.EnterWorld proto)
             {
-                canvas.GetPanel<StartPanel>().Close();
-                MonoManager.Instance.StartCoroutine(canvas.FadeAlpha());
+                Canvas.GetPanel<StartPanel>().Close();
+                MonoManager.Instance.StartCoroutine(Canvas.FadeAlpha());
                 SceneManager.LoadSceneAsync(proto.WorldId, LoadSceneMode.Single);
                 mainPlayer.Obj.transform.position = new(proto.Position.X, proto.Position.Y, proto.Position.Z);
             }
@@ -322,25 +322,25 @@ namespace Manage
         private void GlobalChatHandler(Google.Protobuf.IMessage msg)
         {
             if(msg is Proto.ChatMsg proto)
-                canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.Global, $"{proto.Name}：{proto.Content}");
+                Canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.Global, $"{proto.Name}：{proto.Content}");
         }
 
         private void WorldChatHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.ChatMsg proto)
-                canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.World, $"{proto.Name}：{proto.Content}");
+                Canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.World, $"{proto.Name}：{proto.Content}");
         }
 
         private void TeamChatHandler(Google.Protobuf.IMessage msg)
         {
             if(msg is Proto.ChatMsg proto)
-                canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.Team, $"{proto.Name}：{proto.Content}");
+                Canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.Team, $"{proto.Name}：{proto.Content}");
         }
 
         private void PrivateChatHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.ChatMsg proto)
-                canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.Private, $"{proto.Name}：{proto.Content[(proto.Content.IndexOf(' ') + 1)..]}");
+                Canvas.GetPanel<ChatPanel>().ShowMsg(ChatType.Private, $"{proto.Name}：{proto.Content[(proto.Content.IndexOf(' ') + 1)..]}");
         }
 
         private void ReqJoinTeamHandler(Google.Protobuf.IMessage msg)
@@ -366,7 +366,7 @@ namespace Manage
             if(msg is Proto.EnterDungeon proto)
             {
                 string text = $"玩家[{proto.Sender}]邀请你进入副本[{worldDict[proto.WorldId]}]，是否同意？";
-                canvas.GetPanel<PopPanel>().Open(text, () =>
+                Canvas.GetPanel<PopPanel>().Open(text, () =>
                 {
                     Proto.EnterDungeon protoRes = new()
                     {
@@ -384,7 +384,7 @@ namespace Manage
             if (msg is Proto.PlayerReq proto)
             {
                 string text = $"玩家[{currWorld.roleDict[proto.Applicant].name}]向你发起挑战，是否同意？";
-                canvas.GetPanel<PopPanel>().Open(text, () =>
+                Canvas.GetPanel<PopPanel>().Open(text, () =>
                 {
                     Proto.PlayerReq protoRes = new()
                     {
@@ -421,7 +421,7 @@ namespace Manage
             if(msg is Proto.PlayerReq proto) 
             {
                 string text = $"玩家[{currWorld.roleDict[proto.Applicant].name}]邀请你交易，是否同意？";
-                canvas.GetPanel<PopPanel>().Open(text, () =>
+                Canvas.GetPanel<PopPanel>().Open(text, () =>
                 {
                     Proto.PlayerReq protoRes = new()
                     {
@@ -430,7 +430,7 @@ namespace Manage
                         Agree = true
                     };
                     NetManager.Instance.SendPacket(Proto.MsgId.C2CTradeRes, protoRes);
-                    canvas.GetPanel<TradePanel>().Open(currWorld.roleDict[proto.Applicant], currWorld.roleDict[mainPlayer.Sn]);
+                    Canvas.GetPanel<TradePanel>().Open(currWorld.roleDict[proto.Applicant], currWorld.roleDict[mainPlayer.Sn]);
                 }, null);
             }
         }
@@ -442,22 +442,22 @@ namespace Manage
                 if (proto.Item != null)
                     mainPlayer.Obj.ParseItemToKnap(proto.Item);
                 if (proto.Gold > 0)
-                    canvas.GetPanel<TradePanel>().RemoteRect.GoldField.text = proto.Gold.ToString();
-                canvas.GetPanel<TradePanel>().RemoteRect.SureTog.isOn = proto.Ack;
+                    Canvas.GetPanel<TradePanel>().RemoteRect.GoldField.text = proto.Gold.ToString();
+                Canvas.GetPanel<TradePanel>().RemoteRect.SureTog.isOn = proto.Ack;
             }
         }
 
         private void TradeOpenHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.TradeOpen proto)
-                canvas.GetPanel<TradePanel>().Open(currWorld.roleDict[proto.Applicant], currWorld.roleDict[proto.Responder]);
+                Canvas.GetPanel<TradePanel>().Open(currWorld.roleDict[proto.Applicant], currWorld.roleDict[proto.Responder]);
         }
 
         private void TradeCloseHandler(Google.Protobuf.IMessage msg)
         {
             if (msg is Proto.TradeClose proto)
             {
-                canvas.GetPanel<TradePanel>().Close();
+                Canvas.GetPanel<TradePanel>().Close();
                 mainPlayer.Obj.ParseTradeClose(proto);
             }
         }
