@@ -44,11 +44,11 @@ namespace Manage
 #else
     "Windows";
 #endif
-        private readonly string _ftpIp = "ftp://192.168.120.129";
+        private string _ftpIp;
+        private ModalPanel _modalPanel = null;
+        private readonly List<string> _downloadList = new();
         private readonly Dictionary<string, ABInfo> _remoteInfoDict = new();
         private readonly Dictionary<string, ABInfo> _localInfoDict = new();
-        private readonly List<string> _downloadList = new();
-        private ModalPanel _modalPanel = null;
 
         private static HotUpdateManager _instance;
 
@@ -60,6 +60,7 @@ namespace Manage
                 {
                     GameObject obj = new("HotUpdateManager");
                     _instance = obj.AddComponent<HotUpdateManager>();
+                    _instance._ftpIp = $"ftp://{NetManager.Instance.fileIP}";
                 }
                 return _instance;
             }

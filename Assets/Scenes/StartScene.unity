@@ -28848,8 +28848,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1641c4e25f8f88740be4b5ce610aaa3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  remoteIp: 127.0.0.1
-  remotePort: 7071
+  gateIP: 127.0.0.1
+  fileIP: 192.168.120.129
 --- !u!222 &5023022386287052328
 CanvasRenderer:
   m_ObjectHideFlags: 0
