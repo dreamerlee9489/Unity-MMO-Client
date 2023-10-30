@@ -46,12 +46,11 @@ namespace Manage
         private Socket _sock = null;
         private NetState _state = NetState.NoConnect;
         private int _recvIdx = 0;
+        private readonly int _gatePort = 7071;
         private readonly byte[] _recvBuf = new byte[512 * 1024];
         private readonly Dictionary<Proto.MsgId, ParseFunc> _funcDict = new();
 
-        public string remoteIp;
-        public int remotePort;
-
+        public string gateIP, fileIP;
         public AppType CurApp { get; private set; } = AppType.Client;
 
         protected override void Awake()
@@ -285,7 +284,7 @@ namespace Manage
 
         private IEnumerator ConnectServer()
         {
-            UnityWebRequest request = UnityWebRequest.Get($"http://{remoteIp}:{remotePort}/login");
+            UnityWebRequest request = UnityWebRequest.Get($"http://{gateIP}:{_gatePort}/login");
             request.SetRequestHeader("Content-Type", "application/json;charset=utf-8");
             request.downloadHandler = new DownloadHandlerBuffer();
             yield return request.SendWebRequest();
